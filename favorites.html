@@ -19,6 +19,7 @@ body{
     background:white;
     padding:15px;
     border-radius:15px;
+    box-shadow:0 5px 10px rgba(0,0,0,0.1);
 }
 
 button{
@@ -47,6 +48,7 @@ button{
 
 let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 
+// 📌 列表渲染
 function render(){
 
     const list = document.getElementById("list");
@@ -68,7 +70,7 @@ function render(){
 
 render();
 
-// ✅ 关键修复：用 addEventListener（避免onclick失效）
+// 🚀 ⭐ 重点：改成“卡片练习模式”
 document.getElementById("practiceBtn").addEventListener("click", function(){
 
     if(favorites.length === 0){
@@ -78,22 +80,43 @@ document.getElementById("practiceBtn").addEventListener("click", function(){
 
     let i = 0;
 
-    function show(){
+    // 🔥 重建练习界面（和主页一致）
+    document.body.innerHTML = `
+        <h1>📖 收藏练习模式</h1>
+
+        <div class="card">
+            <div id="word" style="font-size:40px;"></div>
+            <div id="meaning" style="font-size:20px;color:#059669;"></div>
+        </div>
+
+        <button onclick="nextWord()">下一个</button>
+        <button onclick="back()">退出</button>
+    `;
+
+    // 📌 显示单词
+    window.nextWord = function(){
 
         const w = favorites[i];
 
-        alert(w.word + " - " + w.meaning);
+        document.getElementById("word").innerText = w.word;
+        document.getElementById("meaning").innerText = w.meaning;
 
         i++;
 
-        if(i < favorites.length){
-            setTimeout(show, 800);
+        if(i >= favorites.length){
+            i = 0; // 循环练习
         }
-    }
+    };
 
-    show();
+    // 🔙 返回主页
+    window.back = function(){
+        window.location.href = "index.html";
+    };
+
+    nextWord();
 });
 
+// 🔙 返回
 function back(){
     window.location.href = "index.html";
 }
