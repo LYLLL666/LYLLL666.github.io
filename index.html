@@ -58,6 +58,7 @@ button{
 <button class="learn-btn" onclick="nextWord()">下一个</button>
 <button class="like-btn" onclick="collectWord()">⭐ 收藏</button>
 <button class="page-btn" onclick="openFavorites()">📖 我的收藏</button>
+<button class="page-btn" onclick="startQuiz()">🧠 练习模式</button>
 
 <div>
 已学习：<span id="count">0</span> |
@@ -148,6 +149,126 @@ function updateStats(){
 // 📖 收藏页
 function openFavorites(){
     window.location.href = "favorites.html";
+}
+
+let quizIndex = 0;
+let quizOptions = [];
+let quizAnswer = null;
+
+// 🧠 开始练习模式
+function startQuiz(){
+
+    if(!isReady){
+        alert("词库加载中...");
+        return;
+    }
+
+    quizIndex = 0;
+
+    document.body.innerHTML = `
+        <h1>🧠 单词练习模式</h1>
+
+        <div class="card">
+            <div id="quizWord" style="font-size:40px;"></div>
+            <div id="options"></div>
+        </div>
+
+        <div id="result"></div>
+
+        <button onclick="backMain()">退出</button>
+    `;
+
+    nextQuiz();
+}
+
+// 📌 下一题
+function nextQuiz(){
+
+    const w = words[Math.floor(Math.random() * words.length)];
+    quizAnswer = w;
+
+    // 随机生成4个选项
+    let opts = [w.meaning];
+
+    while(opts.length < 4){
+        let r = words[Math.floor(Math.random() * words.length)].meaning;
+        if(!opts.includes(r)){
+            opts.push(r);
+        }
+    }
+
+    // 打乱
+    opts.sort(() => Math.random() - 0.5);
+
+    document.getElementById("quizWord").innerText = w.word;
+
+    const box = document.getElementById("options");
+    box.innerHTML = "";
+
+    opts.forEach(opt => {
+
+        const btn = document.createElement("button");
+
+        btn.innerText = opt;
+        btn.style = `
+            display:block;
+            width:80%;
+            margin:10px auto;
+            padding:10px;
+            border-radius:10px;
+            border:none;
+            cursor:pointer;
+            background:#d1fae5;
+        `;
+
+        btn.onclick = () => checkAnswer(btn, opt);
+
+        box.appendChild(btn);
+    });
+}
+
+// 🎯 判断答案（核心）
+function checkAnswer(btn, opt){
+
+    const result = document.getElementById("result");
+
+    if(opt === quizAnswer.meaning){
+
+        // ✔ 正确动画
+        btn.style.background = "#22c55e";
+        btn.innerText = "✔ 正确";
+
+        result.innerHTML = "<h2 style='color:green'>回答正确 🎉</h2>";
+
+        setTimeout(() => {
+            nextQuiz();
+        }, 800);
+
+    }else{
+
+        // ❌ 错误动画
+        btn.style.background = "#ef4444";
+        btn.innerText = "❌ 错误";
+
+        result.innerHTML = "<h2 style='color:red'>已加入收藏 ❗</h2>";
+
+        // 自动加入收藏
+        if(!favorites.find(i => i.word === quizAnswer.word)){
+            favorites.push(quizAnswer);
+            localStorage.setItem("favorites", JSON.stringify(favorites));
+        }
+
+        updateStats();
+
+        setTimeout(() => {
+            nextQuiz();
+        }, 1000);
+    }
+}
+
+// 🔙 返回主界面
+function backMain(){
+    location.reload();
 }
 
 </script>
