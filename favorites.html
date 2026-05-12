@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的收藏</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#ecfdf5;
+    text-align:center;
+    color:#065f46;
+}
+
+.card{
+    width:300px;
+    margin:10px auto;
+    background:white;
+    padding:15px;
+    border-radius:15px;
+    box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+button{
+    margin:10px;
+    padding:10px 20px;
+    border:none;
+    border-radius:10px;
+    background:#10b981;
+    color:white;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>⭐ 我的收藏</h1>
+
+<div id="list"></div>
+
+<button onclick="practice()">开始练习</button>
+<button onclick="back()">返回学习</button>
+
+<script>
+
+let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+function render(){
+
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+
+    favorites.forEach((w,i)=>{
+
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `<b>${w.word}</b><br>${w.meaning}`;
+        list.appendChild(div);
+
+    });
+}
+
+render();
+
+// 📚 练习模式
+function practice(){
+
+    if(favorites.length === 0){
+        alert("没有收藏单词");
+        return;
+    }
+
+    let i = 0;
+
+    function show(){
+        const w = favorites[i];
+        alert(w.word + " - " + w.meaning);
+        i++;
+
+        if(i < favorites.length){
+            setTimeout(show, 1000);
+        }
+    }
+
+    show();
+}
+
+// 🔙 返回
+function back(){
+    window.location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>
