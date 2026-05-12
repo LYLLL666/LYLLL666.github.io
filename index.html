@@ -188,14 +188,13 @@ function updateStats(){
 
 let quizIndex = 0;
 let quizAnswer = null;
-let userAnswers = {}; // ⭐ 记录每一题你选了什么
+let userAnswers = {}; // 记录每题选择
 
 // 🧠 开始练习
 function startQuiz(){
 
-    // ⭐ 每次进入都刷新状态（你要的“重新进入刷新页面”）
     quizIndex = 0;
-    userAnswers = {};
+    userAnswers = {}; // 每次进入都刷新
 
     document.body.innerHTML = `
         <h1>🧠 单词练习模式</h1>
@@ -241,7 +240,7 @@ function showQuiz(){
 
     document.getElementById("result").innerHTML = "";
 
-    const lastChoice = userAnswers[quizIndex]; // ⭐ 上次选择
+    const lastChoice = userAnswers[quizIndex];
 
     opts.forEach(opt => {
 
@@ -249,59 +248,67 @@ function showQuiz(){
 
         btn.innerText = opt;
 
-        // 🎨 默认白色
+        // 🎨 默认样式（白底+灰边+黑字）
         btn.style = `
             display:block;
             width:80%;
             margin:10px auto;
-            padding:10px;
+            padding:12px;
             border-radius:10px;
-            border:none;
+            border:1px solid #d1d5db;
             background:white;
+            color:#111827;
+            font-size:16px;
             cursor:pointer;
         `;
 
-        // ⭐ 如果是上次选的，恢复状态
+        // ⭐ 回显上次选择
         if(lastChoice){
 
             if(opt === quizAnswer.meaning){
 
-                btn.style.background = "#bbf7d0"; // 浅绿
+                btn.style.background = "#dcfce7";
+                btn.style.border = "1px solid #22c55e";
 
             }else if(opt === lastChoice){
 
-                btn.style.background = "#fecaca"; // 浅红
+                btn.style.background = "#fee2e2";
+                btn.style.border = "1px solid #ef4444";
             }
         }
 
-        btn.onclick = () => checkAnswer(btn,opt);
+        btn.onclick = () => checkAnswer(btn, opt);
 
         box.appendChild(btn);
     });
 }
 
-// 🎯 判断答案（核心）
-function checkAnswer(btn,opt){
+// 🎯 判断答案
+function checkAnswer(btn, opt){
 
     const buttons = document.querySelectorAll("#options button");
-
     const correct = quizAnswer.meaning;
 
-    // ⭐ 记录用户选择
+    // ⭐ 记录选择
     userAnswers[quizIndex] = opt;
 
-    // ❌ 错误
     if(opt !== correct){
 
-        btn.style.background = "#fecaca"; // 浅红
+        // ❌ 错误
+        btn.style.background = "#fee2e2";
+        btn.style.border = "1px solid #ef4444";
+        btn.style.color = "#111827";
 
-        // ⭐ 标出正确答案
+        // ⭐ 显示正确答案
         buttons.forEach(b => {
-
             if(b.innerText === correct){
-                b.style.background = "#bbf7d0"; // 浅绿
+                b.style.background = "#dcfce7";
+                b.style.border = "1px solid #22c55e";
             }
         });
+
+        document.getElementById("result").innerHTML =
+            "<h2 style='color:red'>错误，已显示正确答案</h2>";
 
         // ⭐ 加入收藏
         if(!favorites.find(i => i.word === quizAnswer.word)){
@@ -314,7 +321,11 @@ function checkAnswer(btn,opt){
     }else{
 
         // ✔ 正确
-        btn.style.background = "#bbf7d0"; // 浅绿
+        btn.style.background = "#dcfce7";
+        btn.style.border = "1px solid #22c55e";
+
+        document.getElementById("result").innerHTML =
+            "<h2 style='color:green'>正确 🎉</h2>";
     }
 
     setTimeout(() => {
@@ -346,7 +357,7 @@ function prevQuiz(){
     showQuiz();
 }
 
-// 🔙 返回主页面（刷新练习状态）
+// 🔙 返回主页面
 function backMain(){
     location.reload();
 }
