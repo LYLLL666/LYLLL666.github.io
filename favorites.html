@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>我的收藏</title>
+<title>收藏复习</title>
 
 <style>
 
@@ -20,72 +20,66 @@ h1{
     margin-top:25px;
 }
 
-/* ⭐ 卡片（对齐练习模式） */
 .card{
     width:320px;
-    margin:15px auto;
+    margin:20px auto;
     background:white;
-    padding:20px;
+    padding:25px;
     border-radius:20px;
     box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
-/* 单词 */
-.word{
-    font-size:40px;
+#word{
+    font-size:42px;
     font-weight:bold;
+    margin-bottom:20px;
 }
 
-.meaning{
-    font-size:18px;
-    margin-top:10px;
-}
-
-/* ⭐ 按钮统一风格 */
-.btn{
-    margin-top:12px;
-    padding:10px 18px;
-    border:none;
+.option{
+    width:85%;
+    margin:10px auto;
+    padding:14px;
     border-radius:12px;
+    border:2px solid #d1d5db;
+    background:white;
     cursor:pointer;
-    font-size:15px;
+    font-size:18px;
     transition:0.2s;
 }
 
-/* 复习按钮 */
-.practice-btn{
-    background:#10b981;
-    color:white;
+.option:hover{
+    transform:scale(1.03);
 }
 
-.practice-btn:hover{
-    transform:scale(1.05);
+.correct{
+    background:#bbf7d0 !important;
+    border-color:#22c55e !important;
 }
 
-/* 取消收藏按钮（更精致） */
-.remove-btn{
-    background:linear-gradient(135deg,#ef4444,#f87171);
-    color:white;
+.wrong{
+    background:#fecaca !important;
+    border-color:#ef4444 !important;
 }
 
-.remove-btn:hover{
-    transform:scale(1.05);
-}
-
-/* 空状态 */
-.empty{
-    margin-top:40px;
+#msg{
+    margin-top:15px;
+    height:30px;
     font-size:18px;
+    font-weight:bold;
 }
 
-.top-btn{
-    margin:10px;
-    padding:10px 20px;
+.bottom button{
+    padding:12px 20px;
+    margin:5px;
     border:none;
     border-radius:12px;
-    background:#22c55e;
+    background:#10b981;
     color:white;
     cursor:pointer;
+}
+
+.bottom button:disabled{
+    opacity:0.4;
 }
 
 </style>
@@ -93,93 +87,200 @@ h1{
 
 <body>
 
-<h1>⭐ 我的收藏</h1>
+<h1>📖 收藏复习模式</h1>
 
-<button class="top-btn" onclick="startPractice()">📖 开始复习</button>
-<button class="top-btn" onclick="back()">返回主页</button>
+<div class="card">
 
-<div id="list"></div>
+    <div id="word">加载中...</div>
+
+    <div id="options"></div>
+
+    <div id="msg"></div>
+
+</div>
+
+<div class="bottom">
+
+    <button id="prevBtn" onclick="prev()">⬅ 上一题</button>
+
+    <button onclick="next()">下一题 ➡</button>
+
+    <button onclick="exit()">退出</button>
+
+</div>
 
 <script>
 
+// ⭐ 收藏数据（复习题库）
 let favorites =
 JSON.parse(localStorage.getItem("favorites") || "[]");
 
-// 渲染列表
-function render(){
+// 当前题
+let current = 0;
 
-    let list =
-    document.getElementById("list");
+// 历史记录（不持久）
+let history = [];
 
-    list.innerHTML = "";
+// 如果没有收藏
+if(favorites.length === 0){
+    alert("暂无收藏单词");
+    location.href = "favorites.html";
+}
 
-    if(favorites.length === 0){
+// 显示题目
+function show(){
 
-        list.innerHTML =
-        `<div class="empty">暂无收藏单词</div>`;
+    let w = favorites[current];
 
-        return;
+    document.getElementById("word").innerText =
+    w.word;
+
+    document.getElementById("msg").innerText = "";
+
+    // 上一题按钮控制
+    document.getElementById("prevBtn").disabled =
+    current === 0;
+
+    let options = [w.meaning];
+
+    // 随机错误答案
+    while(options.length < 4){
+
+        let random =
+        favorites[
+            Math.floor(Math.random() * favorites.length)
+        ].meaning;
+
+        if(!options.includes(random)){
+            options.push(random);
+        }
     }
 
-    favorites.forEach((w, index) => {
+    shuffle(options);
 
-        let div = document.createElement("div");
+    let box =
+    document.getElementById("options");
 
-        div.className = "card";
+    box.innerHTML = "";
 
-        div.innerHTML = `
+    options.forEach(opt => {
 
-            <div class="word">${w.word}</div>
+        let div =
+        document.createElement("div");
 
-            <div class="meaning">${w.meaning}</div>
+        div.className = "option";
 
-            <button class="btn remove-btn"
-            onclick="remove(${index})">
-                ❌ 取消收藏
-            </button>
+        div.innerText = opt;
 
-        `;
+        div.onclick = () => check(opt);
 
-        list.appendChild(div);
+        box.appendChild(div);
     });
 }
 
-// 删除收藏
-function remove(index){
+// 判断答案
+function check(opt){
 
-    favorites.splice(index, 1);
+    let w = favorites[current];
 
-    localStorage.setItem(
-        "favorites",
-        JSON.stringify(favorites)
-    );
+    if(history[current]) return;
 
-    render();
-}
+    let correct = opt === w.meaning;
 
-// ⭐ 进入复习模式（重点）
-function startPractice(){
+    history[current] = { correct };
 
-    if(favorites.length === 0){
-        alert("没有收藏单词");
-        return;
+    let all =
+    document.querySelectorAll(".option");
+
+    all.forEach(btn => {
+
+        btn.onclick = null;
+
+        if(btn.innerText === w.meaning){
+            btn.classList.add("correct");
+        }
+
+        if(btn.innerText === opt &&
+           !correct){
+            btn.classList.add("wrong");
+        }
+    });
+
+    // ⭐ 答对 → 取消收藏
+    if(correct){
+
+        favorites = favorites.filter(
+            i => i.word !== w.word
+        );
+
+        localStorage.setItem(
+            "favorites",
+            JSON.stringify(favorites)
+        );
+
+        document.getElementById("msg").innerText =
+        "✅ 正确，已移出收藏";
+
+    }else{
+
+        document.getElementById("msg").innerText =
+        "❌ 错误，仍保留收藏";
     }
 
-    // 存入会话（用于复习页）
-    sessionStorage.setItem(
-        "favPractice",
-        JSON.stringify(favorites)
-    );
+    setTimeout(() => {
 
-    location.href = "favorite-quiz.html";
+        next();
+
+    }, 1200);
 }
 
-// 返回主页
-function back(){
-    location.href = "index.html";
+// 下一题（不循环！）
+function next(){
+
+    if(current < favorites.length - 1){
+
+        current++;
+
+        show();
+
+    }else{
+
+        document.getElementById("msg").innerText =
+        "🎉 已复习完所有收藏";
+
+        document.getElementById("options").innerHTML = "";
+    }
 }
 
-render();
+// 上一题
+function prev(){
+
+    if(current > 0){
+
+        current--;
+
+        show();
+    }
+}
+
+// 打乱
+function shuffle(arr){
+
+    for(let i = arr.length - 1; i > 0; i--){
+
+        let j = Math.floor(Math.random() * (i + 1));
+
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+
+// 退出
+function exit(){
+    location.href = "favorites.html";
+}
+
+// 初始化
+show();
 
 </script>
 
