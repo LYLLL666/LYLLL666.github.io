@@ -1,93 +1,35 @@
 <!DOCTYPE html>
 <html lang="zh">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>练习模式</title>
 
 <style>
-
 body{
     margin:0;
     font-family:Arial;
     background:#ecfdf5;
     text-align:center;
-    color:#065f46;
 }
-
-h1{
-    margin-top:30px;
-}
-
 .card{
     width:320px;
     margin:20px auto;
     background:white;
     padding:25px;
     border-radius:20px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
-
-#word{
-    font-size:42px;
-    margin-bottom:25px;
-    font-weight:bold;
-}
-
+#word{font-size:40px;font-weight:bold;}
 .option{
     width:85%;
-    margin:12px auto;
+    margin:10px auto;
     padding:14px;
     border-radius:12px;
-    border:2px solid #d1d5db;
-    background:white;
-    color:#065f46;
+    border:2px solid #ddd;
     cursor:pointer;
-    transition:0.2s;
-    font-size:18px;
 }
-
-.option:hover{
-    transform:scale(1.03);
-}
-
-.correct{
-    background:#bbf7d0 !important;
-    border-color:#22c55e !important;
-}
-
-.wrong{
-    background:#fecaca !important;
-    border-color:#ef4444 !important;
-}
-
-#msg{
-    margin-top:20px;
-    height:30px;
-    font-size:18px;
-    font-weight:bold;
-}
-
-.bottom{
-    margin-top:20px;
-}
-
-.bottom button{
-    padding:12px 22px;
-    margin:5px;
-    border:none;
-    border-radius:12px;
-    background:#10b981;
-    color:white;
-    cursor:pointer;
-    font-size:16px;
-}
-
-.bottom button:disabled{
-    opacity:0.5;
-}
-
+.correct{background:#bbf7d0;}
+.wrong{background:#fecaca;}
 </style>
 </head>
 
@@ -96,282 +38,66 @@ h1{
 <h1>🧠 练习模式</h1>
 
 <div class="card">
-
-    <div id="word">加载中...</div>
-
-    <div id="options"></div>
-
-    <div id="msg"></div>
-
-</div>
-
-<div class="bottom">
-
-    <button id="prevBtn" onclick="prevWord()">⬅ 上一题</button>
-
-    <button onclick="nextWord()">下一题 ➡</button>
-
-    <button onclick="exitQuiz()">退出</button>
-
+<div id="word">加载中...</div>
+<div id="options"></div>
+<div id="msg"></div>
 </div>
 
 <script>
 
-// 单词数据
 let words = [];
+let index = 0;
 
-// ⭐ 当前题号（会话保存）
-let current =
-parseInt(sessionStorage.getItem("quizCurrent")) || 0;
+let wrongList =
+JSON.parse(localStorage.getItem("wrong_list") || "[]");
 
-// ⭐ 历史记录（会话保存）
-let history =
-JSON.parse(sessionStorage.getItem("quizHistory") || "[]");
-
-// 收藏
-let favorites =
-JSON.parse(localStorage.getItem("favorites") || "[]");
-
-// 加载词库
 fetch("words.json")
-.then(res => res.json())
-.then(data => {
-
+.then(res=>res.json())
+.then(data=>{
     words = data;
-
-    // 第一次进入时才打乱
-    if(!sessionStorage.getItem("quizStarted")){
-
-        shuffle(words);
-
-        sessionStorage.setItem(
-            "quizWords",
-            JSON.stringify(words)
-        );
-
-        sessionStorage.setItem(
-            "quizStarted",
-            "yes"
-        );
-
-    }else{
-
-        words =
-        JSON.parse(sessionStorage.getItem("quizWords"));
-    }
-
-    showWord();
+    render();
 });
 
-// 打乱数组
-function shuffle(arr){
+function render(){
 
-    for(let i = arr.length - 1; i > 0; i--){
+let w = words[index];
 
-        let j = Math.floor(Math.random() * (i + 1));
+document.getElementById("word").innerText = w.word;
 
-        [arr[i], arr[j]] =
-        [arr[j], arr[i]];
-    }
+let options = [w.meaning];
+
+while(options.length<4){
+let r = words[Math.floor(Math.random()*words.length)].meaning;
+if(!options.includes(r)) options.push(r);
 }
 
-// 显示题目
-function showWord(){
+options = options.sort(()=>Math.random()-0.5);
 
-    let w = words[current];
+document.getElementById("options").innerHTML =
+options.map(o =>
+`<div class="option" onclick="check('${o}','${w.word}','${w.meaning}')">${o}</div>`
+).join("");
 
-    document.getElementById("word").innerText =
-    w.word;
-
-    document.getElementById("msg").innerText = "";
-
-    // 第一题禁用上一题
-    let prevBtn =
-    document.getElementById("prevBtn");
-
-    prevBtn.disabled = current === 0;
-
-    // 正确答案
-    let options = [w.meaning];
-
-    // 随机错误答案
-    while(options.length < 4){
-
-        let random =
-        words[
-            Math.floor(Math.random() * words.length)
-        ].meaning;
-
-        if(!options.includes(random)){
-
-            options.push(random);
-        }
-    }
-
-    shuffle(options);
-
-    let box =
-    document.getElementById("options");
-
-    box.innerHTML = "";
-
-    // 创建选项
-    options.forEach(opt => {
-
-        let div =
-        document.createElement("div");
-
-        div.className = "option";
-
-        div.innerText = opt;
-
-        div.onclick = () => selectAnswer(opt);
-
-        box.appendChild(div);
-    });
-
-    // 恢复记录
-    restoreHistory();
 }
 
-// 选择答案
-function selectAnswer(opt){
+function check(opt, word, correct){
 
-    // 已做过则禁止重复选择
-    if(history[current]) return;
+if(opt !== correct){
 
-    let w = words[current];
-
-    let correct = opt === w.meaning;
-
-    // 保存记录
-    history[current] = {
-
-        selected: opt,
-
-        correct: correct
-    };
-
-    sessionStorage.setItem(
-        "quizHistory",
-        JSON.stringify(history)
-    );
-
-    // 错误加入收藏
-    if(!correct){
-
-        if(!favorites.find(i => i.word === w.word)){
-
-            favorites.push(w);
-
-            localStorage.setItem(
-                "favorites",
-                JSON.stringify(favorites)
-            );
-        }
-    }
-
-    renderAnswer();
-
-    // 自动下一题
-    setTimeout(() => {
-
-        if(current < words.length - 1){
-
-            nextWord();
-        }
-
-    }, 1200);
+if(!wrongList.find(i=>i.word===word)){
+wrongList.push({word, meaning:correct});
+localStorage.setItem("wrong_list",JSON.stringify(wrongList));
 }
 
-// 渲染答案
-function renderAnswer(){
+document.getElementById("msg").innerText="❌ 错题已记录";
 
-    let w = words[current];
-
-    let record = history[current];
-
-    let all =
-    document.querySelectorAll(".option");
-
-    all.forEach(btn => {
-
-        let text = btn.innerText;
-
-        btn.onclick = null;
-
-        // 正确答案
-        if(text === w.meaning){
-
-            btn.classList.add("correct");
-        }
-
-        // 错误答案
-        if(text === record.selected &&
-           text !== w.meaning){
-
-            btn.classList.add("wrong");
-        }
-    });
-
-    // 提示
-    if(record.correct){
-
-        document.getElementById("msg").innerText =
-        "✅ 回答正确";
-
-    }else{
-
-        document.getElementById("msg").innerText =
-        "❌ 回答错误，已加入收藏";
-    }
+}else{
+document.getElementById("msg").innerText="✅ 正确";
 }
 
-// 恢复状态
-function restoreHistory(){
+index++;
+render();
 
-    if(history[current]){
-
-        renderAnswer();
-    }
-}
-
-// 下一题
-function nextWord(){
-
-    if(current < words.length - 1){
-
-        current++;
-
-        sessionStorage.setItem(
-            "quizCurrent",
-            current
-        );
-
-        showWord();
-    }
-}
-
-// 上一题
-function prevWord(){
-
-    if(current > 0){
-
-        current--;
-
-        sessionStorage.setItem(
-            "quizCurrent",
-            current
-        );
-
-        showWord();
-    }
-}
-
-// 退出
-function exitQuiz(){
-
-    location.href = "index.html";
 }
 
 </script>
