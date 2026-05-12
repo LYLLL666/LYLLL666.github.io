@@ -156,6 +156,9 @@ let quizOptions = [];
 let quizAnswer = null;
 
 // 🧠 开始练习模式
+let quizIndex = 0;
+let quizAnswer = null;
+
 function startQuiz(){
 
     if(!isReady){
@@ -173,21 +176,24 @@ function startQuiz(){
             <div id="options"></div>
         </div>
 
-        <div id="result"></div>
+        <div id="result" style="margin-top:10px;"></div>
 
-        <button onclick="backMain()">退出</button>
+        <div style="margin-top:20px;">
+            <button onclick="prevQuiz()">⬅ 上一题</button>
+            <button onclick="backMain()">退出</button>
+            <button onclick="nextQuiz()">下一题 ➡</button>
+        </div>
     `;
 
-    nextQuiz();
+    showQuiz();
 }
 
-// 📌 下一题
-function nextQuiz(){
+// 📌 显示题目
+function showQuiz(){
 
-    const w = words[Math.floor(Math.random() * words.length)];
+    const w = words[quizIndex];
     quizAnswer = w;
 
-    // 随机生成4个选项
     let opts = [w.meaning];
 
     while(opts.length < 4){
@@ -197,13 +203,14 @@ function nextQuiz(){
         }
     }
 
-    // 打乱
     opts.sort(() => Math.random() - 0.5);
 
     document.getElementById("quizWord").innerText = w.word;
 
     const box = document.getElementById("options");
     box.innerHTML = "";
+
+    document.getElementById("result").innerHTML = "";
 
     opts.forEach(opt => {
 
@@ -217,8 +224,9 @@ function nextQuiz(){
             padding:10px;
             border-radius:10px;
             border:none;
-            cursor:pointer;
             background:#d1fae5;
+            cursor:pointer;
+            font-size:16px;
         `;
 
         btn.onclick = () => checkAnswer(btn, opt);
@@ -227,28 +235,41 @@ function nextQuiz(){
     });
 }
 
-// 🎯 判断答案（核心）
+// 🎯 判断答案（核心升级）
 function checkAnswer(btn, opt){
 
-    const result = document.getElementById("result");
+    const buttons = document.querySelectorAll("#options button");
+    const correct = quizAnswer.meaning;
 
-    if(opt === quizAnswer.meaning){
+    if(opt === correct){
 
-        // ✔ 正确动画
+        // ✔ 正确
         btn.style.background = "#22c55e";
         btn.innerText = "✔ 正确";
 
-        result.innerHTML = "<h2 style='color:green'>正确 🎉</h2>";
+        document.getElementById("result").innerHTML =
+            "<h2 style='color:green'>回答正确 🎉</h2>";
 
     }else{
 
-        // ❌ 错误动画
+        // ❌ 错误
         btn.style.background = "#ef4444";
         btn.innerText = "❌ 错误";
 
-        result.innerHTML = "<h2 style='color:red'>错误，已加入收藏</h2>";
+        document.getElementById("result").innerHTML =
+            "<h2 style='color:red'>错误，已显示正确答案</h2>";
 
-        // 自动加入收藏
+        // ⭐ 显示正确答案
+        buttons.forEach(b => {
+            if(b.innerText === correct){
+                b.style.background = "#22c55e";
+                b.innerText = "✔ 正确答案";
+            }else{
+                b.style.opacity = "0.4";
+            }
+        });
+
+        // ⭐ 加入收藏
         if(!favorites.find(i => i.word === quizAnswer.word)){
             favorites.push(quizAnswer);
             localStorage.setItem("favorites", JSON.stringify(favorites));
@@ -257,13 +278,27 @@ function checkAnswer(btn, opt){
         updateStats();
     }
 
-    // 🚀 关键：无论对错，都进入下一题
+    // 🚀 自动下一题（统一）
     setTimeout(() => {
         nextQuiz();
-    }, 500);
+    }, 800);
 }
 
-// 🔙 返回主界面
+// ➡ 下一题
+function nextQuiz(){
+    quizIndex++;
+    if(quizIndex >= words.length) quizIndex = 0;
+    showQuiz();
+}
+
+// ⬅ 上一题
+function prevQuiz(){
+    quizIndex--;
+    if(quizIndex < 0) quizIndex = words.length - 1;
+    showQuiz();
+}
+
+// 🔙 返回主页面
 function backMain(){
     location.reload();
 }
