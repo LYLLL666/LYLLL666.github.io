@@ -42,10 +42,7 @@ h1{ margin-top:25px; }
     background:white;
     cursor:pointer;
     font-size:18px;
-    transition:0.2s;
 }
-
-.option:hover{ transform:scale(1.03); }
 
 .correct{
     background:#bbf7d0 !important;
@@ -71,7 +68,6 @@ h1{ margin-top:25px; }
     border-radius:12px;
     background:#10b981;
     color:white;
-    cursor:pointer;
 }
 
 .bottom button:disabled{
@@ -83,7 +79,7 @@ h1{ margin-top:25px; }
 
 <body>
 
-<h1>📖 收藏复习</h1>
+<h1>📖 收藏复习（稳定版）</h1>
 
 <div class="card">
 
@@ -110,33 +106,32 @@ h1{ margin-top:25px; }
 let favorites =
 JSON.parse(localStorage.getItem("favorites") || "[]");
 
-// ⭐ 关键：复习副本（不会被修改）
-let reviewList = [...favorites];
+let index = 0;
+let locked = false; // ⭐ 防止重复点击
 
-let current = 0;
-
-if(reviewList.length === 0){
-    alert("暂无收藏单词");
+if(favorites.length === 0){
+    alert("暂无收藏");
     location.href = "favorites.html";
 }
 
-// 显示
-function show(){
+function render(){
 
-    let w = reviewList[current];
+    locked = false;
+
+    let w = favorites[index];
 
     document.getElementById("word").innerText = w.word;
     document.getElementById("msg").innerText = "";
 
     document.getElementById("prevBtn").disabled =
-    current === 0;
+    index === 0;
 
     let options = [w.meaning];
 
     while(options.length < 4){
 
         let r =
-        reviewList[Math.floor(Math.random()*reviewList.length)].meaning;
+        favorites[Math.floor(Math.random()*favorites.length)].meaning;
 
         if(!options.includes(r)){
             options.push(r);
@@ -146,30 +141,39 @@ function show(){
     shuffle(options);
 
     let box = document.getElementById("options");
+
     box.innerHTML = "";
 
     options.forEach(opt => {
 
         let div = document.createElement("div");
+
         div.className = "option";
+
         div.innerText = opt;
-        div.onclick = () => check(opt);
+
+        div.onclick = () => check(div, opt);
+
         box.appendChild(div);
     });
 }
 
-// 判断
-function check(opt){
+// 判断（完全稳定）
+function check(dom, opt){
 
-    let w = reviewList[current];
+    if(locked) return;
+
+    locked = true;
+
+    let w = favorites[index];
+    let correct = w.meaning;
 
     let all = document.querySelectorAll(".option");
 
+    // 禁止点击
     all.forEach(b => b.onclick = null);
 
-    let correct = w.meaning;
-
-    // 正确答案显示
+    // 正确答案
     all.forEach(b => {
         if(b.innerText === correct){
             b.classList.add("correct");
@@ -180,42 +184,26 @@ function check(opt){
 
         document.getElementById("msg").innerText = "✅ 正确";
 
-        // ⭐ 从原收藏删除（这里才动 favorites）
-        favorites = favorites.filter(
-            i => i.word !== w.word
-        );
-
-        localStorage.setItem(
-            "favorites",
-            JSON.stringify(favorites)
-        );
-
     }else{
 
         document.getElementById("msg").innerText = "❌ 错误";
 
-        all.forEach(b => {
-            if(b.innerText === opt){
-                b.classList.add("wrong");
-            }
-        });
+        dom.classList.add("wrong");
     }
-
-    setTimeout(next, 900);
 }
 
-// 下一题（稳定版）
+// 下一题（不会炸）
 function next(){
 
-    if(current < reviewList.length - 1){
+    if(index < favorites.length - 1){
 
-        current++;
-        show();
+        index++;
+        render();
 
     }else{
 
         document.getElementById("msg").innerText =
-        "🎉 复习完成";
+        "🎉 已复习完成";
 
         document.getElementById("options").innerHTML = "";
     }
@@ -224,9 +212,10 @@ function next(){
 // 上一题
 function prev(){
 
-    if(current > 0){
-        current--;
-        show();
+    if(index > 0){
+
+        index--;
+        render();
     }
 }
 
@@ -246,8 +235,8 @@ function exit(){
     location.href = "favorites.html";
 }
 
-// init
-show();
+// 初始化
+render();
 
 </script>
 
