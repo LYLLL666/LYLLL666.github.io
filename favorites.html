@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>收藏复习</title>
+<title>我的收藏</title>
 
 <style>
 
@@ -22,64 +22,54 @@ h1{
 
 .card{
     width:320px;
-    margin:20px auto;
+    margin:15px auto;
     background:white;
-    padding:25px;
+    padding:20px;
     border-radius:20px;
     box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
-#word{
-    font-size:42px;
-    font-weight:bold;
-    margin-bottom:20px;
-}
-
-.option{
-    width:85%;
-    margin:10px auto;
-    padding:14px;
-    border-radius:12px;
-    border:2px solid #d1d5db;
-    background:white;
-    cursor:pointer;
-    font-size:18px;
-    transition:0.2s;
-}
-
-.option:hover{
-    transform:scale(1.03);
-}
-
-.correct{
-    background:#bbf7d0 !important;
-    border-color:#22c55e !important;
-}
-
-.wrong{
-    background:#fecaca !important;
-    border-color:#ef4444 !important;
-}
-
-#msg{
-    margin-top:15px;
-    height:30px;
-    font-size:18px;
+.word{
+    font-size:34px;
     font-weight:bold;
 }
 
-.bottom button{
-    padding:12px 20px;
-    margin:5px;
+.meaning{
+    margin-top:10px;
+    font-size:18px;
+}
+
+.btn{
+    margin-top:12px;
+    padding:10px 18px;
     border:none;
     border-radius:12px;
+    cursor:pointer;
+    font-size:15px;
+}
+
+.review{
     background:#10b981;
+    color:white;
+}
+
+.delete{
+    background:#ef4444;
+    color:white;
+}
+
+.top-btn{
+    margin:10px;
+    padding:10px 20px;
+    border:none;
+    border-radius:12px;
+    background:#22c55e;
     color:white;
     cursor:pointer;
 }
 
-.bottom button:disabled{
-    opacity:0.4;
+.empty{
+    margin-top:40px;
 }
 
 </style>
@@ -87,200 +77,87 @@ h1{
 
 <body>
 
-<h1>📖 收藏复习模式</h1>
+<h1>⭐ 我的收藏</h1>
 
-<div class="card">
+<button class="top-btn" onclick="goReview()">📖 开始复习</button>
+<button class="top-btn" onclick="back()">返回主页</button>
 
-    <div id="word">加载中...</div>
-
-    <div id="options"></div>
-
-    <div id="msg"></div>
-
-</div>
-
-<div class="bottom">
-
-    <button id="prevBtn" onclick="prev()">⬅ 上一题</button>
-
-    <button onclick="next()">下一题 ➡</button>
-
-    <button onclick="exit()">退出</button>
-
-</div>
+<div id="list"></div>
 
 <script>
 
-// ⭐ 收藏数据（复习题库）
 let favorites =
 JSON.parse(localStorage.getItem("favorites") || "[]");
 
-// 当前题
-let current = 0;
+// 渲染
+function render(){
 
-// 历史记录（不持久）
-let history = [];
+    let list =
+    document.getElementById("list");
 
-// 如果没有收藏
-if(favorites.length === 0){
-    alert("暂无收藏单词");
-    location.href = "favorites.html";
-}
+    list.innerHTML = "";
 
-// 显示题目
-function show(){
+    if(favorites.length === 0){
 
-    let w = favorites[current];
-
-    document.getElementById("word").innerText =
-    w.word;
-
-    document.getElementById("msg").innerText = "";
-
-    // 上一题按钮控制
-    document.getElementById("prevBtn").disabled =
-    current === 0;
-
-    let options = [w.meaning];
-
-    // 随机错误答案
-    while(options.length < 4){
-
-        let random =
-        favorites[
-            Math.floor(Math.random() * favorites.length)
-        ].meaning;
-
-        if(!options.includes(random)){
-            options.push(random);
-        }
+        list.innerHTML = "<div class='empty'>暂无收藏</div>";
+        return;
     }
 
-    shuffle(options);
+    favorites.forEach((w, i) => {
 
-    let box =
-    document.getElementById("options");
+        let div = document.createElement("div");
 
-    box.innerHTML = "";
+        div.className = "card";
 
-    options.forEach(opt => {
+        div.innerHTML = `
 
-        let div =
-        document.createElement("div");
+            <div class="word">${w.word}</div>
+            <div class="meaning">${w.meaning}</div>
 
-        div.className = "option";
+            <button class="btn delete"
+            onclick="remove(${i})">取消收藏</button>
 
-        div.innerText = opt;
+        `;
 
-        div.onclick = () => check(opt);
-
-        box.appendChild(div);
+        list.appendChild(div);
     });
 }
 
-// 判断答案
-function check(opt){
+// 删除
+function remove(i){
 
-    let w = favorites[current];
+    favorites.splice(i, 1);
 
-    if(history[current]) return;
+    localStorage.setItem(
+        "favorites",
+        JSON.stringify(favorites)
+    );
 
-    let correct = opt === w.meaning;
+    render();
+}
 
-    history[current] = { correct };
+// ⭐ 只在这里进入复习模式
+function goReview(){
 
-    let all =
-    document.querySelectorAll(".option");
-
-    all.forEach(btn => {
-
-        btn.onclick = null;
-
-        if(btn.innerText === w.meaning){
-            btn.classList.add("correct");
-        }
-
-        if(btn.innerText === opt &&
-           !correct){
-            btn.classList.add("wrong");
-        }
-    });
-
-    // ⭐ 答对 → 取消收藏
-    if(correct){
-
-        favorites = favorites.filter(
-            i => i.word !== w.word
-        );
-
-        localStorage.setItem(
-            "favorites",
-            JSON.stringify(favorites)
-        );
-
-        document.getElementById("msg").innerText =
-        "✅ 正确，已移出收藏";
-
-    }else{
-
-        document.getElementById("msg").innerText =
-        "❌ 错误，仍保留收藏";
+    if(favorites.length === 0){
+        alert("暂无收藏单词");
+        return;
     }
 
-    setTimeout(() => {
+    sessionStorage.setItem(
+        "favWords",
+        JSON.stringify(favorites)
+    );
 
-        next();
-
-    }, 1200);
+    location.href = "favorite-quiz.html";
 }
 
-// 下一题（不循环！）
-function next(){
-
-    if(current < favorites.length - 1){
-
-        current++;
-
-        show();
-
-    }else{
-
-        document.getElementById("msg").innerText =
-        "🎉 已复习完所有收藏";
-
-        document.getElementById("options").innerHTML = "";
-    }
+// 返回
+function back(){
+    location.href = "index.html";
 }
 
-// 上一题
-function prev(){
-
-    if(current > 0){
-
-        current--;
-
-        show();
-    }
-}
-
-// 打乱
-function shuffle(arr){
-
-    for(let i = arr.length - 1; i > 0; i--){
-
-        let j = Math.floor(Math.random() * (i + 1));
-
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-}
-
-// 退出
-function exit(){
-    location.href = "favorites.html";
-}
-
-// 初始化
-show();
+render();
 
 </script>
 
