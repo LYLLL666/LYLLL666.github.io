@@ -25,7 +25,7 @@ body{
 }
 
 /* =========================
-   🌈 LIGHT FIELD BACKGROUND
+   🌈 RAINBOW LIGHT FIELD
 ========================= */
 canvas{
     position:fixed;
@@ -41,9 +41,9 @@ canvas{
 .glass-bg{
     position:fixed;
     inset:0;
-    background:rgba(255,255,255,0.03);
-    backdrop-filter: blur(55px) saturate(180%);
-    -webkit-backdrop-filter: blur(55px);
+    background:rgba(255,255,255,0.02);
+    backdrop-filter: blur(60px) saturate(200%);
+    -webkit-backdrop-filter: blur(60px);
     z-index:-2;
 }
 
@@ -68,25 +68,25 @@ canvas{
 }
 
 /* =========================
-   💧 LIQUID GLASS BUTTON
-   （水滴曲面最终版）
+   💎 LIQUID CRYSTAL BUTTON
+   （最终晶莹水滴版）
 ========================= */
 .btn{
     position:relative;
     padding:18px;
     margin:14px 0;
 
-    border-radius:36px;
+    border-radius:38px;
 
-    /* 🧊 更轻玻璃 */
-    background:rgba(255,255,255,0.04);
+    /* 💧 更透明（关键修复） */
+    background:rgba(255,255,255,0.075);
 
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
 
-    border:1px solid rgba(255,255,255,0.10);
+    border:1px solid rgba(255,255,255,0.20);
 
-    color:rgba(255,255,255,0.92);
+    color:rgba(255,255,255,0.96);
     font-size:16px;
     font-weight:500;
     text-align:center;
@@ -94,45 +94,46 @@ canvas{
     overflow:hidden;
     cursor:pointer;
 
-    /* 🌊 体积光阴影（去掉叠层感） */
+    /* ✨ 更“空气感”阴影（去灰） */
     box-shadow:
-        0 26px 65px rgba(0,0,0,0.45),
-        inset 0 1px 0 rgba(255,255,255,0.20),
-        inset 0 -22px 40px rgba(0,0,0,0.20);
+        0 24px 55px rgba(0,0,0,0.30),
+        inset 0 1px 0 rgba(255,255,255,0.40),
+        inset 0 -10px 18px rgba(0,0,0,0.10);
 
     transition:
         transform 0.18s cubic-bezier(.2,.9,.2,1),
-        background 0.25s ease;
+        background 0.25s ease,
+        box-shadow 0.25s ease;
 }
 
 /* =========================
-   💧 水滴顶部光（曲面高光）
+   ✨ 晶体顶部高光（增强透明感）
 ========================= */
 .btn::before{
     content:"";
     position:absolute;
-    inset:-30%;
+    inset:-50%;
 
     border-radius:inherit;
 
     background:
     radial-gradient(
-        circle at 30% 20%,
-        rgba(255,255,255,0.38),
-        rgba(255,255,255,0.18) 30%,
-        rgba(255,255,255,0.06) 55%,
-        transparent 75%
+        circle at 30% 18%,
+        rgba(255,255,255,0.65),
+        rgba(255,255,255,0.28) 28%,
+        rgba(255,255,255,0.10) 55%,
+        transparent 78%
     );
 
     mix-blend-mode: screen;
-    opacity:0.9;
+    opacity:1;
 
     pointer-events:none;
 }
 
 /* =========================
-   🌊 水滴边缘曲率光场（核心）
-   👉 解决“层叠感”的关键
+   💧 水晶折射边缘（关键修复）
+   👉 不压暗！全部是“发光过渡”
 ========================= */
 .btn::after{
     content:"";
@@ -141,27 +142,26 @@ canvas{
 
     border-radius:inherit;
 
-    /* 四向连续衰减（模拟球面玻璃） */
     background:
     radial-gradient(
         circle at 50% 0%,
-        rgba(255,255,255,0.22),
-        transparent 68%
-    ),
-    radial-gradient(
-        circle at 50% 100%,
-        rgba(0,0,0,0.26),
+        rgba(255,255,255,0.38),
         transparent 72%
     ),
     radial-gradient(
+        circle at 50% 100%,
+        rgba(0,0,0,0.08),
+        transparent 78%
+    ),
+    radial-gradient(
         circle at 0% 50%,
-        rgba(255,255,255,0.12),
-        transparent 70%
+        rgba(255,255,255,0.22),
+        transparent 75%
     ),
     radial-gradient(
         circle at 100% 50%,
-        rgba(0,0,0,0.20),
-        transparent 70%
+        rgba(255,255,255,0.22),
+        transparent 75%
     );
 
     opacity:1;
@@ -169,24 +169,24 @@ canvas{
 }
 
 /* =========================
-   🌊 hover
+   🌊 hover（轻浮）
 ========================= */
 .btn:hover{
     transform:translateY(-2px);
 }
 
 /* =========================
-   🧠 按压（液体压缩）
+   🧠 按压（晶体压缩，不发灰）
 ========================= */
 .btn:active{
-    transform:scale(0.965);
+    transform:scale(0.97);
 
-    background:rgba(255,255,255,0.07);
+    background:rgba(255,255,255,0.10);
 
     box-shadow:
-        0 12px 28px rgba(0,0,0,0.55),
-        inset 0 22px 45px rgba(0,0,0,0.28),
-        inset 0 0 18px rgba(255,255,255,0.08);
+        0 14px 30px rgba(0,0,0,0.40),
+        inset 0 22px 40px rgba(0,0,0,0.18),
+        inset 0 0 18px rgba(255,255,255,0.14);
 }
 
 /* =========================
@@ -223,7 +223,7 @@ canvas{
 
 </div>
 
-<div class="tip">Liquid Glass · Droplet Curvature System</div>
+<div class="tip">Liquid Glass · Crystal Droplet System</div>
 
 <script>
 
