@@ -25,7 +25,7 @@ body{
 }
 
 /* =========================
-   🌈 RAINBOW LIGHT FIELD
+   🌈 BACKGROUND
 ========================= */
 canvas{
     position:fixed;
@@ -36,7 +36,7 @@ canvas{
 }
 
 /* =========================
-   🧊 ENV GLASS LAYER
+   🧊 ENV GLASS
 ========================= */
 .glass-bg{
     position:fixed;
@@ -68,21 +68,21 @@ canvas{
 }
 
 /* =========================
-   💎 LIQUID CRYSTAL BUTTON
-   （最终晶莹水滴版）
+   💧 LIQUID DROPLET BUTTON
+   （修复水滴结构版）
 ========================= */
 .btn{
     position:relative;
     padding:18px;
     margin:14px 0;
 
-    border-radius:38px;
+    border-radius:42px;
 
-    /* 💧 更透明（关键修复） */
-    background:rgba(255,255,255,0.075);
+    /* 💧 中心更透（关键） */
+    background:rgba(255,255,255,0.06);
 
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(26px);
+    -webkit-backdrop-filter: blur(26px);
 
     border:1px solid rgba(255,255,255,0.20);
 
@@ -94,33 +94,33 @@ canvas{
     overflow:hidden;
     cursor:pointer;
 
-    /* ✨ 更“空气感”阴影（去灰） */
+    /* 🌊 水体阴影（去灰 + 保体积） */
     box-shadow:
-        0 24px 55px rgba(0,0,0,0.30),
-        inset 0 1px 0 rgba(255,255,255,0.40),
-        inset 0 -10px 18px rgba(0,0,0,0.10);
+        0 30px 75px rgba(0,0,0,0.35),
+        inset 0 2px 0 rgba(255,255,255,0.45),
+        inset 0 -20px 35px rgba(0,0,0,0.18),
+        inset 0 0 18px rgba(255,255,255,0.10);
 
     transition:
         transform 0.18s cubic-bezier(.2,.9,.2,1),
-        background 0.25s ease,
-        box-shadow 0.25s ease;
+        background 0.25s ease;
 }
 
 /* =========================
-   ✨ 晶体顶部高光（增强透明感）
+   💎 水滴“顶部晶体光”
 ========================= */
 .btn::before{
     content:"";
     position:absolute;
-    inset:-50%;
+    inset:-45%;
 
     border-radius:inherit;
 
     background:
     radial-gradient(
         circle at 30% 18%,
-        rgba(255,255,255,0.65),
-        rgba(255,255,255,0.28) 28%,
+        rgba(255,255,255,0.70),
+        rgba(255,255,255,0.30) 30%,
         rgba(255,255,255,0.10) 55%,
         transparent 78%
     );
@@ -132,8 +132,8 @@ canvas{
 }
 
 /* =========================
-   💧 水晶折射边缘（关键修复）
-   👉 不压暗！全部是“发光过渡”
+   🌊 水滴“体积边缘壳”（核心）
+   👉 这里才是你要的“水滴感”
 ========================= */
 .btn::after{
     content:"";
@@ -142,55 +142,56 @@ canvas{
 
     border-radius:inherit;
 
+    /* ✨ 四向“厚边光壳” */
     background:
     radial-gradient(
         circle at 50% 0%,
-        rgba(255,255,255,0.38),
+        rgba(255,255,255,0.45),
         transparent 72%
     ),
     radial-gradient(
         circle at 50% 100%,
-        rgba(0,0,0,0.08),
-        transparent 78%
+        rgba(0,0,0,0.20),
+        transparent 75%
     ),
     radial-gradient(
         circle at 0% 50%,
-        rgba(255,255,255,0.22),
+        rgba(255,255,255,0.30),
         transparent 75%
     ),
     radial-gradient(
         circle at 100% 50%,
-        rgba(255,255,255,0.22),
+        rgba(255,255,255,0.30),
         transparent 75%
     );
 
-    opacity:1;
+    opacity:1.2;
     pointer-events:none;
 }
 
 /* =========================
-   🌊 hover（轻浮）
+   🌊 hover
 ========================= */
 .btn:hover{
     transform:translateY(-2px);
 }
 
 /* =========================
-   🧠 按压（晶体压缩，不发灰）
+   🧠 press（水滴压扁）
 ========================= */
 .btn:active{
-    transform:scale(0.97);
+    transform:scale(0.965);
 
-    background:rgba(255,255,255,0.10);
+    background:rgba(255,255,255,0.09);
 
     box-shadow:
-        0 14px 30px rgba(0,0,0,0.40),
-        inset 0 22px 40px rgba(0,0,0,0.18),
-        inset 0 0 18px rgba(255,255,255,0.14);
+        0 14px 32px rgba(0,0,0,0.45),
+        inset 0 26px 55px rgba(0,0,0,0.22),
+        inset 0 0 20px rgba(255,255,255,0.14);
 }
 
 /* =========================
-   🌫 FOOTER
+   🌫 footer
 ========================= */
 .tip{
     text-align:center;
@@ -223,7 +224,7 @@ canvas{
 
 </div>
 
-<div class="tip">Liquid Glass · Crystal Droplet System</div>
+<div class="tip">Liquid Glass · Droplet Structure System</div>
 
 <script>
 
