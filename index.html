@@ -1,20 +1,98 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
 <meta charset="UTF-8">
-<title>Test</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Learning</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+    text-align: center;
+}
+
+.container {
+    margin-top: 100px;
+}
+
+.card {
+    width: 300px;
+    margin: 40px auto;
+    background: rgba(255,255,255,0.1);
+    padding: 30px;
+    border-radius: 20px;
+}
+
+.word {
+    font-size: 40px;
+}
+
+.meaning {
+    font-size: 20px;
+    color: #38bdf8;
+}
+
+button {
+    margin-top: 30px;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 10px;
+    background: #38bdf8;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+</style>
+
 </head>
 
 <body>
 
-<h1>如果你能看到这行字，说明HTML没问题</h1>
+<div class="container">
 
-<button onclick="test()">点我</button>
+<h1>English Learning</h1>
+
+<div class="card">
+    <div class="word" id="word">加载中...</div>
+    <div class="meaning" id="meaning">正在读取词库</div>
+</div>
+
+<button onclick="nextWord()">下一个单词</button>
+
+</div>
 
 <script>
-function test(){
-    alert("JS正常运行");
+
+let words = [];
+
+// ✅ 读取 words.json
+fetch("words.json")
+    .then(res => res.json())
+    .then(data => {
+        words = data;
+        nextWord(); // 自动显示第一个
+    })
+    .catch(err => {
+        console.log(err);
+        document.getElementById("word").innerText = "加载失败";
+        document.getElementById("meaning").innerText = "words.json未找到";
+    });
+
+function nextWord() {
+
+    if (words.length === 0) return;
+
+    const index = Math.floor(Math.random() * words.length);
+    const selected = words[index];
+
+    document.getElementById("word").innerText = selected.word;
+    document.getElementById("meaning").innerText = selected.meaning;
 }
+
 </script>
 
 </body>
