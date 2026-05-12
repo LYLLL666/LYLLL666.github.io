@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>学习系统 V6</title>
+<title>学习系统 V8</title>
 
 <style>
 
@@ -16,52 +16,59 @@
 
 body{
     margin:0;
-    font-family:Arial;
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", Arial;
     overflow:hidden;
-    background:#f5f7fb;
+
+    /* 🌌 苹果空间深色底 */
+    background:#05070d;
 }
 
-/* 🌈 苹果“果味彩虹雾”背景 */
+/* 🌈 苹果“空间彩虹光场”（重点升级） */
 .bg{
     position:fixed;
     inset:-60%;
     z-index:-3;
 
     background:
-    radial-gradient(circle at 20% 20%, rgba(255,205,210,0.9), transparent 42%),
-    radial-gradient(circle at 70% 25%, rgba(187,222,251,0.9), transparent 45%),
-    radial-gradient(circle at 40% 75%, rgba(200,230,201,0.9), transparent 48%),
-    radial-gradient(circle at 80% 70%, rgba(225,190,231,0.9), transparent 50%),
-    radial-gradient(circle at 10% 80%, rgba(255,249,196,0.9), transparent 45%);
+    radial-gradient(circle at 15% 20%, rgba(255, 99, 132, 0.35), transparent 45%),
+    radial-gradient(circle at 75% 25%, rgba(54, 162, 235, 0.35), transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(75, 192, 192, 0.3), transparent 55%),
+    radial-gradient(circle at 85% 70%, rgba(153, 102, 255, 0.3), transparent 55%),
+    radial-gradient(circle at 10% 85%, rgba(255, 206, 86, 0.25), transparent 50%);
 
-    filter: blur(110px) saturate(130%);
+    filter: blur(140px) saturate(140%);
     opacity:0.95;
 
-    animation: float 16s ease-in-out infinite;
+    animation: spaceFlow 24s ease-in-out infinite;
 }
 
-@keyframes float{
+/* 🌊 空间漂浮（慢 + 深度感） */
+@keyframes spaceFlow{
 0%{transform:translate(0,0) scale(1);}
-50%{transform:translate(-2%,2%) scale(1.12);}
+50%{transform:translate(-3%,2%) scale(1.15);}
 100%{transform:translate(0,0) scale(1);}
 }
 
-/* 🧊 visionOS级玻璃层 */
+/* 🧊 visionOS深玻璃层 */
 .glass{
     position:fixed;
     inset:0;
-    background:rgba(255,255,255,0.65);
-    backdrop-filter: blur(40px) saturate(160%);
-    -webkit-backdrop-filter: blur(40px);
+
+    background:rgba(255,255,255,0.06);
+
+    backdrop-filter: blur(50px) saturate(180%);
+    -webkit-backdrop-filter: blur(50px);
+
     z-index:-2;
 }
 
-/* 📌 标题 */
+/* 📌 标题（苹果系统风） */
 h1{
     text-align:center;
-    margin-top:40px;
-    color:#0f172a;
-    font-size:26px;
+    margin-top:45px;
+    font-size:28px;
+    font-weight:600;
+    color:#f1f5f9;
 }
 
 /* 📦 容器 */
@@ -71,80 +78,74 @@ h1{
     margin:30px auto;
 }
 
-/* 🧊 苹果液态玻璃按钮 */
+/* 🧊 苹果 Liquid Glass（升级版） */
 .glass-btn{
     position:relative;
     padding:18px;
     margin:14px 0;
 
-    border-radius:24px;
+    border-radius:26px;
 
-    background:rgba(255,255,255,0.75);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
+    /* 🌫 更真实玻璃（深色环境） */
+    background:rgba(255,255,255,0.08);
 
-    border:1px solid rgba(255,255,255,0.9);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
 
-    color:#0f172a;
+    border:1px solid rgba(255,255,255,0.18);
+
+    color:#f8fafc;
     font-size:16px;
     font-weight:500;
 
     text-align:center;
 
     box-shadow:
-        0 20px 45px rgba(0,0,0,0.08),
-        inset 0 1px 0 rgba(255,255,255,0.95);
+        0 18px 45px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.2);
 
     cursor:pointer;
 
-    transition:none;
+    transition: all 0.2s cubic-bezier(.2,.8,.2,1);
 
-    transform: translateZ(0);
+    overflow:hidden;
 }
 
-/* ✨ 高光 */
+/* ✨ 苹果空间光斑 */
 .glass-btn::before{
     content:"";
     position:absolute;
     inset:-60%;
-    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), transparent 45%);
-    opacity:0.35;
+
+    background:radial-gradient(
+        circle at 30% 20%,
+        rgba(255,255,255,0.25),
+        transparent 50%
+    );
+
+    opacity:0.5;
 }
 
-/* 🌊 hover */
+/* 🌊 hover轻漂浮 */
 .glass-btn:hover{
-    transform: translateY(-2px);
+    transform:translateY(-2px);
 }
 
-/* ⚡ 超高速弹性按压（核心） */
+/* 🍏 苹果级压感（深空间版本） */
 .glass-btn:active{
-    animation: press 220ms cubic-bezier(.2,1.6,.3,1) forwards;
+    transform:scale(0.95) translateY(2px);
+
+    background:rgba(255,255,255,0.12);
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,0.55),
+        inset 0 0 20px rgba(255,255,255,0.08);
 }
 
-@keyframes press{
-
-0%{
-    transform: scale(1) translateY(0);
-}
-
-35%{
-    transform: scale(0.78) translateY(6px);
-}
-
-70%{
-    transform: scale(1.08) translateY(-2px);
-}
-
-100%{
-    transform: scale(1) translateY(0);
-}
-
-}
-
-/* 🌫 底部提示 */
+/* 🌫 底部 */
 .tip{
     text-align:center;
-    color:#475569;
+    color:#94a3b8;
     font-size:12px;
     margin-top:20px;
 }
@@ -158,7 +159,7 @@ h1{
 <div class="bg"></div>
 <div class="glass"></div>
 
-<h1>📚 学习系统 V6</h1>
+<h1>📚 学习系统 V8</h1>
 
 <div class="container">
 
@@ -170,14 +171,14 @@ h1{
 
 </div>
 
-<div class="tip">Liquid Glass · Apple Style UI</div>
+<div class="tip">Apple Vision-style Liquid Glass UI</div>
 
 <script>
 
 function go(page){
 
 if(navigator.vibrate){
-navigator.vibrate(8);
+navigator.vibrate(10);
 }
 
 location.href = page;
