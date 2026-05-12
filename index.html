@@ -8,7 +8,13 @@
 
 <style>
 
-/* 🌈 混乱彩虹背景 */
+/* 🚫 去掉所有蓝色选中框 */
+*{
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 body{
     margin:0;
     font-family:Arial;
@@ -16,7 +22,7 @@ body{
     background:#0b1020;
 }
 
-/* 🌈 流体彩虹 */
+/* 🌈 混乱彩虹背景 */
 .bg{
     position:fixed;
     top:-50%;
@@ -33,7 +39,7 @@ body{
     radial-gradient(circle at 10% 80%, #06d6a0, transparent 50%);
 
     filter: blur(100px) saturate(160%);
-    opacity:0.85;
+    opacity:0.88;
 
     animation: drift 22s ease-in-out infinite;
 }
@@ -52,15 +58,17 @@ body{
     width:100%;
     height:100%;
     backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
     background:rgba(255,255,255,0.05);
     z-index:-2;
 }
 
-/* 🧊 标题 */
+/* 📌 标题 */
 h1{
     text-align:center;
     margin-top:40px;
     color:white;
+    font-size:26px;
 }
 
 /* 📦 容器 */
@@ -70,51 +78,74 @@ h1{
     margin:30px auto;
 }
 
-/* 🧊 液态玻璃按钮 */
+/* 🧊 液态玻璃按钮（最终版） */
 .glass-btn{
     position:relative;
-    padding:16px;
+    padding:16px 18px;
     margin:12px 0;
 
-    border-radius:18px;
+    border-radius:20px;
 
-    background:rgba(255,255,255,0.18);
-    backdrop-filter: blur(25px);
+    background:rgba(255,255,255,0.16);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
 
-    border:1px solid rgba(255,255,255,0.25);
+    border:1px solid rgba(255,255,255,0.28);
 
     color:#0f172a;
     font-size:16px;
+    font-weight:500;
 
     text-align:center;
 
     box-shadow:
-        0 10px 30px rgba(0,0,0,0.15),
-        inset 0 1px 0 rgba(255,255,255,0.4);
+        0 12px 35px rgba(0,0,0,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.55);
 
     cursor:pointer;
 
-    transition:0.15s;
+    transition:
+        transform 0.18s cubic-bezier(.2,.9,.2,1),
+        box-shadow 0.18s ease,
+        background 0.18s ease;
+
+    overflow:hidden;
 }
 
-/* ✨ 高光 */
+/* ✨ 苹果高光层 */
 .glass-btn::before{
     content:"";
     position:absolute;
-    width:160%;
-    height:160%;
-    top:-40%;
-    left:-40%;
-    background:radial-gradient(circle, rgba(255,255,255,0.6), transparent 40%);
-    opacity:0.35;
+    top:-50%;
+    left:-50%;
+    width:200%;
+    height:200%;
+
+    background:radial-gradient(
+        circle at 30% 25%,
+        rgba(255,255,255,0.7),
+        transparent 45%
+    );
+
+    opacity:0.25;
+    pointer-events:none;
 }
 
-/* 📱 点击效果 */
+/* 📱 hover */
+.glass-btn:hover{
+    transform:translateY(-2px);
+}
+
+/* 🧠 点击反馈（核心） */
 .glass-btn:active{
-    transform:scale(0.96);
+    transform:scale(0.94);
+    box-shadow:
+        0 6px 18px rgba(0,0,0,0.22),
+        inset 0 2px 10px rgba(0,0,0,0.08);
+    background:rgba(255,255,255,0.22);
 }
 
-/* 🌫 底部提示 */
+/* 🌫 提示文字 */
 .tip{
     text-align:center;
     color:white;
@@ -144,18 +175,18 @@ h1{
 
 </div>
 
-<div class="tip">Liquid Glass UI · Study System</div>
+<div class="tip">Liquid Glass UI · Learning System</div>
 
 <script>
 
 function go(page){
 
+// 📳 轻触反馈
 if(navigator.vibrate){
-navigator.vibrate(15);
+navigator.vibrate([8]);
 }
 
 location.href = page;
-
 }
 
 </script>
