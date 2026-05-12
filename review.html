@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>收藏复习</title>
+<title>复习模式</title>
 
 <style>
 
@@ -44,6 +44,7 @@ h1{
     background:white;
     cursor:pointer;
     font-size:18px;
+    transition:0.2s;
 }
 
 .option:hover{
@@ -51,18 +52,18 @@ h1{
 }
 
 .correct{
-    background:#bbf7d0;
-    border-color:#22c55e;
+    background:#bbf7d0 !important;
+    border-color:#22c55e !important;
 }
 
 .wrong{
-    background:#fecaca;
-    border-color:#ef4444;
+    background:#fecaca !important;
+    border-color:#ef4444 !important;
 }
 
 #msg{
     margin-top:15px;
-    height:30px;
+    height:25px;
     font-weight:bold;
 }
 
@@ -73,6 +74,7 @@ button{
     border-radius:12px;
     background:#10b981;
     color:white;
+    cursor:pointer;
 }
 
 </style>
@@ -100,18 +102,24 @@ button{
 
 <script>
 
+// ======================
+// 数据
+// ======================
 let list = [];
-
 let index = 0;
 
-// =====================
-// 初始化（防炸版）
-// =====================
+// ======================
+// 启动（防卡死核心）
+// ======================
 function init(){
 
-try{
+let raw = localStorage.getItem("favorites");
 
-list = JSON.parse(localStorage.getItem("favorites") || "[]");
+try{
+    list = JSON.parse(raw || "[]");
+}catch(e){
+    list = [];
+}
 
 if(!Array.isArray(list) || list.length === 0){
     document.body.innerHTML = "<h2>暂无收藏单词</h2>";
@@ -120,23 +128,167 @@ if(!Array.isArray(list) || list.length === 0){
 
 render();
 
-}catch(e){
-    document.body.innerHTML = "<pre>"+e+"</pre>";
 }
 
-}
-
-// =====================
+// ======================
 // 渲染
-// =====================
+// ======================
 function render(){
 
 let item = list[index];
 
 if(!item){
-    document.getElementById("word").innerText = "完成";
-    document.getElementById("options").innerHTML = "";
-    return;
+index = 0;
+item = list[0];
 }
 
-document.getElementById("word").
+document.getElementById("word").innerText = item.word;
+
+document.getElementById("msg").innerText = "";
+
+let options = buildOptions(item);
+
+let box = document.getElementById("options");
+
+box.innerHTML = "";
+
+options.forEach(opt => {
+
+let div = document.createElement("div");
+
+div.className = "option";
+div.innerText = opt;
+
+div.onclick = () => check(opt);
+
+box.appendChild(div);
+
+});
+
+}
+
+// ======================
+// 生成选项
+// ======================
+function buildOptions(item){
+
+let arr = [item.meaning];
+
+// 防空
+if(!list.length){
+return arr;
+}
+
+while(arr.length < 4){
+
+let r = list[Math.floor(Math.random() * list.length)];
+
+if(r && r.meaning && !arr.includes(r.meaning)){
+arr.push(r.meaning);
+}
+
+if(arr.length > 10) break;
+
+}
+
+return shuffle(arr);
+
+}
+
+// ======================
+// 判断
+// ======================
+function check(opt){
+
+let item = list[index];
+
+let correct = item.meaning;
+
+// 禁止重复点击
+document.querySelectorAll(".option").forEach(b => b.onclick = null);
+
+// 标记正确
+document.querySelectorAll(".option").forEach(b => {
+if(b.innerText === correct){
+b.classList.add("correct");
+}
+});
+
+// 判断结果
+if(opt === correct){
+
+document.getElementById("msg").innerText = "✅ 正确";
+
+// 删除收藏
+list = list.filter(i => i.word !== item.word);
+
+localStorage.setItem("favorites", JSON.stringify(list));
+
+}else{
+
+document.getElementById("msg").innerText = "❌ 错误";
+
+event.target.classList.add("wrong");
+
+}
+
+setTimeout(next, 700);
+
+}
+
+// ======================
+// 下一题
+// ======================
+function next(){
+
+if(list.length === 0){
+document.body.innerHTML = "<h2>🎉 全部复习完成</h2>";
+return;
+}
+
+index++;
+
+if(index >= list.length){
+index = 0;
+}
+
+render();
+
+}
+
+// ======================
+// 上一题
+// ======================
+function prev(){
+
+if(index > 0){
+index--;
+render();
+}
+
+}
+
+// ======================
+// 打乱
+// ======================
+function shuffle(arr){
+
+for(let i = arr.length - 1; i > 0; i--){
+
+let j = Math.floor(Math.random() * (i + 1));
+
+[arr[i], arr[j]] = [arr[j], arr[i]];
+
+}
+
+return arr;
+
+}
+
+// 启动
+init();
+
+</script>
+
+</body>
+</html>
