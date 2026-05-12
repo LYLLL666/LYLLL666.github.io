@@ -6,6 +6,66 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>English Learning</title>
 
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background: linear-gradient(135deg, #d1fae5, #ecfdf5);
+    color:#064e3b;
+    text-align:center;
+}
+
+.container{margin-top:80px;}
+
+.card{
+    width:320px;
+    margin:20px auto;
+    background:white;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 10px 20px rgba(0,0,0,0.1);
+}
+
+.word{font-size:40px;}
+.meaning{font-size:20px;color:#059669;}
+
+button{
+    margin:10px;
+    padding:12px 25px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.learn-btn{background:#34d399;color:white;}
+.like-btn{background:#10b981;color:white;}
+.page-btn{background:#22c55e;color:white;}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>📚 英语学习系统</h1>
+
+<div class="card">
+    <div class="word" id="word">加载中...</div>
+    <div class="meaning" id="meaning">正在加载词库</div>
+</div>
+
+<button class="learn-btn" onclick="nextWord()">下一个</button>
+<button class="like-btn" onclick="collectWord()">⭐ 收藏</button>
+<button class="page-btn" onclick="openFavorites()">📖 我的收藏</button>
+
+<div>
+已学习：<span id="count">0</span> |
+收藏：<span id="favCount">0</span>
+</div>
+
+</div>
+
 <script>
 
 let words = [];
@@ -16,6 +76,7 @@ let isReady = false;
 let learned = JSON.parse(localStorage.getItem("learned") || "[]");
 let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 
+// 📥 加载词库
 fetch("words.json")
 .then(res => res.json())
 .then(data => {
@@ -41,7 +102,7 @@ function shuffleWords(){
 function nextWord(){
 
     if(!isReady){
-        alert("词库加载中...");
+        console.log("加载中...");
         return;
     }
 
@@ -63,7 +124,7 @@ function nextWord(){
     updateStats();
 }
 
-// ⭐ 收藏（🔥彻底修复版）
+// ⭐ 收藏
 function collectWord(){
 
     if(!isReady) return;
@@ -84,15 +145,11 @@ function updateStats(){
     document.getElementById("favCount").innerText = favorites.length;
 }
 
-// 📖 打开收藏页
+// 📖 收藏页
 function openFavorites(){
     window.location.href = "favorites.html";
 }
-    
-window.openFavorites = function(){
-    window.location.href = "favorites.html";
-}
-    
+
 </script>
 
 </body>
