@@ -1,4 +1,3 @@
-<h2 id="debug">JS未运行</h2>
 <!DOCTYPE html>
 <html lang="zh">
 
@@ -45,6 +44,7 @@ h1{
     background:white;
     cursor:pointer;
     font-size:18px;
+    transition:0.2s;
 }
 
 .option:hover{
@@ -96,10 +96,10 @@ button{
 </div>
 
 <div>
-    <button onclick="prev()">⬅</button>
-    <button onclick="next()">➡</button>
+    <button onclick="prev()">⬅ 上一题</button>
+    <button onclick="next()">下一题 ➡</button>
 </div>
-document.getElementById("debug").innerText = "JS已运行";
+
 <script>
 
 // =====================
@@ -107,9 +107,10 @@ document.getElementById("debug").innerText = "JS已运行";
 // =====================
 let list = [];
 let index = 0;
+let locked = false;
 
 // =====================
-// 初始化（绝对防卡死）
+// 初始化（绝对不会卡死）
 // =====================
 function init(){
 
@@ -119,7 +120,6 @@ let raw = localStorage.getItem("favorites");
 
 list = JSON.parse(raw || "[]");
 
-// 必须是数组
 if(!Array.isArray(list)){
 list = [];
 }
@@ -145,9 +145,10 @@ document.body.innerHTML =
 // =====================
 function render(){
 
+locked = false;
+
 let item = list[index];
 
-// 防空
 if(!item){
 index = 0;
 item = list[0];
@@ -162,7 +163,7 @@ document.getElementById("word").innerText = item.word;
 
 document.getElementById("msg").innerText = "";
 
-let options = buildOptions(item);
+let options = build(item);
 
 let box = document.getElementById("options");
 
@@ -184,20 +185,15 @@ box.appendChild(div);
 }
 
 // =====================
-// 生成选项（安全版）
+// 生成选项
 // =====================
-function buildOptions(item){
+function build(item){
 
 let arr = [item.meaning];
 
-// 防炸
-if(!list.length){
-return arr;
-}
-
 while(arr.length < 4){
 
-let r = list[Math.floor(Math.random() * list.length)];
+let r = list[Math.floor(Math.random()*list.length)];
 
 if(r && r.meaning && !arr.includes(r.meaning)){
 arr.push(r.meaning);
@@ -212,17 +208,19 @@ return shuffle(arr);
 }
 
 // =====================
-// 判断
+// 判断（无自动跳转）
 // =====================
 function check(opt){
 
-let item = list[index];
+if(locked) return;
 
-if(!item) return;
+locked = true;
+
+let item = list[index];
 
 let correct = item.meaning;
 
-// 锁定按钮
+// 锁按钮
 document.querySelectorAll(".option").forEach(b => b.onclick = null);
 
 // 标记正确
@@ -232,7 +230,7 @@ b.classList.add("correct");
 }
 });
 
-// 结果
+// 判断结果
 if(opt === correct){
 
 document.getElementById("msg").innerText = "✅ 正确";
@@ -250,13 +248,10 @@ event.target.classList.add("wrong");
 
 }
 
-// 下一题
-setTimeout(next, 600);
-
 }
 
 // =====================
-// 下一题
+// 下一题（手动）
 // =====================
 function next(){
 
@@ -294,7 +289,7 @@ function shuffle(arr){
 
 for(let i = arr.length - 1; i > 0; i--){
 
-let j = Math.floor(Math.random() * (i + 1));
+let j = Math.floor(Math.random()*(i+1));
 
 [arr[i], arr[j]] = [arr[j], arr[i]];
 
@@ -310,22 +305,4 @@ init();
 </script>
 
 </body>
-<script>
-window.onerror = function(msg, src, line, col, err){
-    document.body.innerHTML =
-    "<h2 style='color:red'>JS报错</h2>" +
-    "<pre>" + msg + "</pre>" +
-    "<br>行号：" + line;
-};
-</script>
-<script>
-window.onerror = function(msg, src, line, col, err){
-    document.body.innerHTML =
-    "<h2 style='color:red'>JS真实错误：</h2>" +
-    "<pre>" + msg + "</pre>" +
-    "<br>文件：" + src +
-    "<br>行号：" + line +
-    "<br>列号：" + col;
-};
-</script>
 </html>
