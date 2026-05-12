@@ -1,192 +1,49 @@
-<!DOCTYPE html>
-<html lang="zh">
-
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>学习系统 V5</title>
-
 <style>
-
-/* 🚫 去蓝框 */
-*{
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-}
 
 body{
     margin:0;
     font-family:Arial;
     overflow:hidden;
-
-    /* 🌈 浅色背景基底 */
-    background:#f8fafc;
+    background:#f5f7fb;
 }
 
-/* 🌈 浅色彩虹流体（核心变化） */
+/* 🌈 苹果风“果味彩虹雾” */
 .bg{
     position:fixed;
-    inset:-40%;
+    inset:-60%;
     z-index:-3;
 
     background:
-    radial-gradient(circle at 20% 20%, rgba(255,182,193,0.9), transparent 40%),
-    radial-gradient(circle at 70% 30%, rgba(173,216,230,0.9), transparent 45%),
-    radial-gradient(circle at 40% 80%, rgba(144,238,144,0.9), transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(221,160,221,0.9), transparent 55%),
-    radial-gradient(circle at 10% 80%, rgba(255,255,180,0.9), transparent 50%);
+    radial-gradient(circle at 20% 20%, rgba(255,205,210,0.9), transparent 42%),
+    radial-gradient(circle at 70% 25%, rgba(187,222,251,0.9), transparent 45%),
+    radial-gradient(circle at 40% 75%, rgba(200,230,201,0.9), transparent 48%),
+    radial-gradient(circle at 80% 70%, rgba(225,190,231,0.9), transparent 50%),
+    radial-gradient(circle at 10% 80%, rgba(255,249,196,0.9), transparent 45%);
 
-    filter: blur(90px) saturate(140%);
-    opacity:0.9;
+    filter: blur(110px) saturate(130%);
+    opacity:0.95;
 
-    animation: float 18s ease-in-out infinite;
+    animation: float 16s ease-in-out infinite;
 }
 
-/* 🌊 柔和漂浮 */
+/* 🌊 更“果冻漂浮” */
 @keyframes float{
 0%{transform:translate(0,0) scale(1);}
-50%{transform:translate(-3%,3%) scale(1.15);}
+50%{transform:translate(-2%,2%) scale(1.12);}
 100%{transform:translate(0,0) scale(1);}
 }
 
-/* 🧊 轻磨砂（浅色模式） */
+/* 🧊 苹果 visionOS 级玻璃层 */
 .glass{
     position:fixed;
     inset:0;
-    backdrop-filter: blur(25px);
-    background:rgba(255,255,255,0.55);
+
+    background:rgba(255,255,255,0.65);
+
+    backdrop-filter: blur(40px) saturate(160%);
+    -webkit-backdrop-filter: blur(40px);
+
     z-index:-2;
 }
 
-/* 📌 标题 */
-h1{
-    text-align:center;
-    margin-top:40px;
-    color:#0f172a;
-    font-size:26px;
-}
-
-/* 📦 容器 */
-.container{
-    width:90%;
-    max-width:360px;
-    margin:30px auto;
-}
-
-/* 🧊 苹果级液态按钮（夸张版） */
-.glass-btn{
-    position:relative;
-    padding:18px;
-    margin:14px 0;
-
-    border-radius:22px;
-
-    /* 🌫 浅色玻璃 */
-    background:rgba(255,255,255,0.7);
-    backdrop-filter: blur(20px);
-
-    border:1px solid rgba(255,255,255,0.8);
-
-    color:#0f172a;
-    font-size:16px;
-    font-weight:500;
-
-    text-align:center;
-
-    box-shadow:
-        0 18px 45px rgba(0,0,0,0.08),
-        inset 0 1px 0 rgba(255,255,255,0.9);
-
-    cursor:pointer;
-
-    transition:
-        transform 0.35s cubic-bezier(.2,1.4,.2,1),
-        box-shadow 0.35s ease,
-        background 0.25s ease;
-
-    overflow:hidden;
-}
-
-/* ✨ 高光流体 */
-.glass-btn::before{
-    content:"";
-    position:absolute;
-    inset:-60%;
-
-    background:radial-gradient(
-        circle at 30% 20%,
-        rgba(255,255,255,0.9),
-        transparent 45%
-    );
-
-    opacity:0.4;
-}
-
-/* 🌊 hover轻浮 */
-.glass-btn:hover{
-    transform:translateY(-3px) scale(1.02);
-}
-
-/* 🧠 🍎 超夸张按压效果（重点升级） */
-.glass-btn:active{
-    transform:
-        scale(0.88)
-        translateY(6px)
-        perspective(800px)
-        rotateX(8deg);
-
-    background:rgba(255,255,255,0.85);
-
-    box-shadow:
-        0 5px 12px rgba(0,0,0,0.12),
-        inset 0 10px 25px rgba(0,0,0,0.08),
-        inset 0 0 25px rgba(255,255,255,0.7);
-}
-
-/* 🌫 标语 */
-.tip{
-    text-align:center;
-    color:#475569;
-    font-size:12px;
-    margin-top:20px;
-}
-
 </style>
-
-</head>
-
-<body>
-
-<div class="bg"></div>
-<div class="glass"></div>
-
-<h1>📚 学习系统 V5</h1>
-
-<div class="container">
-
-<div class="glass-btn" onclick="go('word.html')">📖 单词学习</div>
-<div class="glass-btn" onclick="go('quiz.html')">🧠 练习模式</div>
-<div class="glass-btn" onclick="go('favorites.html')">⭐ 收藏</div>
-<div class="glass-btn" onclick="go('wronglist.html')">❌ 错题本</div>
-<div class="glass-btn" onclick="go('review.html')">🔁 错题复习</div>
-
-</div>
-
-<div class="tip">Liquid Glass · Light Rainbow UI</div>
-
-<script>
-
-function go(page){
-
-if(navigator.vibrate){
-navigator.vibrate([12]);
-}
-
-location.href = page;
-}
-
-</script>
-
-</body>
-
-</html>
