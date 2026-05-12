@@ -48,11 +48,6 @@ h1{
     font-size:15px;
 }
 
-.review{
-    background:#10b981;
-    color:white;
-}
-
 .delete{
     background:#ef4444;
     color:white;
@@ -79,7 +74,6 @@ h1{
 
 <h1>⭐ 我的收藏</h1>
 
-<button class="top-btn" onclick="goReview()">📖 开始复习</button>
 <button class="top-btn" onclick="back()">返回主页</button>
 
 <div id="list"></div>
@@ -136,22 +130,6 @@ function remove(i){
     render();
 }
 
-// ⭐ 只在这里进入复习模式
-function goReview(){
-
-    if(favorites.length === 0){
-        alert("暂无收藏单词");
-        return;
-    }
-
-    sessionStorage.setItem(
-        "favWords",
-        JSON.stringify(favorites)
-    );
-
-    location.href = "review.html";
-}
-
 // 返回
 function back(){
     location.href = "index.html";
@@ -162,4 +140,5 @@ render();
 </script>
 
 </body>
+
 </html>
