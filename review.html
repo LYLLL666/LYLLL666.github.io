@@ -44,7 +44,6 @@ h1{
     background:white;
     cursor:pointer;
     font-size:18px;
-    transition:0.2s;
 }
 
 .option:hover{
@@ -68,7 +67,7 @@ h1{
 }
 
 button{
-    margin:5px;
+    margin:8px;
     padding:10px 18px;
     border:none;
     border-radius:12px;
@@ -110,15 +109,13 @@ let index = 0;
 let locked = false;
 
 // =====================
-// 初始化（绝对不会卡死）
+// 初始化（安全版）
 // =====================
 function init(){
 
 try{
 
-let raw = localStorage.getItem("favorites");
-
-list = JSON.parse(raw || "[]");
+list = JSON.parse(localStorage.getItem("favorites") || "[]");
 
 if(!Array.isArray(list)){
 list = [];
@@ -134,7 +131,7 @@ render();
 }catch(e){
 
 document.body.innerHTML =
-"<h2>数据错误</h2><pre>" + e + "</pre>";
+"<h2>数据加载失败</h2><pre>" + e + "</pre>";
 
 }
 
@@ -155,7 +152,7 @@ item = list[0];
 }
 
 if(!item){
-document.body.innerHTML = "<h2>数据为空</h2>";
+document.body.innerHTML = "<h2>没有数据</h2>";
 return;
 }
 
@@ -163,7 +160,7 @@ document.getElementById("word").innerText = item.word;
 
 document.getElementById("msg").innerText = "";
 
-let options = build(item);
+let options = buildOptions(item);
 
 let box = document.getElementById("options");
 
@@ -176,7 +173,7 @@ let div = document.createElement("div");
 div.className = "option";
 div.innerText = opt;
 
-div.onclick = () => check(opt);
+div.onclick = () => check(opt, div);
 
 box.appendChild(div);
 
@@ -187,13 +184,13 @@ box.appendChild(div);
 // =====================
 // 生成选项
 // =====================
-function build(item){
+function buildOptions(item){
 
 let arr = [item.meaning];
 
 while(arr.length < 4){
 
-let r = list[Math.floor(Math.random()*list.length)];
+let r = list[Math.floor(Math.random() * list.length)];
 
 if(r && r.meaning && !arr.includes(r.meaning)){
 arr.push(r.meaning);
@@ -208,9 +205,9 @@ return shuffle(arr);
 }
 
 // =====================
-// 判断（无自动跳转）
+// 判断（不自动跳）
 // =====================
-function check(opt){
+function check(opt, el){
 
 if(locked) return;
 
@@ -223,19 +220,19 @@ let correct = item.meaning;
 // 锁按钮
 document.querySelectorAll(".option").forEach(b => b.onclick = null);
 
-// 标记正确
+// 标正确
 document.querySelectorAll(".option").forEach(b => {
 if(b.innerText === correct){
 b.classList.add("correct");
 }
 });
 
-// 判断结果
+// 判断
 if(opt === correct){
 
 document.getElementById("msg").innerText = "✅ 正确";
 
-// 删除收藏
+// 从收藏删除
 list = list.filter(i => i.word !== item.word);
 
 localStorage.setItem("favorites", JSON.stringify(list));
@@ -244,7 +241,7 @@ localStorage.setItem("favorites", JSON.stringify(list));
 
 document.getElementById("msg").innerText = "❌ 错误";
 
-event.target.classList.add("wrong");
+el.classList.add("wrong");
 
 }
 
@@ -289,7 +286,7 @@ function shuffle(arr){
 
 for(let i = arr.length - 1; i > 0; i--){
 
-let j = Math.floor(Math.random()*(i+1));
+let j = Math.floor(Math.random() * (i + 1));
 
 [arr[i], arr[j]] = [arr[j], arr[i]];
 
@@ -305,4 +302,5 @@ init();
 </script>
 
 </body>
+
 </html>
