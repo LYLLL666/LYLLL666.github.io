@@ -1,121 +1,30 @@
-<!DOCTYPE html>
-<html lang="zh">
+<script>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Learning</title>
+let words = [];
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial;
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            color: white;
-            text-align: center;
-        }
+// 🌍 自动加载词库（你以后可以无限扩展这个文件）
+fetch("words.json")
+    .then(res => res.json())
+    .then(data => {
+        words = data;
+    })
+    .catch(() => {
+        // 如果加载失败，备用词库
+        words = [
+            { word: "Dream", meaning: "梦想" },
+            { word: "Future", meaning: "未来" },
+            { word: "Success", meaning: "成功" }
+        ];
+    });
 
-        .container {
-            margin-top: 100px;
-        }
+function nextWord() {
 
-        h1 {
-            font-size: 50px;
-            margin-bottom: 20px;
-        }
+    if (words.length === 0) return;
 
-        p {
-            font-size: 22px;
-            color: #cbd5e1;
-        }
+    const random = Math.floor(Math.random() * words.length);
 
-        .card {
-            width: 300px;
-            margin: 40px auto;
-            background: rgba(255,255,255,0.1);
-            padding: 30px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
+    document.getElementById("word").innerText = words[random].word;
+    document.getElementById("meaning").innerText = words[random].meaning;
+}
 
-        .word {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-
-        .meaning {
-            font-size: 18px;
-            color: #38bdf8;
-        }
-
-        button {
-            margin-top: 30px;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 10px;
-            background: #38bdf8;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #0ea5e9;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="container">
-
-        <h1>English Learning</h1>
-
-        <p>点击获取随机单词</p >
-
-        <div class="card">
-            <div class="word" id="word">Click Start</div>
-            <div class="meaning" id="meaning">开始学习吧</div>
-        </div>
-
-        <button onclick="nextWord()">下一个单词</button>
-
-    </div>
-
-    <script>
-
-        async function nextWord() {
-
-            try {
-                // 1. 获取随机单词
-                const res1 = await fetch("https://random-word-api.herokuapp.com/word?number=1");
-                const data1 = await res1.json();
-                const word = data1[0];
-
-                // 2. 查询词典
-                const res2 = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-                const data2 = await res2.json();
-
-                let meaning = "暂无释义";
-
-                if (data2 && data2[0] && data2[0].meanings) {
-                    meaning = data2[0].meanings[0].definitions[0].definition;
-                }
-
-                // 3. 显示
-                document.getElementById("word").innerText = word;
-                document.getElementById("meaning").innerText = meaning;
-
-            } catch (error) {
-                console.log(error);
-                document.getElementById("word").innerText = "加载失败";
-                document.getElementById("meaning").innerText = "请检查网络或刷新页面";
-            }
-        }
-
-    </script>
-
-</body>
-
-</html>
+</script>
