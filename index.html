@@ -4,29 +4,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>English Learning System</title>
+<title>English Learning</title>
 
 <style>
 body{
     margin:0;
     font-family:Arial;
-    background:#0f172a;
-    color:white;
+    background: linear-gradient(135deg, #d1fae5, #ecfdf5);
+    color:#064e3b;
     text-align:center;
 }
 
 .container{margin-top:80px;}
 
+h1{
+    color:#065f46;
+}
+
 .card{
     width:320px;
     margin:20px auto;
-    background:rgba(255,255,255,0.1);
+    background:white;
     padding:25px;
     border-radius:20px;
+    box-shadow:0 10px 20px rgba(0,0,0,0.1);
 }
 
 .word{font-size:40px;}
-.meaning{color:#38bdf8;font-size:20px;}
+.meaning{font-size:20px;color:#059669;}
 
 button{
     margin:10px;
@@ -34,16 +39,16 @@ button{
     border:none;
     border-radius:10px;
     cursor:pointer;
+    font-size:16px;
 }
 
-.learn-btn{background:#38bdf8;color:white;}
-.like-btn{background:#22c55e;color:white;}
-.next-btn{background:#f59e0b;color:white;}
+.learn-btn{background:#34d399;color:white;}
+.like-btn{background:#10b981;color:white;}
+.page-btn{background:#22c55e;color:white;}
 
 .stats{
     margin-top:20px;
-    font-size:16px;
-    color:#cbd5e1;
+    color:#065f46;
 }
 </style>
 
@@ -62,10 +67,10 @@ button{
 
 <button class="learn-btn" onclick="nextWord()">下一个</button>
 <button class="like-btn" onclick="collectWord()">⭐ 收藏</button>
-<button class="next-btn" onclick="showFavorites()">📖 收藏列表</button>
+<button class="page-btn" onclick="openFavorites()">📖 我的收藏</button>
 
 <div class="stats">
-    已学习：<span id="count">0</span> | 收藏：<span id="favCount">0</span>
+已学习：<span id="count">0</span> | 收藏：<span id="favCount">0</span>
 </div>
 
 </div>
@@ -75,7 +80,6 @@ button{
 let words = [];
 let index = 0;
 
-// 📦 本地存储
 let learned = JSON.parse(localStorage.getItem("learned") || "[]");
 let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 
@@ -85,15 +89,18 @@ fetch("words.json")
 .then(data => {
     words = data;
     nextWord();
-})
-.catch(() => {
-    document.getElementById("word").innerText = "词库加载失败";
 });
+
+function vibrate(){
+    if(navigator.vibrate){
+        navigator.vibrate(80); // 📳 点击震动
+    }
+}
 
 // 📌 下一个单词
 function nextWord(){
 
-    if(words.length === 0) return;
+    vibrate();
 
     index = Math.floor(Math.random()*words.length);
     const w = words[index];
@@ -101,7 +108,6 @@ function nextWord(){
     document.getElementById("word").innerText = w.word;
     document.getElementById("meaning").innerText = w.meaning;
 
-    // 记录学习
     if(!learned.includes(w.word)){
         learned.push(w.word);
         localStorage.setItem("learned", JSON.stringify(learned));
@@ -113,8 +119,11 @@ function nextWord(){
 // ⭐ 收藏
 function collectWord(){
 
+    vibrate();
+
     const w = words[index];
-    if(!favorites.find(item => item.word === w.word)){
+
+    if(!favorites.find(i => i.word === w.word)){
         favorites.push(w);
         localStorage.setItem("favorites", JSON.stringify(favorites));
     }
@@ -122,16 +131,10 @@ function collectWord(){
     updateStats();
 }
 
-// 📖 查看收藏
-function showFavorites(){
-
-    if(favorites.length === 0){
-        alert("暂无收藏");
-        return;
-    }
-
-    let list = favorites.map(f => f.word + " - " + f.meaning).join("\n");
-    alert("收藏单词：\n\n" + list);
+// 📖 打开收藏页
+function openFavorites(){
+    vibrate();
+    window.location.href = "favorites.html";
 }
 
 // 📊 更新统计
