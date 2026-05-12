@@ -1,306 +1,106 @@
 <!DOCTYPE html>
 <html lang="zh">
-
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>复习模式</title>
+<title>错题复习</title>
 
 <style>
-
 body{
-    margin:0;
     font-family:Arial;
     background:#ecfdf5;
     text-align:center;
-    color:#065f46;
 }
-
-h1{
-    margin-top:25px;
-}
-
 .card{
     width:320px;
     margin:20px auto;
     background:white;
     padding:25px;
     border-radius:20px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
-
-#word{
-    font-size:40px;
-    font-weight:bold;
-    margin-bottom:20px;
-}
-
 .option{
-    width:85%;
     margin:10px auto;
-    padding:14px;
-    border-radius:12px;
-    border:2px solid #d1d5db;
-    background:white;
-    cursor:pointer;
-    font-size:18px;
-}
-
-.option:hover{
-    transform:scale(1.03);
-}
-
-.correct{
-    background:#bbf7d0 !important;
-    border-color:#22c55e !important;
-}
-
-.wrong{
-    background:#fecaca !important;
-    border-color:#ef4444 !important;
-}
-
-#msg{
-    margin-top:10px;
-    height:25px;
-    font-weight:bold;
-}
-
-button{
-    margin:8px;
-    padding:10px 18px;
-    border:none;
-    border-radius:12px;
-    background:#10b981;
-    color:white;
+    padding:12px;
+    border:2px solid #ddd;
+    border-radius:10px;
     cursor:pointer;
 }
-
+.correct{background:#bbf7d0;}
+.wrong{background:#fecaca;}
 </style>
-
 </head>
 
 <body>
 
-<h1>📖 收藏复习</h1>
+<h1>🔁 错题复习</h1>
 
 <div class="card">
-
-    <div id="word">加载中...</div>
-
-    <div id="options"></div>
-
-    <div id="msg"></div>
-
+<div id="word"></div>
+<div id="options"></div>
+<div id="msg"></div>
 </div>
 
-<div>
-    <button onclick="prev()">⬅ 上一题</button>
-    <button onclick="next()">下一题 ➡</button>
-</div>
+<button onclick="next()">下一题</button>
 
 <script>
 
-// =====================
-// 数据
-// =====================
-let list = [];
-let index = 0;
-let locked = false;
+let list =
+JSON.parse(localStorage.getItem("wrong_list") || "[]");
 
-// =====================
-// 初始化（安全版）
-// =====================
-function init(){
+let index=0;
 
-try{
-
-list = JSON.parse(localStorage.getItem("favorites") || "[]");
-
-if(!Array.isArray(list)){
-list = [];
-}
-
-if(list.length === 0){
-document.body.innerHTML = "<h2>暂无收藏单词</h2>";
-return;
-}
-
-render();
-
-}catch(e){
-
-document.body.innerHTML =
-"<h2>数据加载失败</h2><pre>" + e + "</pre>";
-
-}
-
-}
-
-// =====================
-// 渲染
-// =====================
 function render(){
 
-locked = false;
-
-let item = list[index];
-
-if(!item){
-index = 0;
-item = list[0];
-}
-
-if(!item){
-document.body.innerHTML = "<h2>没有数据</h2>";
+if(list.length===0){
+document.body.innerHTML="<h2>没有错题</h2>";
 return;
 }
 
-document.getElementById("word").innerText = item.word;
+let w=list[index];
 
-document.getElementById("msg").innerText = "";
+document.getElementById("word").innerText=w.word;
 
-let options = buildOptions(item);
+let options=[w.meaning];
 
-let box = document.getElementById("options");
+while(options.length<4){
+let r=list[Math.floor(Math.random()*list.length)].meaning;
+if(!options.includes(r)) options.push(r);
+}
 
-box.innerHTML = "";
+options=options.sort(()=>Math.random()-0.5);
 
-options.forEach(opt => {
-
-let div = document.createElement("div");
-
-div.className = "option";
-div.innerText = opt;
-
-div.onclick = () => check(opt, div);
-
-box.appendChild(div);
-
-});
+document.getElementById("options").innerHTML=
+options.map(o=>
+`<div class="option" onclick="check('${o}','${w.word}','${w.meaning}')">${o}</div>`
+).join("");
 
 }
 
-// =====================
-// 生成选项
-// =====================
-function buildOptions(item){
+function check(opt,word,correct){
 
-let arr = [item.meaning];
+if(opt===correct){
 
-while(arr.length < 4){
+list=list.filter(i=>i.word!==word);
+localStorage.setItem("wrong_list",JSON.stringify(list));
 
-let r = list[Math.floor(Math.random() * list.length)];
-
-if(r && r.meaning && !arr.includes(r.meaning)){
-arr.push(r.meaning);
-}
-
-if(arr.length > 10) break;
-
-}
-
-return shuffle(arr);
-
-}
-
-// =====================
-// 判断（不自动跳）
-// =====================
-function check(opt, el){
-
-if(locked) return;
-
-locked = true;
-
-let item = list[index];
-
-let correct = item.meaning;
-
-// 锁按钮
-document.querySelectorAll(".option").forEach(b => b.onclick = null);
-
-// 标正确
-document.querySelectorAll(".option").forEach(b => {
-if(b.innerText === correct){
-b.classList.add("correct");
-}
-});
-
-// 判断
-if(opt === correct){
-
-document.getElementById("msg").innerText = "✅ 正确";
-
-// 从收藏删除
-list = list.filter(i => i.word !== item.word);
-
-localStorage.setItem("favorites", JSON.stringify(list));
+document.getElementById("msg").innerText="🎉 已掌握";
 
 }else{
-
-document.getElementById("msg").innerText = "❌ 错误";
-
-el.classList.add("wrong");
-
+document.getElementById("msg").innerText="❌ 错误";
 }
 
 }
 
-// =====================
-// 下一题（手动）
-// =====================
 function next(){
 
-if(list.length === 0){
-document.body.innerHTML = "<h2>🎉 全部复习完成</h2>";
-return;
-}
-
 index++;
-
-if(index >= list.length){
-index = 0;
-}
-
+if(index>=list.length) index=0;
 render();
 
 }
 
-// =====================
-// 上一题
-// =====================
-function prev(){
-
-if(index > 0){
-index--;
 render();
-}
-
-}
-
-// =====================
-// 打乱
-// =====================
-function shuffle(arr){
-
-for(let i = arr.length - 1; i > 0; i--){
-
-let j = Math.floor(Math.random() * (i + 1));
-
-[arr[i], arr[j]] = [arr[j], arr[i]];
-
-}
-
-return arr;
-
-}
-
-// 启动
-init();
 
 </script>
 
 </body>
-
 </html>
