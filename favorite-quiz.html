@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>收藏复习</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#ecfdf5;
+    text-align:center;
+    color:#065f46;
+}
+
+.card{
+    width:320px;
+    margin:20px auto;
+    background:white;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+#word{
+    font-size:42px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.option{
+    width:85%;
+    margin:10px auto;
+    padding:14px;
+    border-radius:12px;
+    border:2px solid #d1d5db;
+    background:white;
+    cursor:pointer;
+}
+
+.correct{
+    background:#bbf7d0 !important;
+    border-color:#22c55e;
+}
+
+.wrong{
+    background:#fecaca !important;
+    border-color:#ef4444;
+}
+
+#msg{
+    height:30px;
+    font-size:18px;
+    margin-top:10px;
+}
+
+.bottom button{
+    padding:10px 20px;
+    margin:5px;
+    border:none;
+    border-radius:12px;
+    background:#10b981;
+    color:white;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>📖 收藏复习</h1>
+
+<div class="card">
+
+    <div id="word">加载中...</div>
+
+    <div id="options"></div>
+
+    <div id="msg"></div>
+
+</div>
+
+<div class="bottom">
+
+    <button onclick="prev()">上一题</button>
+    <button onclick="next()">下一题</button>
+    <button onclick="exit()">退出</button>
+
+</div>
+
+<script>
+
+let words =
+JSON.parse(sessionStorage.getItem("favWords") || "[]");
+
+let current = 0;
+
+if(words.length === 0){
+    alert("没有收藏");
+    location.href = "favorites.html";
+}
+
+function show(){
+
+    let w = words[current];
+
+    document.getElementById("word").innerText = w.word;
+
+    let options = [w.meaning];
+
+    while(options.length < 4){
+
+        let r =
+        words[Math.floor(Math.random()*words.length)].meaning;
+
+        if(!options.includes(r)){
+            options.push(r);
+        }
+    }
+
+    shuffle(options);
+
+    let box = document.getElementById("options");
+
+    box.innerHTML = "";
+
+    options.forEach(opt => {
+
+        let div = document.createElement("div");
+
+        div.className = "option";
+
+        div.innerText = opt;
+
+        div.onclick = () => check(opt);
+
+        box.appendChild(div);
+    });
+}
+
+function check(opt){
+
+    let w = words[current];
+
+    let all = document.querySelectorAll(".option");
+
+    all.forEach(b => b.onclick = null);
+
+    if(opt === w.meaning){
+
+        document.getElementById("msg").innerText = "✅ 正确";
+
+    }else{
+
+        document.getElementById("msg").innerText = "❌ 错误";
+    }
+
+    setTimeout(next, 1000);
+}
+
+function next(){
+
+    if(current < words.length - 1){
+        current++;
+        show();
+    }
+}
+
+function prev(){
+
+    if(current > 0){
+        current--;
+        show();
+    }
+}
+
+function shuffle(arr){
+
+    for(let i = arr.length - 1; i > 0; i--){
+
+        let j = Math.floor(Math.random() * (i + 1));
+
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+
+function exit(){
+    location.href = "favorites.html";
+}
+
+show();
+
+</script>
+
+</body>
+</html>
