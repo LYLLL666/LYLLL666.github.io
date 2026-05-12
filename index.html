@@ -4,187 +4,77 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Liquid Glass System</title>
+<title>Liquid Glass Canvas</title>
 
 <style>
 
-/* =======================
-   🍏 BASE SYSTEM RESET
-======================= */
 *{
     margin:0;
     padding:0;
-    -webkit-tap-highlight-color: transparent;
     user-select:none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display";
-    background:#070a12;
     overflow:hidden;
+    background:#05070d;
+    font-family:-apple-system, BlinkMacSystemFont;
 }
 
-/* =======================
-   🌈 LIGHT FIELD BACKGROUND
-======================= */
-.bg{
+/* 🌌 canvas背景 */
+canvas{
     position:fixed;
-    inset:-80%;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
     z-index:-3;
-
-    /* 🌈 苹果“光场”核心 */
-    background:
-    radial-gradient(circle at 20% 20%, rgba(255, 90, 120, 0.30), transparent 45%),
-    radial-gradient(circle at 70% 25%, rgba(80, 160, 255, 0.28), transparent 50%),
-    radial-gradient(circle at 45% 80%, rgba(90, 255, 190, 0.22), transparent 55%),
-    radial-gradient(circle at 80% 70%, rgba(200, 120, 255, 0.25), transparent 55%),
-    radial-gradient(circle at 10% 85%, rgba(255, 230, 120, 0.18), transparent 55%);
-
-    filter: blur(160px) saturate(160%);
-    animation: float 20s ease-in-out infinite;
 }
 
-/* 🌊 光场漂移 */
-@keyframes float{
-0%{transform:translate(0,0) scale(1);}
-50%{transform:translate(-3%,2%) scale(1.18);}
-100%{transform:translate(0,0) scale(1);}
-}
-
-/* =======================
-   🧊 GLOBAL GLASS LAYER
-======================= */
-.glass-layer{
-    position:fixed;
-    inset:0;
-
-    background:rgba(255,255,255,0.04);
-
-    backdrop-filter: blur(70px) saturate(180%);
-    -webkit-backdrop-filter: blur(70px);
-
-    z-index:-2;
-}
-
-/* =======================
-   📌 TITLE
-======================= */
-h1{
-    text-align:center;
-    margin-top:55px;
-    font-size:30px;
-    font-weight:600;
-    color:rgba(255,255,255,0.92);
-}
-
-/* =======================
-   📦 CONTAINER
-======================= */
-.container{
-    width:90%;
-    max-width:360px;
-    margin:40px auto;
-}
-
-/* =======================
-   🧊 LIQUID GLASS BUTTON
-======================= */
-.glass-btn{
+/* 🧊 玻璃UI层 */
+.ui{
     position:relative;
+    width:100%;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+/* 🍏 玻璃按钮 */
+.glass-btn{
+    width:260px;
     padding:18px;
-    margin:14px 0;
+    margin:12px;
 
-    border-radius:32px;
+    border-radius:26px;
 
-    /* 🧊 核心：真实透明玻璃 */
-    background:rgba(255,255,255,0.06);
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.15);
 
-    backdrop-filter: blur(45px) saturate(180%);
-    -webkit-backdrop-filter: blur(45px);
-
-    border:1px solid rgba(255,255,255,0.16);
-
-    color:rgba(255,255,255,0.92);
-    font-size:16px;
-    font-weight:500;
-
+    color:white;
     text-align:center;
 
-    /* 🌌 深度层 */
-    box-shadow:
-        0 40px 90px rgba(0,0,0,0.65),
-        inset 0 1px 0 rgba(255,255,255,0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
 
     cursor:pointer;
 
-    overflow:hidden;
-
-    transition:none;
+    transition:transform 0.15s ease;
 }
 
-/* =======================
-   ✨ SPECULAR LIGHT (关键)
-======================= */
-.glass-btn::before{
-    content:"";
-    position:absolute;
-    inset:-60%;
-
-    background:
-    radial-gradient(circle at 30% 20%,
-        rgba(255,255,255,0.22),
-        transparent 60%);
-
-    opacity:0.9;
-}
-
-/* =======================
-   🌊 HOVER FLOAT
-======================= */
-.glass-btn:hover{
-    transform:translateY(-3px);
-}
-
-/* =======================
-   🧠 TRUE APPLE PRESS
-   （材质变化，不是动画）
-======================= */
+/* 🌊 点击压缩 */
 .glass-btn:active{
-
-    animation: press 160ms cubic-bezier(.2,1.8,.2,1) forwards;
+    transform:scale(0.92);
 }
 
-/* ⚡ 弹性回弹（苹果系统级感觉） */
-@keyframes press{
-
-0%{
-    transform:scale(1);
-    background:rgba(255,255,255,0.06);
-}
-
-40%{
-    transform:scale(0.86) translateY(6px);
-    background:rgba(255,255,255,0.10);
-}
-
-70%{
-    transform:scale(1.05) translateY(-2px);
-}
-
-100%{
-    transform:scale(1) translateY(0);
-}
-
-}
-
-/* =======================
-   🌫 FOOTER
-======================= */
-.tip{
-    text-align:center;
-    margin-top:20px;
-    font-size:12px;
-    color:rgba(255,255,255,0.45);
+.title{
+    color:white;
+    margin-bottom:20px;
+    font-size:22px;
 }
 
 </style>
@@ -193,33 +83,81 @@ h1{
 
 <body>
 
-<div class="bg"></div>
-<div class="glass-layer"></div>
+<canvas id="bg"></canvas>
 
-<h1>📚 Study System</h1>
+<div class="ui">
 
-<div class="container">
+<div class="title">📚 Liquid Glass System</div>
 
-<div class="glass-btn" onclick="go('word.html')">📖 Word Study</div>
-<div class="glass-btn" onclick="go('quiz.html')">🧠 Practice</div>
-<div class="glass-btn" onclick="go('favorites.html')">⭐ Favorites</div>
-<div class="glass-btn" onclick="go('wronglist.html')">❌ Mistakes</div>
-<div class="glass-btn" onclick="go('review.html')">🔁 Review</div>
+<div class="glass-btn">📖 单词学习</div>
+<div class="glass-btn">🧠 练习模式</div>
+<div class="glass-btn">⭐ 收藏</div>
+<div class="glass-btn">❌ 错题本</div>
+<div class="glass-btn">🔁 复习</div>
 
 </div>
 
-<div class="tip">Apple Liquid Glass – Full Material Simulation</div>
-
 <script>
 
-function go(page){
+/* =========================
+   🌌 光场 canvas 背景
+========================= */
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
 
-if(navigator.vibrate){
-navigator.vibrate(12);
+let w,h;
+function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+/* 🌈 光点 */
+let points = [];
+
+for(let i=0;i<40;i++){
+    points.push({
+        x:Math.random()*w,
+        y:Math.random()*h,
+        vx:(Math.random()-0.5)*0.6,
+        vy:(Math.random()-0.5)*0.6,
+        r:Math.random()*120+80
+    });
 }
 
-location.href = page;
+/* 🌊 动画 */
+function animate(){
+
+ctx.clearRect(0,0,w,h);
+
+/* 🌈 光场 */
+for(let p of points){
+
+p.x += p.vx;
+p.y += p.vy;
+
+if(p.x<0||p.x>w)p.vx*=-1;
+if(p.y<0||p.y>h)p.vy*=-1;
+
+/* 渐变光 */
+let gradient = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+
+gradient.addColorStop(0,"rgba(255,120,180,0.35)");
+gradient.addColorStop(0.3,"rgba(120,180,255,0.25)");
+gradient.addColorStop(1,"rgba(0,0,0,0)");
+
+ctx.fillStyle = gradient;
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+
 }
+
+requestAnimationFrame(animate);
+}
+
+animate();
 
 </script>
 
