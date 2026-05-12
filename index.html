@@ -2,228 +2,256 @@
 <html lang="zh">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Liquid Glass Study System</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liquid Glass Study System</title>
 
-    <style>
-        /* =========================
-           🧼 基础重置
-        ========================= */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
+<style>
 
-        body {
-            /* 苹果典型的深色模式背景色，非纯黑 */
-            background: #121217; 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+/* =========================
+   🧼 RESET
+========================= */
+*{
+    margin:0;
+    padding:0;
+    user-select:none;
+    -webkit-tap-highlight-color: transparent;
+}
 
-        /* =========================
-           🌈 背景层 (减弱流动感，增加优雅感)
-        ========================= */
-        canvas {
-            position: fixed;
-            inset: 0;
-            z-index: -3;
-            filter: blur(40px); /* 额外的模糊让流动更丝滑 */
-        }
+body{
+    font-family:-apple-system, BlinkMacSystemFont;
+    background:#05070d;
+    overflow:hidden;
+}
 
-        .glass-bg {
-            position: fixed;
-            inset: 0;
-            /* 增加一点白色的蒙版，减少纯黑感 */
-            background: rgba(255, 255, 255, 0.03); 
-            backdrop-filter: blur(80px) saturate(150%);
-            -webkit-backdrop-filter: blur(80px);
-            z-index: -2;
-        }
+/* =========================
+   🌈 CANVAS BACKGROUND
+========================= */
+canvas{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:-3;
+}
 
-        /* =========================
-           📌 标题
-        ========================= */
-        .title {
-            margin-top: 70px;
-            font-size: 28px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.95);
-            letter-spacing: -0.5px;
-        }
+/* =========================
+   🧊 GLOBAL GLASS LAYER
+========================= */
+.glass-bg{
+    position:fixed;
+    inset:0;
+    background:rgba(255,255,255,0.03);
+    backdrop-filter: blur(60px) saturate(180%);
+    -webkit-backdrop-filter: blur(60px);
+    z-index:-2;
+}
 
-        /* =========================
-           🧊 苹果级液态玻璃按键
-        ========================= */
-        .container {
-            width: 90%;
-            max-width: 360px;
-            margin-top: 40px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
+/* =========================
+   📌 TITLE
+========================= */
+.title{
+    text-align:center;
+    margin-top:60px;
+    font-size:28px;
+    font-weight:600;
+    color:rgba(255,255,255,0.92);
+}
 
-        .btn {
-            position: relative;
-            padding: 18px 24px;
-            border-radius: 22px;
-            cursor: pointer;
-            
-            /* 核心：高通透玻璃材质 */
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            
-            /* 苹果标志性的“高光边框” */
-            border: 0.5px solid rgba(255, 255, 255, 0.25);
-            
-            color: #fff;
-            font-size: 17px;
-            font-weight: 500;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+/* =========================
+   📦 CONTAINER
+========================= */
+.container{
+    width:90%;
+    max-width:360px;
+    margin:40px auto;
+}
 
-            /* 阴影：非常轻薄的投影 */
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
+/* =========================
+   🍏 LIQUID GLASS BUTTON (FIXED)
+========================= */
+.btn{
+    position:relative;
+    padding:18px;
+    margin:14px 0;
 
-        /* 按键内部的光效 */
-        .btn::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: 22px;
-            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), 
-                        rgba(255, 255, 255, 0.12) 0%, 
-                        transparent 70%);
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
+    border-radius:28px;
 
-        .btn:hover::before {
-            opacity: 1;
-        }
+    /* 🧊 主玻璃 */
+    background:rgba(255,255,255,0.06);
 
-        /* 🍎 苹果标准的交互缩放 */
-        .btn:active {
-            transform: scale(0.96);
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
+    backdrop-filter: blur(38px);
+    -webkit-backdrop-filter: blur(38px);
 
-        .tip {
-            margin-top: auto;
-            margin-bottom: 40px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    border:1px solid rgba(255,255,255,0.18);
 
-    </style>
+    color:rgba(255,255,255,0.92);
+    font-size:16px;
+    font-weight:500;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    overflow:hidden;
+
+    /* 🌌 多层结构阴影（关键修复） */
+    box-shadow:
+        0 30px 70px rgba(0,0,0,0.65),
+        inset 0 1px 0 rgba(255,255,255,0.20),
+        inset 0 -12px 25px rgba(0,0,0,0.25);
+
+    transition: transform 0.18s cubic-bezier(.2,.9,.2,1),
+                background 0.2s ease;
+}
+
+/* ✨ 光源层 */
+.btn::before{
+    content:"";
+    position:absolute;
+    inset:-50%;
+
+    background:
+    radial-gradient(circle at 30% 20%,
+        rgba(255,255,255,0.25),
+        transparent 60%);
+
+    opacity:1;
+}
+
+/* 🌊 hover浮动 */
+.btn:hover{
+    transform:translateY(-3px);
+}
+
+/* 🧠 苹果级“材质按压”（关键修复） */
+.btn:active{
+
+    transform:translateY(2px) scale(0.94);
+
+    background:rgba(255,255,255,0.10);
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,0.7),
+        inset 0 18px 30px rgba(0,0,0,0.35),
+        inset 0 0 25px rgba(255,255,255,0.08);
+}
+
+/* =========================
+   🌫 FOOTER
+========================= */
+.tip{
+    text-align:center;
+    margin-top:20px;
+    font-size:12px;
+    color:rgba(255,255,255,0.45);
+}
+
+</style>
+
 </head>
 
 <body>
 
-    <canvas id="bg"></canvas>
-    <div class="glass-bg"></div>
+<!-- 🌈 背景 -->
+<canvas id="bg"></canvas>
 
-    <div class="title">学习系统</div>
+<!-- 🧊 玻璃环境 -->
+<div class="glass-bg"></div>
 
-    <div class="container">
-        <div class="btn" onclick="go('word.html')"><span>📖</span> 单词学习</div>
-        <div class="btn" onclick="go('quiz.html')"><span>🧠</span> 练习模式</div>
-        <div class="btn" onclick="go('favorites.html')"><span>⭐</span> 收藏中心</div>
-        <div class="btn" onclick="go('wronglist.html')"><span>❌</span> 错题本</div>
-        <div class="btn" onclick="go('review.html')"><span>🔁</span> 复习巩固</div>
-    </div>
+<div class="title">📚 Study System</div>
 
-    <div class="tip">Designed for iOS 18 Interface</div>
+<div class="container">
 
-    <script>
-        /* =========================
-           🌈 背景逻辑：减弱了速度和亮度
-        ========================= */
-        const canvas = document.getElementById("bg");
-        const ctx = canvas.getContext("2d");
+<div class="btn" onclick="go('word.html')">📖 单词学习</div>
+<div class="btn" onclick="go('quiz.html')">🧠 练习模式</div>
+<div class="btn" onclick="go('favorites.html')">⭐ 收藏</div>
+<div class="btn" onclick="go('wronglist.html')">❌ 错题本</div>
+<div class="btn" onclick="go('review.html')">🔁 复习模式</div>
 
-        let w, h;
-        function resize() {
-            w = canvas.width = window.innerWidth;
-            h = canvas.height = window.innerHeight;
-        }
-        resize();
-        window.addEventListener("resize", resize);
+</div>
 
-        let points = [];
-        for (let i = 0; i < 40; i++) { // 减少粒子数量，让背景更干净
-            points.push({
-                x: Math.random() * w,
-                y: Math.random() * h,
-                vx: (Math.random() - 0.5) * 0.2, // 速度减慢一倍
-                vy: (Math.random() - 0.5) * 0.2,
-                hue: Math.random() * 360,
-                r: Math.random() * 200 + 150
-            });
-        }
+<div class="tip">Liquid Glass System + Rainbow Light Field</div>
 
-        function animate() {
-            ctx.clearRect(0, 0, w, h);
-            ctx.globalCompositeOperation = "screen"; // 改用 screen 让色彩更柔和，不那么暗
+<script>
 
-            for (let p of points) {
-                p.x += p.vx;
-                p.y += p.vy;
-                if (p.x < -100 || p.x > w + 100) p.vx *= -1;
-                if (p.y < -100 || p.y > h + 100) p.vy *= -1;
+/* =========================
+   🌈 彩虹光场背景（你这个是对的）
+========================= */
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
 
-                p.hue += 0.1;
-                let g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
-                // 降低了颜色的透明度(0.1)，减少“黑色块”感
-                g.addColorStop(0, `hsla(${p.hue}, 60%, 70%, 0.1)`); 
-                g.addColorStop(1, "transparent");
+let w,h;
+function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
 
-                ctx.fillStyle = g;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            requestAnimationFrame(animate);
-        }
-        animate();
+let points = [];
 
-        /* =========================
-           🖱 光源交互控制
-        ========================= */
-        document.querySelectorAll('.btn').forEach(btn => {
-            const move = (e) => {
-                const rect = btn.getBoundingClientRect();
-                const xPos = e.touches ? e.touches[0].clientX : e.clientX;
-                const yPos = e.touches ? e.touches[0].clientY : e.clientY;
-                btn.style.setProperty('--x', `${xPos - rect.left}px`);
-                btn.style.setProperty('--y', `${yPos - rect.top}px`);
-            };
-            btn.addEventListener('mousemove', move);
-            btn.addEventListener('touchstart', move, {passive: true});
-        });
+for(let i=0;i<120;i++){
+    points.push({
+        x:Math.random()*w,
+        y:Math.random()*h,
+        vx:(Math.random()-0.5)*0.5,
+        vy:(Math.random()-0.5)*0.5,
+        hue:Math.random()*360,
+        r:Math.random()*120+60
+    });
+}
 
-        function go(page) {
-            if (navigator.vibrate) navigator.vibrate(8);
-            // 这里可以添加页面跳转逻辑
-        }
-    </script>
+function animate(){
+
+ctx.clearRect(0,0,w,h);
+ctx.globalCompositeOperation = "lighter";
+
+for(let p of points){
+
+p.x += p.vx;
+p.y += p.vy;
+
+if(p.x<0||p.x>w)p.vx*=-1;
+if(p.y<0||p.y>h)p.vy*=-1;
+
+p.hue += 0.25;
+
+let g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+
+g.addColorStop(0,`hsla(${p.hue},100%,70%,0.35)`);
+g.addColorStop(0.4,`hsla(${p.hue+40},100%,60%,0.15)`);
+g.addColorStop(1,"rgba(0,0,0,0)");
+
+ctx.fillStyle = g;
+
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+
+}
+
+ctx.globalCompositeOperation = "source-over";
+
+requestAnimationFrame(animate);
+}
+
+animate();
+
+/* =========================
+   📱 跳转
+========================= */
+function go(page){
+
+if(navigator.vibrate){
+navigator.vibrate(12);
+}
+
+location.href = page;
+}
+
+</script>
+
 </body>
 
 </html>
