@@ -45,7 +45,7 @@
         }
 
         .meaning {
-            font-size: 22px;
+            font-size: 18px;
             color: #38bdf8;
         }
 
@@ -72,11 +72,11 @@
 
         <h1>English Learning</h1>
 
-        <p>每天学习一个英语单词</p >
+        <p>点击获取随机单词</p >
 
         <div class="card">
-            <div class="word" id="word">Dream</div>
-            <div class="meaning" id="meaning">梦想</div>
+            <div class="word" id="word">Click Start</div>
+            <div class="meaning" id="meaning">开始学习吧</div>
         </div>
 
         <button onclick="nextWord()">下一个单词</button>
@@ -85,36 +85,33 @@
 
     <script>
 
-        const words = [
-            {
-                word: "Dream",
-                meaning: "梦想"
-            },
-            {
-                word: "Future",
-                meaning: "未来"
-            },
-            {
-                word: "Knowledge",
-                meaning: "知识"
-            },
-            {
-                word: "Success",
-                meaning: "成功"
-            },
-            {
-                word: "Confidence",
-                meaning: "自信"
+        async function nextWord() {
+
+            try {
+                // 1. 获取随机单词
+                const res1 = await fetch("https://random-word-api.herokuapp.com/word?number=1");
+                const data1 = await res1.json();
+                const word = data1[0];
+
+                // 2. 查询词典
+                const res2 = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+                const data2 = await res2.json();
+
+                let meaning = "暂无释义";
+
+                if (data2 && data2[0] && data2[0].meanings) {
+                    meaning = data2[0].meanings[0].definitions[0].definition;
+                }
+
+                // 3. 显示
+                document.getElementById("word").innerText = word;
+                document.getElementById("meaning").innerText = meaning;
+
+            } catch (error) {
+                console.log(error);
+                document.getElementById("word").innerText = "加载失败";
+                document.getElementById("meaning").innerText = "请检查网络或刷新页面";
             }
-        ];
-
-        function nextWord() {
-
-            const random = Math.floor(Math.random() * words.length);
-
-            document.getElementById("word").innerText = words[random].word;
-
-            document.getElementById("meaning").innerText = words[random].meaning;
         }
 
     </script>
