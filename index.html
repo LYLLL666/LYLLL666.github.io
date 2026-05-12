@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>学习系统 V4</title>
+<title>学习系统 V5</title>
 
 <style>
 
@@ -18,69 +18,43 @@ body{
     margin:0;
     font-family:Arial;
     overflow:hidden;
-    background:#050816;
+
+    /* 🌈 浅色背景基底 */
+    background:#f8fafc;
 }
 
-/* 🌈 第一层彩虹流体 */
-.bg1{
+/* 🌈 浅色彩虹流体（核心变化） */
+.bg{
     position:fixed;
-    top:-60%;
-    left:-60%;
-    width:220%;
-    height:220%;
+    inset:-40%;
     z-index:-3;
 
     background:
-    radial-gradient(circle at 20% 30%, #ff006e, transparent 40%),
-    radial-gradient(circle at 60% 20%, #ffbe0b, transparent 45%),
-    radial-gradient(circle at 40% 70%, #3a86ff, transparent 50%),
-    radial-gradient(circle at 80% 80%, #8338ec, transparent 55%),
-    radial-gradient(circle at 10% 80%, #06d6a0, transparent 50%);
+    radial-gradient(circle at 20% 20%, rgba(255,182,193,0.9), transparent 40%),
+    radial-gradient(circle at 70% 30%, rgba(173,216,230,0.9), transparent 45%),
+    radial-gradient(circle at 40% 80%, rgba(144,238,144,0.9), transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(221,160,221,0.9), transparent 55%),
+    radial-gradient(circle at 10% 80%, rgba(255,255,180,0.9), transparent 50%);
 
-    filter: blur(120px) saturate(180%);
-    opacity:0.85;
+    filter: blur(90px) saturate(140%);
+    opacity:0.9;
 
-    animation: drift1 18s infinite ease-in-out;
+    animation: float 18s ease-in-out infinite;
 }
 
-/* 🌊 第二层反向漂移 */
-.bg2{
-    position:fixed;
-    top:-50%;
-    left:-50%;
-    width:200%;
-    height:200%;
-    z-index:-4;
-
-    background:
-    radial-gradient(circle at 30% 40%, #ff4d6d, transparent 45%),
-    radial-gradient(circle at 70% 60%, #48cae4, transparent 50%),
-    radial-gradient(circle at 50% 20%, #f72585, transparent 45%);
-
-    filter: blur(140px);
-    opacity:0.6;
-
-    animation: drift2 25s infinite alternate;
-}
-
-/* 🌊 不规则流动 */
-@keyframes drift1{
+/* 🌊 柔和漂浮 */
+@keyframes float{
 0%{transform:translate(0,0) scale(1);}
-50%{transform:translate(-6%,4%) scale(1.25);}
+50%{transform:translate(-3%,3%) scale(1.15);}
 100%{transform:translate(0,0) scale(1);}
 }
 
-@keyframes drift2{
-0%{transform:translate(0,0) scale(1);}
-100%{transform:translate(5%,-5%) scale(1.2);}
-}
-
-/* 🧊 磨砂层 */
+/* 🧊 轻磨砂（浅色模式） */
 .glass{
     position:fixed;
     inset:0;
-    backdrop-filter: blur(45px);
-    background:rgba(255,255,255,0.05);
+    backdrop-filter: blur(25px);
+    background:rgba(255,255,255,0.55);
     z-index:-2;
 }
 
@@ -88,7 +62,7 @@ body{
 h1{
     text-align:center;
     margin-top:40px;
-    color:white;
+    color:#0f172a;
     font-size:26px;
 }
 
@@ -99,7 +73,7 @@ h1{
     margin:30px auto;
 }
 
-/* 🧊 超级液态按钮 */
+/* 🧊 苹果级液态按钮（夸张版） */
 .glass-btn{
     position:relative;
     padding:18px;
@@ -107,10 +81,11 @@ h1{
 
     border-radius:22px;
 
-    background:rgba(255,255,255,0.16);
-    backdrop-filter: blur(30px);
+    /* 🌫 浅色玻璃 */
+    background:rgba(255,255,255,0.7);
+    backdrop-filter: blur(20px);
 
-    border:1px solid rgba(255,255,255,0.3);
+    border:1px solid rgba(255,255,255,0.8);
 
     color:#0f172a;
     font-size:16px;
@@ -119,48 +94,60 @@ h1{
     text-align:center;
 
     box-shadow:
-        0 15px 40px rgba(0,0,0,0.25),
-        inset 0 1px 0 rgba(255,255,255,0.6);
+        0 18px 45px rgba(0,0,0,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.9);
 
     cursor:pointer;
 
-    transition: all 0.25s cubic-bezier(.2,.9,.2,1);
+    transition:
+        transform 0.35s cubic-bezier(.2,1.4,.2,1),
+        box-shadow 0.35s ease,
+        background 0.25s ease;
 
     overflow:hidden;
 }
 
-/* ✨ 高光流动 */
+/* ✨ 高光流体 */
 .glass-btn::before{
     content:"";
     position:absolute;
-    inset:-50%;
-    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), transparent 45%);
-    opacity:0.25;
+    inset:-60%;
+
+    background:radial-gradient(
+        circle at 30% 20%,
+        rgba(255,255,255,0.9),
+        transparent 45%
+    );
+
+    opacity:0.4;
 }
 
-/* 🌊 hover漂浮 */
+/* 🌊 hover轻浮 */
 .glass-btn:hover{
-    transform:translateY(-3px) scale(1.01);
+    transform:translateY(-3px) scale(1.02);
 }
 
-/* 🧠 超级按压效果（重点） */
+/* 🧠 🍎 超夸张按压效果（重点升级） */
 .glass-btn:active{
-    transform:scale(0.92) translateY(2px);
+    transform:
+        scale(0.88)
+        translateY(6px)
+        perspective(800px)
+        rotateX(8deg);
+
+    background:rgba(255,255,255,0.85);
 
     box-shadow:
-        0 5px 15px rgba(0,0,0,0.35),
-        inset 0 6px 20px rgba(0,0,0,0.15),
-        inset 0 0 20px rgba(255,255,255,0.25);
-
-    background:rgba(255,255,255,0.22);
+        0 5px 12px rgba(0,0,0,0.12),
+        inset 0 10px 25px rgba(0,0,0,0.08),
+        inset 0 0 25px rgba(255,255,255,0.7);
 }
 
 /* 🌫 标语 */
 .tip{
     text-align:center;
-    color:white;
+    color:#475569;
     font-size:12px;
-    opacity:0.7;
     margin-top:20px;
 }
 
@@ -170,11 +157,10 @@ h1{
 
 <body>
 
-<div class="bg1"></div>
-<div class="bg2"></div>
+<div class="bg"></div>
 <div class="glass"></div>
 
-<h1>📚 学习系统 V4</h1>
+<h1>📚 学习系统 V5</h1>
 
 <div class="container">
 
@@ -186,14 +172,14 @@ h1{
 
 </div>
 
-<div class="tip">Liquid Chaos Glass UI · V4</div>
+<div class="tip">Liquid Glass · Light Rainbow UI</div>
 
 <script>
 
 function go(page){
 
 if(navigator.vibrate){
-navigator.vibrate([10]);
+navigator.vibrate([12]);
 }
 
 location.href = page;
