@@ -1,125 +1,66 @@
 <!DOCTYPE html>
 <html lang="zh">
-
 <head>
 <meta charset="UTF-8">
-<title>收藏练习</title>
+<title>收藏中心</title>
 
 <style>
 body{
     font-family:Arial;
     background:#ecfdf5;
     text-align:center;
-    color:#065f46;
 }
-
 .card{
     width:300px;
     margin:10px auto;
     background:white;
-    padding:15px;
-    border-radius:15px;
-    box-shadow:0 5px 10px rgba(0,0,0,0.1);
-}
-
-button{
-    margin:10px;
-    padding:10px 20px;
-    border:none;
+    padding:10px;
     border-radius:10px;
-    background:#10b981;
-    color:white;
-    cursor:pointer;
+}
+button{
+    margin-top:5px;
+    padding:5px 10px;
 }
 </style>
-
 </head>
 
 <body>
 
-<h1>⭐ 我的收藏</h1>
+<h1>⭐ 收藏中心</h1>
 
 <div id="list"></div>
 
-<button id="practiceBtn">开始练习</button>
-<button onclick="back()">返回</button>
+<button onclick="location.href='index.html'">返回主页</button>
 
 <script>
 
-let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+let favorites=JSON.parse(localStorage.getItem("favorites")||"[]");
 
-// 📌 列表渲染
 function render(){
+    let box=document.getElementById("list");
+    box.innerHTML="";
 
-    const list = document.getElementById("list");
+    favorites.forEach(w=>{
+        let div=document.createElement("div");
+        div.className="card";
 
-    if(favorites.length === 0){
-        list.innerHTML = "<p>暂无收藏</p >";
-        return;
-    }
+        div.innerHTML=`
+            <b>${w.word}</b><br>
+            ${w.meaning}<br>
+            <button onclick="removeFav('${w.word}')">❌ 取消收藏</button>
+        `;
 
-    list.innerHTML = "";
-
-    favorites.forEach(w => {
-        const div = document.createElement("div");
-        div.className = "card";
-        div.innerHTML = `<b>${w.word}</b><br>${w.meaning}`;
-        list.appendChild(div);
+        box.appendChild(div);
     });
 }
 
-render();
-
-// 🚀 ⭐ 重点：改成“卡片练习模式”
-document.getElementById("practiceBtn").addEventListener("click", function(){
-
-    if(favorites.length === 0){
-        alert("没有收藏单词");
-        return;
-    }
-
-    let i = 0;
-
-    // 🔥 重建练习界面（和主页一致）
-    document.body.innerHTML = `
-        <h1>📖 收藏练习模式</h1>
-
-        <div class="card">
-            <div id="word" style="font-size:40px;"></div>
-            <div id="meaning" style="font-size:20px;color:#059669;"></div>
-        </div>
-
-        <button onclick="nextWord()">下一个</button>
-        <button onclick="back()">退出</button>
-    `;
-
-    // 📌 显示单词
-    window.nextWord = function(){
-
-        const w = favorites[i];
-
-        document.getElementById("word").innerText = w.word;
-        document.getElementById("meaning").innerText = w.meaning;
-
-        i++;
-
-        if(i >= favorites.length){
-            i = 0; // 循环练习
-        }
-    };
-
-    // 🔙 返回主页
-    window.back = function(){
-        window.location.href = "index.html";
-    };
-
-    nextWord();
-});
-
-// 🔙 返回
-function back(){
-    window.location.href = "index.html";
+function removeFav(word){
+    favorites=favorites.filter(i=>i.word!==word);
+    localStorage.setItem("favorites",JSON.stringify(favorites));
+    render();
 }
+
+render();
 
 </script>
 
