@@ -1,30 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>Test</title>
+</head>
+
+<body>
+
+<h1>如果你能看到这行字，说明HTML没问题</h1>
+
+<button onclick="test()">点我</button>
+
 <script>
-
-let words = [];
-
-// 🌍 自动加载词库（你以后可以无限扩展这个文件）
-fetch("words.json")
-    .then(res => res.json())
-    .then(data => {
-        words = data;
-    })
-    .catch(() => {
-        // 如果加载失败，备用词库
-        words = [
-            { word: "Dream", meaning: "梦想" },
-            { word: "Future", meaning: "未来" },
-            { word: "Success", meaning: "成功" }
-        ];
-    });
-
-function nextWord() {
-
-    if (words.length === 0) return;
-
-    const random = Math.floor(Math.random() * words.length);
-
-    document.getElementById("word").innerText = words[random].word;
-    document.getElementById("meaning").innerText = words[random].meaning;
+function test(){
+    alert("JS正常运行");
 }
-
 </script>
+
+</body>
+</html>
