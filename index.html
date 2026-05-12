@@ -36,7 +36,7 @@ canvas{
 }
 
 /* =========================
-   🧊 GLASS OVERLAY LAYER
+   🧊 GLOBAL GLASS LAYER
 ========================= */
 .glass-bg{
     position:fixed;
@@ -68,21 +68,22 @@ canvas{
 }
 
 /* =========================
-   🍏 LIQUID GLASS BUTTON
+   🍏 LIQUID GLASS BUTTON (FIXED)
 ========================= */
 .btn{
     position:relative;
     padding:18px;
     margin:14px 0;
 
-    border-radius:30px;
+    border-radius:28px;
 
-    background:rgba(255,255,255,0.07);
+    /* 🧊 主玻璃 */
+    background:rgba(255,255,255,0.06);
 
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
+    backdrop-filter: blur(38px);
+    -webkit-backdrop-filter: blur(38px);
 
-    border:1px solid rgba(255,255,255,0.16);
+    border:1px solid rgba(255,255,255,0.18);
 
     color:rgba(255,255,255,0.92);
     font-size:16px;
@@ -90,39 +91,50 @@ canvas{
 
     text-align:center;
 
-    box-shadow:
-        0 35px 80px rgba(0,0,0,0.6),
-        inset 0 1px 0 rgba(255,255,255,0.12);
-
     cursor:pointer;
 
-    transition: transform 0.15s ease;
+    overflow:hidden;
+
+    /* 🌌 多层结构阴影（关键修复） */
+    box-shadow:
+        0 30px 70px rgba(0,0,0,0.65),
+        inset 0 1px 0 rgba(255,255,255,0.20),
+        inset 0 -12px 25px rgba(0,0,0,0.25);
+
+    transition: transform 0.18s cubic-bezier(.2,.9,.2,1),
+                background 0.2s ease;
 }
 
-/* ✨ 高光层 */
+/* ✨ 光源层 */
 .btn::before{
     content:"";
     position:absolute;
-    inset:-60%;
+    inset:-50%;
 
-    background:radial-gradient(
-        circle at 30% 20%,
-        rgba(255,255,255,0.22),
-        transparent 60%
-    );
+    background:
+    radial-gradient(circle at 30% 20%,
+        rgba(255,255,255,0.25),
+        transparent 60%);
 
-    opacity:0.9;
+    opacity:1;
 }
 
-/* 🌊 hover */
+/* 🌊 hover浮动 */
 .btn:hover{
-    transform:translateY(-2px);
+    transform:translateY(-3px);
 }
 
-/* 🧠 点击反馈（苹果风压感） */
+/* 🧠 苹果级“材质按压”（关键修复） */
 .btn:active{
-    transform:scale(0.92);
-    background:rgba(255,255,255,0.12);
+
+    transform:translateY(2px) scale(0.94);
+
+    background:rgba(255,255,255,0.10);
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,0.7),
+        inset 0 18px 30px rgba(0,0,0,0.35),
+        inset 0 0 25px rgba(255,255,255,0.08);
 }
 
 /* =========================
@@ -141,10 +153,10 @@ canvas{
 
 <body>
 
-<!-- 🌈 动态彩虹背景 -->
+<!-- 🌈 背景 -->
 <canvas id="bg"></canvas>
 
-<!-- 🧊 玻璃环境层 -->
+<!-- 🧊 玻璃环境 -->
 <div class="glass-bg"></div>
 
 <div class="title">📚 Study System</div>
@@ -159,12 +171,12 @@ canvas{
 
 </div>
 
-<div class="tip">Liquid Glass + Rainbow Light Field UI</div>
+<div class="tip">Liquid Glass System + Rainbow Light Field</div>
 
 <script>
 
 /* =========================
-   🌈 RAINBOW LIGHT FIELD
+   🌈 彩虹光场背景（你这个是对的）
 ========================= */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
@@ -177,7 +189,6 @@ function resize(){
 resize();
 window.addEventListener("resize", resize);
 
-/* 🌈 光粒子 */
 let points = [];
 
 for(let i=0;i<120;i++){
@@ -191,12 +202,9 @@ for(let i=0;i<120;i++){
     });
 }
 
-/* 🌊 动画 */
 function animate(){
 
 ctx.clearRect(0,0,w,h);
-
-/* ✨ 光混合模式 */
 ctx.globalCompositeOperation = "lighter";
 
 for(let p of points){
@@ -207,18 +215,15 @@ p.y += p.vy;
 if(p.x<0||p.x>w)p.vx*=-1;
 if(p.y<0||p.y>h)p.vy*=-1;
 
-p.hue += 0.3;
+p.hue += 0.25;
 
-let gradient = ctx.createRadialGradient(
-    p.x,p.y,0,
-    p.x,p.y,p.r
-);
+let g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
 
-gradient.addColorStop(0,`hsla(${p.hue},100%,70%,0.35)`);
-gradient.addColorStop(0.4,`hsla(${p.hue+40},100%,60%,0.15)`);
-gradient.addColorStop(1,"rgba(0,0,0,0)");
+g.addColorStop(0,`hsla(${p.hue},100%,70%,0.35)`);
+g.addColorStop(0.4,`hsla(${p.hue+40},100%,60%,0.15)`);
+g.addColorStop(1,"rgba(0,0,0,0)");
 
-ctx.fillStyle = gradient;
+ctx.fillStyle = g;
 
 ctx.beginPath();
 ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
@@ -234,7 +239,7 @@ requestAnimationFrame(animate);
 animate();
 
 /* =========================
-   📱 NAV
+   📱 跳转
 ========================= */
 function go(page){
 
