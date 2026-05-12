@@ -1,12 +1,124 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
+
 <head>
-    <title>我的网站</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Learning</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 100px;
+        }
+
+        h1 {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 22px;
+            color: #cbd5e1;
+        }
+
+        .card {
+            width: 300px;
+            margin: 40px auto;
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .word {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .meaning {
+            font-size: 22px;
+            color: #38bdf8;
+        }
+
+        button {
+            margin-top: 30px;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            background: #38bdf8;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0ea5e9;
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>你好</h1>
-<p>这是我的第一个网站</p >
+    <div class="container">
+
+        <h1>English Learning</h1>
+
+        <p>每天学习一个英语单词</p >
+
+        <div class="card">
+            <div class="word" id="word">Dream</div>
+            <div class="meaning" id="meaning">梦想</div>
+        </div>
+
+        <button onclick="nextWord()">下一个单词</button>
+
+    </div>
+
+    <script>
+
+        const words = [
+            {
+                word: "Dream",
+                meaning: "梦想"
+            },
+            {
+                word: "Future",
+                meaning: "未来"
+            },
+            {
+                word: "Knowledge",
+                meaning: "知识"
+            },
+            {
+                word: "Success",
+                meaning: "成功"
+            },
+            {
+                word: "Confidence",
+                meaning: "自信"
+            }
+        ];
+
+        function nextWord() {
+
+            const random = Math.floor(Math.random() * words.length);
+
+            document.getElementById("word").innerText = words[random].word;
+
+            document.getElementById("meaning").innerText = words[random].meaning;
+        }
+
+    </script>
 
 </body>
+
 </html>
