@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
 <meta charset="UTF-8">
 <title>练习模式</title>
 
 <style>
+
 body{
     font-family:Arial;
     background:#ecfdf5;
@@ -12,22 +14,63 @@ body{
 }
 
 .card{
-    width:300px;
+    width:320px;
     margin:30px auto;
     background:white;
     padding:20px;
     border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
-button{
-    display:block;
-    width:80%;
-    margin:10px auto;
-    padding:10px;
-    border-radius:10px;
-    border:1px solid #d1d5db;
-    background:white;
+#word{
+    font-size:40px;
+    margin-bottom:20px;
+    color:#065f46;
 }
+
+.option{
+    width:85%;
+    margin:10px auto;
+    padding:12px;
+    border-radius:10px;
+    border:2px solid #d1d5db;
+    background:white;
+    color:#065f46;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.correct{
+    background:#bbf7d0 !important;
+    border-color:#22c55e;
+}
+
+.wrong{
+    background:#fecaca !important;
+    border-color:#ef4444;
+}
+
+#msg{
+    margin-top:15px;
+    font-size:18px;
+    height:30px;
+    color:#065f46;
+}
+
+.bottom{
+    margin-top:20px;
+}
+
+.bottom button{
+    padding:10px 20px;
+    margin:5px;
+    border:none;
+    border-radius:10px;
+    background:#10b981;
+    color:white;
+    cursor:pointer;
+}
+
 </style>
 </head>
 
@@ -36,68 +79,166 @@ button{
 <h1>🧠 练习模式</h1>
 
 <div class="card">
-    <div id="word" style="font-size:40px;"></div>
-    <div id="opts"></div>
+
+    <div id="word">加载中...</div>
+
+    <div id="options"></div>
+
+    <div id="msg"></div>
+
 </div>
 
-<button onclick="next()">下一题</button>
-<button onclick="location.href='index.html'">退出</button>
+<div class="bottom">
+    <button onclick="prevWord()">上一题</button>
+    <button onclick="nextWord()">下一题</button>
+    <button onclick="location.href='index.html'">退出</button>
+</div>
 
 <script>
 
-let words=[];
-let i=0;
-let ans=null;
-let favorites=JSON.parse(localStorage.getItem("favorites")||"[]");
+let words = [];
+let current = 0;
+let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 
-fetch("words.json").then(r=>r.json()).then(d=>{
-    words=d;
-    show();
+// 加载词库
+fetch("words.json")
+.then(res => res.json())
+.then(data => {
+
+    words = data;
+
+    shuffle(words);
+
+    showWord();
 });
 
-function show(){
-    let w=words[i];
-    ans=w;
+// 打乱数组
+function shuffle(arr){
+    for(let i = arr.length - 1; i > 0; i--){
+        let j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
 
-    document.getElementById("word").innerText=w.word;
+// 显示题目
+function showWord(){
 
-    let opts=[w.meaning];
+    let w = words[current];
 
-    while(opts.length<4){
-        let r=words[Math.floor(Math.random()*words.length)].meaning;
-        if(!opts.includes(r)) opts.push(r);
+    document.getElementById("word").innerText = w.word;
+
+    document.getElementById("msg").innerText = "";
+
+    let options = [w.meaning];
+
+    while(options.length < 4){
+
+        let random =
+        words[Math.floor(Math.random() * words.length)].meaning;
+
+        if(!options.includes(random)){
+            options.push(random);
+        }
     }
 
-    opts.sort(()=>Math.random()-0.5);
+    shuffle(options);
 
-    let box=document.getElementById("opts");
-    box.innerHTML="";
+    let box = document.getElementById("options");
 
-    opts.forEach(o=>{
-        let b=document.createElement("button");
-        b.innerText=o;
+    box.innerHTML = "";
 
-        b.onclick=()=>{
-            if(o===ans.meaning){
-                b.style.background="#dcfce7";
-            }else{
-                b.style.background="#fee2e2";
+    options.forEach(opt => {
 
-                if(!favorites.find(i=>i.word===ans.word)){
-                    favorites.push(ans);
-                    localStorage.setItem("favorites",JSON.stringify(favorites));
-                }
-            }
-        };
+        let btn = document.createElement("div");
 
-        box.appendChild(b);
+        btn.className = "option";
+
+        btn.innerText = opt;
+
+        btn.onclick = () => checkAnswer(btn, opt);
+
+        box.appendChild(btn);
     });
 }
 
-function next(){
-    i++;
-    if(i>=words.length) i=0;
-    show();
+// 检查答案
+function checkAnswer(btn, opt){
+
+    let w = words[current];
+
+    let all = document.querySelectorAll(".option");
+
+    all.forEach(i => i.onclick = null);
+
+    // 正确
+    if(opt === w.meaning){
+
+        btn.classList.add("correct");
+
+        document.getElementById("msg").innerText =
+        "✅ 回答正确";
+
+    }else{
+
+        btn.classList.add("wrong");
+
+        // 显示正确答案
+        all.forEach(i => {
+
+            if(i.innerText === w.meaning){
+                i.classList.add("correct");
+            }
+        });
+
+        document.getElementById("msg").innerText =
+        "❌ 回答错误，已加入收藏";
+
+        // 自动加入收藏
+        if(!favorites.find(i => i.word === w.word)){
+
+            favorites.push(w);
+
+            localStorage.setItem(
+                "favorites",
+                JSON.stringify(favorites)
+            );
+        }
+    }
+
+    // 自动下一题
+    setTimeout(() => {
+
+        nextWord();
+
+    }, 1200);
+}
+
+// 下一题
+function nextWord(){
+
+    current++;
+
+    if(current >= words.length){
+
+        current = 0;
+
+        shuffle(words);
+    }
+
+    showWord();
+}
+
+// 上一题
+function prevWord(){
+
+    current--;
+
+    if(current < 0){
+
+        current = words.length - 1;
+    }
+
+    showWord();
 }
 
 </script>
