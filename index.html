@@ -79,14 +79,28 @@ let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 
 // 📥 加载词库
 fetch("words.json")
-.then(res => res.json())
+.then(res => {
+    if(!res.ok){
+        throw new Error("words.json加载失败");
+    }
+    return res.json();
+})
 .then(data => {
 
     words = data;
     isReady = true;
 
     shuffleWords();
-    nextWord();
+
+    // ✅ 等页面 DOM 准备好再执行
+    setTimeout(() => {
+        nextWord();
+    }, 100);
+
+})
+.catch(err => {
+    console.error(err);
+    document.body.innerHTML = "<h2>❌ 词库加载失败</h2>";
 });
 
 // 🔀 洗牌
