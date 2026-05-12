@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>复习模式</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#ecfdf5;
+    text-align:center;
+    color:#065f46;
+}
+
+h1{
+    margin-top:30px;
+}
+
+.card{
+    width:320px;
+    margin:20px auto;
+    background:white;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+#word{
+    font-size:42px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.option{
+    width:85%;
+    margin:10px auto;
+    padding:14px;
+    border-radius:12px;
+    border:2px solid #d1d5db;
+    background:white;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.correct{
+    background:#bbf7d0 !important;
+    border-color:#22c55e !important;
+}
+
+.wrong{
+    background:#fecaca !important;
+    border-color:#ef4444 !important;
+}
+
+#msg{
+    margin-top:15px;
+    height:30px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+button{
+    margin:5px;
+    padding:10px 20px;
+    border:none;
+    border-radius:12px;
+    background:#10b981;
+    color:white;
+    cursor:pointer;
+}
+
+button:disabled{
+    opacity:0.5;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>📖 收藏复习</h1>
+
+<div class="card">
+
+    <div id="word">加载中...</div>
+
+    <div id="options"></div>
+
+    <div id="msg"></div>
+
+</div>
+
+<div>
+
+    <button onclick="prev()">⬅ 上一题</button>
+    <button onclick="next()">下一题 ➡</button>
+    <button onclick="exit()">退出</button>
+
+</div>
+
+<script>
+
+// =====================
+// 🔥 唯一数据源
+// =====================
+let list =
+JSON.parse(localStorage.getItem("favorites") || "[]");
+
+let index = 0;
+
+// 如果没数据
+if(list.length === 0){
+    alert("没有收藏单词");
+    location.href = "favorites.html";
+}
+
+// =====================
+// 渲染
+// =====================
+function render(){
+
+    let item = list[index];
+
+    document.getElementById("word").innerText = item.word;
+    document.getElementById("msg").innerText = "";
+
+    let options = [item.meaning];
+
+    while(options.length < 4){
+
+        let r = list[Math.floor(Math.random()*list.length)].meaning;
+
+        if(!options.includes(r)){
+            options.push(r);
+        }
+    }
+
+    shuffle(options);
+
+    let box = document.getElementById("options");
+    box.innerHTML = "";
+
+    options.forEach(opt => {
+
+        let div = document.createElement("div");
+
+        div.className = "option";
+        div.innerText = opt;
+
+        div.onclick = () => check(div, opt, item);
+
+        box.appendChild(div);
+    });
+
+    document.querySelector("button").disabled = index === 0;
+}
+
+// =====================
+// 判断
+// =====================
+function check(dom, opt, item){
+
+    let correct = item.meaning;
+
+    let all = document.querySelectorAll(".option");
+
+    all.forEach(b => b.onclick = null);
+
+    // 标正确答案
+    all.forEach(b => {
+        if(b.innerText === correct){
+            b.classList.add("correct");
+        }
+    });
+
+    if(opt === correct){
+
+        document.getElementById("msg").innerText = "✅ 正确";
+
+        // ⭐ 删除收藏
+        list = list.filter(i => i.word !== item.word);
+
+        localStorage.setItem("favorites", JSON.stringify(list));
+
+    }else{
+
+        document.getElementById("msg").innerText = "❌ 错误";
+
+        dom.classList.add("wrong");
+    }
+
+    setTimeout(next, 800);
+}
+
+// =====================
+// 下一题（安全）
+// =====================
+function next(){
+
+    if(list.length === 0){
+
+        document.getElementById("msg").innerText = "🎉 全部复习完成";
+
+        document.getElementById("options").innerHTML = "";
+
+        return;
+    }
+
+    if(index >= list.length - 1){
+        index = 0;
+    }else{
+        index++;
+    }
+
+    render();
+}
+
+// =====================
+// 上一题
+// =====================
+function prev(){
+
+    if(index > 0){
+        index--;
+        render();
+    }
+}
+
+// =====================
+// 打乱
+// =====================
+function shuffle(arr){
+
+    for(let i = arr.length - 1; i > 0; i--){
+
+        let j = Math.floor(Math.random() * (i + 1));
+
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+
+    return arr;
+}
+
+// =====================
+// 退出
+// =====================
+function exit(){
+    location.href = "favorites.html";
+}
+
+// init
+render();
+
+</script>
+
+</body>
+</html>
