@@ -1,368 +1,42 @@
 <!DOCTYPE html>
 <html lang="zh">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>English Learning</title>
+<title>英语学习系统</title>
 
 <style>
-
 body{
     margin:0;
     font-family:Arial;
-    background: linear-gradient(135deg,#d1fae5,#ecfdf5);
+    background:linear-gradient(135deg,#d1fae5,#ecfdf5);
     text-align:center;
     color:#065f46;
 }
 
-.container{
-    margin-top:60px;
-}
+h1{ margin-top:60px; }
 
 .card{
-    width:320px;
-    margin:20px auto;
+    width:260px;
+    margin:15px auto;
+    padding:20px;
     background:white;
-    padding:25px;
-    border-radius:20px;
+    border-radius:15px;
     box-shadow:0 10px 20px rgba(0,0,0,0.1);
-}
-
-.word{
-    font-size:40px;
-}
-
-.meaning{
-    font-size:22px;
-    color:#059669;
-}
-
-button{
-    margin:10px;
-    padding:12px 25px;
-    border:none;
-    border-radius:10px;
-    background:#10b981;
-    color:white;
     cursor:pointer;
-    font-size:16px;
 }
-
-button:hover{
-    opacity:0.9;
-}
-
+.card:hover{ transform:scale(1.05); }
 </style>
-
 </head>
 
 <body>
 
-<div class="container">
-
 <h1>📚 英语学习系统</h1>
 
-<div class="card">
-    <div class="word" id="word">加载中...</div>
-    <div class="meaning" id="meaning">正在加载词库</div>
-</div>
-
-<button onclick="nextWord()">下一个</button>
-
-<button onclick="collectWord()">⭐ 收藏</button>
-
-<button onclick="openFavorites()">📖 我的收藏</button>
-
-<button onclick="startQuiz()">🧠 练习模式</button>
-
-<div style="margin-top:20px;">
-已学习：
-<span id="count">0</span>
-
-|
-
-收藏：
-<span id="favCount">0</span>
-</div>
-
-</div>
-
-<script>
-
-let words = [];
-let queue = [];
-let currentIndex = 0;
-let isReady = false;
-
-let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-
-let learned = JSON.parse(localStorage.getItem("learned") || "[]");
-
-// 📥 加载词库
-fetch("words.json")
-.then(res => res.json())
-.then(data => {
-
-    words = data;
-
-    isReady = true;
-
-    shuffleWords();
-
-    nextWord();
-});
-
-// 🔀 打乱
-function shuffleWords(){
-
-    queue = [...words];
-
-    for(let i = queue.length - 1; i > 0; i--){
-
-        const j = Math.floor(Math.random() * (i + 1));
-
-        [queue[i], queue[j]] = [queue[j], queue[i]];
-    }
-}
-
-// 📌 下一个
-function nextWord(){
-
-    if(!isReady) return;
-
-    if(queue.length === 0){
-        shuffleWords();
-    }
-
-    const w = queue.pop();
-
-    currentIndex = words.indexOf(w);
-
-    document.getElementById("word").innerText = w.word;
-
-    document.getElementById("meaning").innerText = w.meaning;
-
-    if(!learned.includes(w.word)){
-
-        learned.push(w.word);
-
-        localStorage.setItem("learned", JSON.stringify(learned));
-    }
-
-    updateStats();
-}
-
-// ⭐ 收藏
-function collectWord(){
-
-    const w = words[currentIndex];
-
-    if(!favorites.find(i => i.word === w.word)){
-
-        favorites.push(w);
-
-        localStorage.setItem("favorites", JSON.stringify(favorites));
-    }
-
-    updateStats();
-}
-
-// 📖 收藏页
-function openFavorites(){
-
-    window.location.href = "favorites.html";
-}
-
-// 📊 更新统计
-function updateStats(){
-
-    document.getElementById("count").innerText = learned.length;
-
-    document.getElementById("favCount").innerText = favorites.length;
-}
-
-// =======================
-// 🧠 练习模式
-// =======================
-
-let quizIndex = 0;
-let quizAnswer = null;
-let userAnswers = {}; // 记录每题选择
-
-// 🧠 开始练习
-function startQuiz(){
-
-    quizIndex = 0;
-    userAnswers = {}; // 每次进入都刷新
-
-    document.body.innerHTML = `
-        <h1>🧠 单词练习模式</h1>
-
-        <div class="card">
-            <div id="quizWord" style="font-size:40px;"></div>
-            <div id="options"></div>
-        </div>
-
-        <div id="result"></div>
-
-        <div style="margin-top:20px;">
-            <button onclick="prevQuiz()">⬅ 上一题</button>
-            <button onclick="backMain()">退出</button>
-            <button onclick="nextQuiz()">下一题 ➡</button>
-        </div>
-    `;
-
-    showQuiz();
-}
-
-// 📌 显示题目
-function showQuiz(){
-
-    const w = words[quizIndex];
-    quizAnswer = w;
-
-    let opts = [w.meaning];
-
-    while(opts.length < 4){
-        let r = words[Math.floor(Math.random() * words.length)].meaning;
-        if(!opts.includes(r)){
-            opts.push(r);
-        }
-    }
-
-    opts.sort(() => Math.random() - 0.5);
-
-    document.getElementById("quizWord").innerText = w.word;
-
-    const box = document.getElementById("options");
-    box.innerHTML = "";
-
-    document.getElementById("result").innerHTML = "";
-
-    const lastChoice = userAnswers[quizIndex];
-
-    opts.forEach(opt => {
-
-        const btn = document.createElement("button");
-
-        btn.innerText = opt;
-
-        // 🎨 默认样式（白底+灰边+黑字）
-        btn.style = `
-            display:block;
-            width:80%;
-            margin:10px auto;
-            padding:12px;
-            border-radius:10px;
-            border:1px solid #d1d5db;
-            background:white;
-            color:#111827;
-            font-size:16px;
-            cursor:pointer;
-        `;
-
-        // ⭐ 回显上次选择
-        if(lastChoice){
-
-            if(opt === quizAnswer.meaning){
-
-                btn.style.background = "#dcfce7";
-                btn.style.border = "1px solid #22c55e";
-
-            }else if(opt === lastChoice){
-
-                btn.style.background = "#fee2e2";
-                btn.style.border = "1px solid #ef4444";
-            }
-        }
-
-        btn.onclick = () => checkAnswer(btn, opt);
-
-        box.appendChild(btn);
-    });
-}
-
-// 🎯 判断答案
-function checkAnswer(btn, opt){
-
-    const buttons = document.querySelectorAll("#options button");
-    const correct = quizAnswer.meaning;
-
-    // ⭐ 记录选择
-    userAnswers[quizIndex] = opt;
-
-    if(opt !== correct){
-
-        // ❌ 错误
-        btn.style.background = "#fee2e2";
-        btn.style.border = "1px solid #ef4444";
-        btn.style.color = "#111827";
-
-        // ⭐ 显示正确答案
-        buttons.forEach(b => {
-            if(b.innerText === correct){
-                b.style.background = "#dcfce7";
-                b.style.border = "1px solid #22c55e";
-            }
-        });
-
-        document.getElementById("result").innerHTML =
-            "<h2 style='color:red'>错误，已显示正确答案</h2>";
-
-        // ⭐ 加入收藏
-        if(!favorites.find(i => i.word === quizAnswer.word)){
-            favorites.push(quizAnswer);
-            localStorage.setItem("favorites", JSON.stringify(favorites));
-        }
-
-        updateStats();
-
-    }else{
-
-        // ✔ 正确
-        btn.style.background = "#dcfce7";
-        btn.style.border = "1px solid #22c55e";
-
-        document.getElementById("result").innerHTML =
-            "<h2 style='color:green'>正确 🎉</h2>";
-    }
-
-    setTimeout(() => {
-        nextQuiz();
-    }, 600);
-}
-
-// ➡ 下一题
-function nextQuiz(){
-
-    quizIndex++;
-
-    if(quizIndex >= words.length){
-        quizIndex = 0;
-    }
-
-    showQuiz();
-}
-
-// ⬅ 上一题
-function prevQuiz(){
-
-    quizIndex--;
-
-    if(quizIndex < 0){
-        quizIndex = words.length - 1;
-    }
-
-    showQuiz();
-}
-
-// 🔙 返回主页面
-function backMain(){
-    location.reload();
-}
-
-</script>
+<div class="card" onclick="location.href='word.html'">📖 单词学习</div>
+<div class="card" onclick="location.href='quiz.html'">🧠 练习模式</div>
+<div class="card" onclick="location.href='favorites.html'">⭐ 我的收藏</div>
+<div class="card" onclick="location.href='chat.html'">💬 情景对话 AI</div>
 
 </body>
 </html>
