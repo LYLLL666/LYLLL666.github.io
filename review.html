@@ -44,7 +44,6 @@ h1{
     background:white;
     cursor:pointer;
     font-size:18px;
-    transition:0.2s;
 }
 
 .option:hover{
@@ -62,7 +61,7 @@ h1{
 }
 
 #msg{
-    margin-top:15px;
+    margin-top:10px;
     height:25px;
     font-weight:bold;
 }
@@ -102,44 +101,60 @@ button{
 
 <script>
 
-// ======================
+// =====================
 // 数据
-// ======================
+// =====================
 let list = [];
 let index = 0;
 
-// ======================
-// 启动（防卡死核心）
-// ======================
+// =====================
+// 初始化（绝对防卡死）
+// =====================
 function init(){
+
+try{
 
 let raw = localStorage.getItem("favorites");
 
-try{
-    list = JSON.parse(raw || "[]");
-}catch(e){
-    list = [];
+list = JSON.parse(raw || "[]");
+
+// 必须是数组
+if(!Array.isArray(list)){
+list = [];
 }
 
-if(!Array.isArray(list) || list.length === 0){
-    document.body.innerHTML = "<h2>暂无收藏单词</h2>";
-    return;
+if(list.length === 0){
+document.body.innerHTML = "<h2>暂无收藏单词</h2>";
+return;
 }
 
 render();
 
+}catch(e){
+
+document.body.innerHTML =
+"<h2>数据错误</h2><pre>" + e + "</pre>";
+
 }
 
-// ======================
+}
+
+// =====================
 // 渲染
-// ======================
+// =====================
 function render(){
 
 let item = list[index];
 
+// 防空
 if(!item){
 index = 0;
 item = list[0];
+}
+
+if(!item){
+document.body.innerHTML = "<h2>数据为空</h2>";
+return;
 }
 
 document.getElementById("word").innerText = item.word;
@@ -167,14 +182,14 @@ box.appendChild(div);
 
 }
 
-// ======================
-// 生成选项
-// ======================
+// =====================
+// 生成选项（安全版）
+// =====================
 function buildOptions(item){
 
 let arr = [item.meaning];
 
-// 防空
+// 防炸
 if(!list.length){
 return arr;
 }
@@ -195,16 +210,18 @@ return shuffle(arr);
 
 }
 
-// ======================
+// =====================
 // 判断
-// ======================
+// =====================
 function check(opt){
 
 let item = list[index];
 
+if(!item) return;
+
 let correct = item.meaning;
 
-// 禁止重复点击
+// 锁定按钮
 document.querySelectorAll(".option").forEach(b => b.onclick = null);
 
 // 标记正确
@@ -214,7 +231,7 @@ b.classList.add("correct");
 }
 });
 
-// 判断结果
+// 结果
 if(opt === correct){
 
 document.getElementById("msg").innerText = "✅ 正确";
@@ -232,13 +249,14 @@ event.target.classList.add("wrong");
 
 }
 
-setTimeout(next, 700);
+// 下一题
+setTimeout(next, 600);
 
 }
 
-// ======================
+// =====================
 // 下一题
-// ======================
+// =====================
 function next(){
 
 if(list.length === 0){
@@ -256,9 +274,9 @@ render();
 
 }
 
-// ======================
+// =====================
 // 上一题
-// ======================
+// =====================
 function prev(){
 
 if(index > 0){
@@ -268,9 +286,9 @@ render();
 
 }
 
-// ======================
+// =====================
 // 打乱
-// ======================
+// =====================
 function shuffle(arr){
 
 for(let i = arr.length - 1; i > 0; i--){
