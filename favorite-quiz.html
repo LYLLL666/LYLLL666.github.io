@@ -16,6 +16,10 @@ body{
     color:#065f46;
 }
 
+h1{
+    margin-top:25px;
+}
+
 .card{
     width:320px;
     margin:20px auto;
@@ -39,22 +43,29 @@ body{
     border:2px solid #d1d5db;
     background:white;
     cursor:pointer;
+    font-size:18px;
+    transition:0.2s;
+}
+
+.option:hover{
+    transform:scale(1.03);
 }
 
 .correct{
     background:#bbf7d0 !important;
-    border-color:#22c55e;
+    border-color:#22c55e !important;
 }
 
 .wrong{
     background:#fecaca !important;
-    border-color:#ef4444;
+    border-color:#ef4444 !important;
 }
 
 #msg{
+    margin-top:15px;
     height:30px;
     font-size:18px;
-    margin-top:10px;
+    font-weight:bold;
 }
 
 .bottom button{
@@ -64,6 +75,12 @@ body{
     border-radius:12px;
     background:#10b981;
     color:white;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.bottom button:disabled{
+    opacity:0.4;
 }
 
 </style>
@@ -85,36 +102,47 @@ body{
 
 <div class="bottom">
 
-    <button onclick="prev()">上一题</button>
-    <button onclick="next()">下一题</button>
+    <button id="prevBtn" onclick="prev()">⬅ 上一题</button>
+
+    <button onclick="next()">下一题 ➡</button>
+
     <button onclick="exit()">退出</button>
 
 </div>
 
 <script>
 
-let words =
-JSON.parse(sessionStorage.getItem("favWords") || "[]");
+// ⭐ 收藏数据
+let favorites =
+JSON.parse(localStorage.getItem("favorites") || "[]");
 
+// 当前题
 let current = 0;
 
-if(words.length === 0){
-    alert("没有收藏");
+// 没收藏直接退出
+if(favorites.length === 0){
+    alert("暂无收藏单词");
     location.href = "favorites.html";
 }
 
+// 显示题目
 function show(){
 
-    let w = words[current];
+    let w = favorites[current];
 
     document.getElementById("word").innerText = w.word;
+
+    document.getElementById("msg").innerText = "";
+
+    document.getElementById("prevBtn").disabled =
+    current === 0;
 
     let options = [w.meaning];
 
     while(options.length < 4){
 
         let r =
-        words[Math.floor(Math.random()*words.length)].meaning;
+        favorites[Math.floor(Math.random()*favorites.length)].meaning;
 
         if(!options.includes(r)){
             options.push(r);
@@ -123,7 +151,8 @@ function show(){
 
     shuffle(options);
 
-    let box = document.getElementById("options");
+    let box =
+    document.getElementById("options");
 
     box.innerHTML = "";
 
@@ -141,34 +170,73 @@ function show(){
     });
 }
 
+// 判断答案（核心）
 function check(opt){
 
-    let w = words[current];
+    let w = favorites[current];
 
-    let all = document.querySelectorAll(".option");
+    let all =
+    document.querySelectorAll(".option");
 
     all.forEach(b => b.onclick = null);
 
-    if(opt === w.meaning){
+    let correct = w.meaning;
+
+    // ⭐ 标正确答案（必须）
+    all.forEach(b => {
+
+        if(b.innerText === correct){
+            b.classList.add("correct");
+        }
+    });
+
+    if(opt === correct){
 
         document.getElementById("msg").innerText = "✅ 正确";
+
+        // ⭐ 答对 → 移除收藏
+        favorites = favorites.filter(
+            i => i.word !== w.word
+        );
+
+        localStorage.setItem(
+            "favorites",
+            JSON.stringify(favorites)
+        );
 
     }else{
 
         document.getElementById("msg").innerText = "❌ 错误";
+
+        all.forEach(b => {
+
+            if(b.innerText === opt){
+                b.classList.add("wrong");
+            }
+        });
     }
 
     setTimeout(next, 1000);
 }
 
+// 下一题（不循环）
 function next(){
 
-    if(current < words.length - 1){
+    if(current < favorites.length - 1){
+
         current++;
         show();
+
+    }else{
+
+        document.getElementById("msg").innerText =
+        "🎉 已复习完成";
+
+        document.getElementById("options").innerHTML = "";
     }
 }
 
+// 上一题
 function prev(){
 
     if(current > 0){
@@ -177,6 +245,7 @@ function prev(){
     }
 }
 
+// 打乱
 function shuffle(arr){
 
     for(let i = arr.length - 1; i > 0; i--){
@@ -187,10 +256,12 @@ function shuffle(arr){
     }
 }
 
+// 退出
 function exit(){
     location.href = "favorites.html";
 }
 
+// 初始化
 show();
 
 </script>
