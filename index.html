@@ -4,25 +4,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>学习系统</title>
+<title>学习系统 V3</title>
 
 <style>
 
+/* 🌈 混乱彩虹背景 */
 body{
     margin:0;
     font-family:Arial;
     overflow:hidden;
     background:#0b1020;
-    color:#0f172a;
 }
 
-/* 🌈 混乱彩虹背景 */
+/* 🌈 流体彩虹 */
 .bg{
     position:fixed;
-    top:-40%;
-    left:-40%;
-    width:180%;
-    height:180%;
+    top:-50%;
+    left:-50%;
+    width:200%;
+    height:200%;
     z-index:-3;
 
     background:
@@ -32,15 +32,15 @@ body{
     radial-gradient(circle at 80% 70%, #b5179e, transparent 55%),
     radial-gradient(circle at 10% 80%, #06d6a0, transparent 50%);
 
-    filter: blur(90px) saturate(160%);
+    filter: blur(100px) saturate(160%);
     opacity:0.85;
 
-    animation: drift 20s ease-in-out infinite;
+    animation: drift 22s ease-in-out infinite;
 }
 
 @keyframes drift{
 0%{transform:translate(0,0) scale(1);}
-50%{transform:translate(-4%,3%) scale(1.15);}
+50%{transform:translate(-4%,3%) scale(1.2);}
 100%{transform:translate(0,0) scale(1);}
 }
 
@@ -51,53 +51,76 @@ body{
     left:0;
     width:100%;
     height:100%;
-    backdrop-filter: blur(35px);
+    backdrop-filter: blur(40px);
     background:rgba(255,255,255,0.05);
     z-index:-2;
 }
 
-/* 📦 主布局 */
+/* 🧊 标题 */
 h1{
     text-align:center;
     margin-top:40px;
     color:white;
-    font-size:26px;
 }
 
+/* 📦 容器 */
 .container{
     width:90%;
     max-width:360px;
     margin:30px auto;
 }
 
-/* 🎯 卡片按钮 */
-.card{
-    background:rgba(255,255,255,0.85);
-    margin:12px 0;
+/* 🧊 液态玻璃按钮 */
+.glass-btn{
+    position:relative;
     padding:16px;
-    border-radius:16px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.15);
-    text-align:center;
+    margin:12px 0;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,0.18);
+    backdrop-filter: blur(25px);
+
+    border:1px solid rgba(255,255,255,0.25);
+
+    color:#0f172a;
     font-size:16px;
+
+    text-align:center;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.15),
+        inset 0 1px 0 rgba(255,255,255,0.4);
+
     cursor:pointer;
+
     transition:0.15s;
 }
 
-/* ✨ 点击反馈 */
-.card:active{
-    transform:scale(0.97);
+/* ✨ 高光 */
+.glass-btn::before{
+    content:"";
+    position:absolute;
+    width:160%;
+    height:160%;
+    top:-40%;
+    left:-40%;
+    background:radial-gradient(circle, rgba(255,255,255,0.6), transparent 40%);
+    opacity:0.35;
 }
 
-.icon{
-    margin-right:8px;
+/* 📱 点击效果 */
+.glass-btn:active{
+    transform:scale(0.96);
 }
 
+/* 🌫 底部提示 */
 .tip{
     text-align:center;
     color:white;
     font-size:12px;
+    opacity:0.6;
     margin-top:20px;
-    opacity:0.7;
 }
 
 </style>
@@ -109,19 +132,19 @@ h1{
 <div class="bg"></div>
 <div class="glass"></div>
 
-<h1>📚 英语学习系统</h1>
+<h1>📚 学习系统 V3</h1>
 
 <div class="container">
 
-<div class="card" onclick="go('word.html')">📖 单词学习</div>
-<div class="card" onclick="go('quiz.html')">🧠 练习模式</div>
-<div class="card" onclick="go('favorites.html')">⭐ 收藏</div>
-<div class="card" onclick="go('wronglist.html')">❌ 错题本</div>
-<div class="card" onclick="go('review.html')">🔁 错题复习</div>
+<div class="glass-btn" onclick="go('word.html')">📖 单词学习</div>
+<div class="glass-btn" onclick="go('quiz.html')">🧠 练习模式</div>
+<div class="glass-btn" onclick="go('favorites.html')">⭐ 收藏</div>
+<div class="glass-btn" onclick="go('wronglist.html')">❌ 错题本</div>
+<div class="glass-btn" onclick="go('review.html')">🔁 错题复习</div>
 
 </div>
 
-<div class="tip">轻量学习 · 每天进步一点点</div>
+<div class="tip">Liquid Glass UI · Study System</div>
 
 <script>
 
