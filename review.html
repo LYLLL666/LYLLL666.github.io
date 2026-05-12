@@ -40,3 +40,10 @@ show();
 
 </body>
 </html>
+<div id="debug"></div>
+
+<script>
+window.onerror = e => {
+    document.getElementById("debug").innerText = e;
+};
+</script>
