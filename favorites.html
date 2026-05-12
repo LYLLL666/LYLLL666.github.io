@@ -30,22 +30,21 @@ h1{
 }
 
 .word{
-    font-size:34px;
+    font-size:32px;
     font-weight:bold;
 }
 
 .meaning{
-    margin-top:10px;
+    margin-top:8px;
     font-size:18px;
 }
 
 .btn{
-    margin-top:12px;
-    padding:10px 18px;
+    margin-top:10px;
+    padding:8px 14px;
     border:none;
-    border-radius:12px;
+    border-radius:10px;
     cursor:pointer;
-    font-size:15px;
 }
 
 .delete{
@@ -55,12 +54,11 @@ h1{
 
 .top-btn{
     margin:10px;
-    padding:10px 20px;
+    padding:10px 18px;
     border:none;
-    border-radius:12px;
-    background:#22c55e;
+    border-radius:10px;
+    background:#10b981;
     color:white;
-    cursor:pointer;
 }
 
 .empty{
@@ -68,6 +66,7 @@ h1{
 }
 
 </style>
+
 </head>
 
 <body>
@@ -81,58 +80,58 @@ h1{
 <script>
 
 let favorites =
-JSON.parse(localStorage.getItem("favorites") || "[]");
+JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
 // 渲染
 function render(){
 
-    let list =
-    document.getElementById("list");
+let box = document.getElementById("list");
 
-    list.innerHTML = "";
+box.innerHTML = "";
 
-    if(favorites.length === 0){
-
-        list.innerHTML = "<div class='empty'>暂无收藏</div>";
-        return;
-    }
-
-    favorites.forEach((w, i) => {
-
-        let div = document.createElement("div");
-
-        div.className = "card";
-
-        div.innerHTML = `
-
-            <div class="word">${w.word}</div>
-            <div class="meaning">${w.meaning}</div>
-
-            <button class="btn delete"
-            onclick="remove(${i})">取消收藏</button>
-
-        `;
-
-        list.appendChild(div);
-    });
+if(favorites.length === 0){
+box.innerHTML = "<div class='empty'>暂无收藏</div>";
+return;
 }
 
-// 删除
+favorites.forEach((w,i)=>{
+
+let div = document.createElement("div");
+
+div.className = "card";
+
+div.innerHTML = `
+
+<div class="word">${w.word}</div>
+<div class="meaning">${w.meaning}</div>
+
+<button class="btn delete" onclick="remove(${i})">取消收藏</button>
+
+`;
+
+box.appendChild(div);
+
+});
+
+}
+
+// 删除收藏
 function remove(i){
 
-    favorites.splice(i, 1);
+favorites.splice(i,1);
 
-    localStorage.setItem(
-        "favorites",
-        JSON.stringify(favorites)
-    );
+localStorage.setItem(
+"favorites_list",
+JSON.stringify(favorites)
+);
 
-    render();
+render();
+
 }
 
-// 返回
+// 返回主页
 function back(){
-    location.href = "index.html";
+location.href = "index.html";
 }
 
 render();
