@@ -1,4 +1,18 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学习系统 V6</title>
+
 <style>
+
+/* 🚫 去蓝框 */
+*{
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
 
 body{
     margin:0;
@@ -7,7 +21,7 @@ body{
     background:#f5f7fb;
 }
 
-/* 🌈 苹果风“果味彩虹雾” */
+/* 🌈 苹果“果味彩虹雾”背景 */
 .bg{
     position:fixed;
     inset:-60%;
@@ -26,24 +40,151 @@ body{
     animation: float 16s ease-in-out infinite;
 }
 
-/* 🌊 更“果冻漂浮” */
 @keyframes float{
 0%{transform:translate(0,0) scale(1);}
 50%{transform:translate(-2%,2%) scale(1.12);}
 100%{transform:translate(0,0) scale(1);}
 }
 
-/* 🧊 苹果 visionOS 级玻璃层 */
+/* 🧊 visionOS级玻璃层 */
 .glass{
     position:fixed;
     inset:0;
-
     background:rgba(255,255,255,0.65);
-
     backdrop-filter: blur(40px) saturate(160%);
     -webkit-backdrop-filter: blur(40px);
-
     z-index:-2;
 }
 
+/* 📌 标题 */
+h1{
+    text-align:center;
+    margin-top:40px;
+    color:#0f172a;
+    font-size:26px;
+}
+
+/* 📦 容器 */
+.container{
+    width:90%;
+    max-width:360px;
+    margin:30px auto;
+}
+
+/* 🧊 苹果液态玻璃按钮 */
+.glass-btn{
+    position:relative;
+    padding:18px;
+    margin:14px 0;
+
+    border-radius:24px;
+
+    background:rgba(255,255,255,0.75);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+
+    border:1px solid rgba(255,255,255,0.9);
+
+    color:#0f172a;
+    font-size:16px;
+    font-weight:500;
+
+    text-align:center;
+
+    box-shadow:
+        0 20px 45px rgba(0,0,0,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.95);
+
+    cursor:pointer;
+
+    transition:none;
+
+    transform: translateZ(0);
+}
+
+/* ✨ 高光 */
+.glass-btn::before{
+    content:"";
+    position:absolute;
+    inset:-60%;
+    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), transparent 45%);
+    opacity:0.35;
+}
+
+/* 🌊 hover */
+.glass-btn:hover{
+    transform: translateY(-2px);
+}
+
+/* ⚡ 超高速弹性按压（核心） */
+.glass-btn:active{
+    animation: press 220ms cubic-bezier(.2,1.6,.3,1) forwards;
+}
+
+@keyframes press{
+
+0%{
+    transform: scale(1) translateY(0);
+}
+
+35%{
+    transform: scale(0.78) translateY(6px);
+}
+
+70%{
+    transform: scale(1.08) translateY(-2px);
+}
+
+100%{
+    transform: scale(1) translateY(0);
+}
+
+}
+
+/* 🌫 底部提示 */
+.tip{
+    text-align:center;
+    color:#475569;
+    font-size:12px;
+    margin-top:20px;
+}
+
 </style>
+
+</head>
+
+<body>
+
+<div class="bg"></div>
+<div class="glass"></div>
+
+<h1>📚 学习系统 V6</h1>
+
+<div class="container">
+
+<div class="glass-btn" onclick="go('word.html')">📖 单词学习</div>
+<div class="glass-btn" onclick="go('quiz.html')">🧠 练习模式</div>
+<div class="glass-btn" onclick="go('favorites.html')">⭐ 收藏</div>
+<div class="glass-btn" onclick="go('wronglist.html')">❌ 错题本</div>
+<div class="glass-btn" onclick="go('review.html')">🔁 错题复习</div>
+
+</div>
+
+<div class="tip">Liquid Glass · Apple Style UI</div>
+
+<script>
+
+function go(page){
+
+if(navigator.vibrate){
+navigator.vibrate(8);
+}
+
+location.href = page;
+}
+
+</script>
+
+</body>
+
+</html>
