@@ -6,94 +6,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>English Learning</title>
 
-<style>
-body{
-    margin:0;
-    font-family:Arial;
-    background: linear-gradient(135deg, #d1fae5, #ecfdf5);
-    color:#064e3b;
-    text-align:center;
-}
-
-.container{margin-top:80px;}
-
-h1{
-    color:#065f46;
-}
-
-.card{
-    width:320px;
-    margin:20px auto;
-    background:white;
-    padding:25px;
-    border-radius:20px;
-    box-shadow:0 10px 20px rgba(0,0,0,0.1);
-}
-
-.word{font-size:40px;}
-.meaning{font-size:20px;color:#059669;}
-
-button{
-    margin:10px;
-    padding:12px 25px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:16px;
-}
-
-.learn-btn{background:#34d399;color:white;}
-.like-btn{background:#10b981;color:white;}
-.page-btn{background:#22c55e;color:white;}
-
-.stats{
-    margin-top:20px;
-    color:#065f46;
-}
-</style>
-
-</head>
-
-<body>
-
-<div class="container">
-
-<h1>📚 英语学习系统</h1>
-
-<div class="card">
-    <div class="word" id="word">加载中...</div>
-    <div class="meaning" id="meaning">正在加载词库</div>
-</div>
-
-<button class="learn-btn" onclick="nextWord()">下一个</button>
-<button class="like-btn" onclick="collectWord()">⭐ 收藏</button>
-<button class="page-btn" onclick="openFavorites()">📖 我的收藏</button>
-
-<div class="stats">
-已学习：<span id="count">0</span> | 收藏：<span id="favCount">0</span>
-</div>
-
-</div>
-
 <script>
 
 let words = [];
-let queue = []; // 🔥 打乱后的队列
+let queue = [];
+let currentIndex = 0;
+let isReady = false;
+
 let learned = JSON.parse(localStorage.getItem("learned") || "[]");
 let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 
-// 📥 加载词库
 fetch("words.json")
 .then(res => res.json())
 .then(data => {
+
     words = data;
+    isReady = true;
+
     shuffleWords();
     nextWord();
 });
 
-// 🔀 洗牌函数（关键）
+// 🔀 洗牌
 function shuffleWords(){
-
     queue = [...words];
 
     for(let i = queue.length - 1; i > 0; i--){
@@ -102,14 +37,20 @@ function shuffleWords(){
     }
 }
 
-// 📌 下一个单词（核心改造）
+// 📌 下一个单词
 function nextWord(){
 
-    if(queue.length === 0){
-        shuffleWords(); // 用完重新打乱
+    if(!isReady){
+        alert("词库加载中...");
+        return;
     }
 
-    const w = queue.pop(); // 顺序取，不再随机重复
+    if(queue.length === 0){
+        shuffleWords();
+    }
+
+    const w = queue.pop();
+    currentIndex = words.indexOf(w);
 
     document.getElementById("word").innerText = w.word;
     document.getElementById("meaning").innerText = w.meaning;
@@ -122,11 +63,12 @@ function nextWord(){
     updateStats();
 }
 
-// ⭐ 收藏（保持不变）
+// ⭐ 收藏（🔥彻底修复版）
 function collectWord(){
 
-    const current = document.getElementById("word").innerText;
-    const w = words.find(i => i.word === current);
+    if(!isReady) return;
+
+    const w = words[currentIndex];
 
     if(w && !favorites.find(i => i.word === w.word)){
         favorites.push(w);
@@ -140,6 +82,11 @@ function collectWord(){
 function updateStats(){
     document.getElementById("count").innerText = learned.length;
     document.getElementById("favCount").innerText = favorites.length;
+}
+
+// 📖 打开收藏页
+function openFavorites(){
+    window.location.href = "favorites.html";
 }
 
 </script>
