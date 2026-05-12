@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>单词学习</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#ecfdf5;
+    text-align:center;
+    color:#065f46;
+}
+.card{
+    width:300px;
+    margin:50px auto;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+}
+.word{font-size:40px;}
+.meaning{color:#059669;}
+
+button{
+    padding:10px 20px;
+    margin:10px;
+    border:none;
+    border-radius:10px;
+    background:#10b981;
+    color:white;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📖 单词学习</h1>
+
+<div class="card">
+    <div class="word" id="word"></div>
+    <div class="meaning" id="meaning"></div>
+</div>
+
+<button onclick="nextWord()">下一个</button>
+<button onclick="toggleFav()">⭐ 收藏/取消</button>
+<button onclick="location.href='index.html'">返回</button>
+
+<script>
+
+let words=[];
+let index=0;
+let favorites=JSON.parse(localStorage.getItem("favorites")||"[]");
+
+fetch("words.json").then(r=>r.json()).then(d=>{
+    words=d;
+    show();
+});
+
+function show(){
+    let w=words[index];
+    document.getElementById("word").innerText=w.word;
+    document.getElementById("meaning").innerText=w.meaning;
+    updateBtn();
+}
+
+function nextWord(){
+    index++;
+    if(index>=words.length) index=0;
+    show();
+}
+
+function isFav(word){
+    return favorites.find(i=>i.word===word);
+}
+
+function toggleFav(){
+    let w=words[index];
+
+    if(isFav(w.word)){
+        favorites=favorites.filter(i=>i.word!==w.word);
+    }else{
+        favorites.push(w);
+    }
+
+    localStorage.setItem("favorites",JSON.stringify(favorites));
+    updateBtn();
+}
+
+function updateBtn(){
+    let w=words[index];
+    let btn=document.querySelector("button:nth-of-type(2)");
+
+    btn.innerText = isFav(w.word) ? "❌ 取消收藏" : "⭐ 收藏";
+}
+
+</script>
+
+</body>
+</html>
