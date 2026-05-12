@@ -25,7 +25,7 @@ body{
 }
 
 /* =========================
-   🌈 BACKGROUND CANVAS
+   🌈 LIGHT FIELD BACKGROUND
 ========================= */
 canvas{
     position:fixed;
@@ -36,7 +36,7 @@ canvas{
 }
 
 /* =========================
-   🧊 GLASS ENV LAYER
+   🧊 ENV GLASS LAYER
 ========================= */
 .glass-bg{
     position:fixed;
@@ -68,21 +68,23 @@ canvas{
 }
 
 /* =========================
-   🍏 LIQUID GLASS BUTTON (FINAL POLISHED)
+   💧 LIQUID GLASS BUTTON
+   （水滴曲面最终版）
 ========================= */
 .btn{
     position:relative;
     padding:18px;
     margin:14px 0;
 
-    border-radius:30px;
+    border-radius:36px;
 
-    background:rgba(255,255,255,0.045);
+    /* 🧊 更轻玻璃 */
+    background:rgba(255,255,255,0.04);
 
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
 
-    border:1px solid rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.10);
 
     color:rgba(255,255,255,0.92);
     font-size:16px;
@@ -92,56 +94,73 @@ canvas{
     overflow:hidden;
     cursor:pointer;
 
-    /* 🌊 更自然阴影（苹果关键） */
+    /* 🌊 体积光阴影（去掉叠层感） */
     box-shadow:
-        0 22px 55px rgba(0,0,0,0.45),
-        inset 0 1px 0 rgba(255,255,255,0.18),
-        inset 0 -1px 0 rgba(0,0,0,0.20);
+        0 26px 65px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.20),
+        inset 0 -22px 40px rgba(0,0,0,0.20);
 
     transition:
         transform 0.18s cubic-bezier(.2,.9,.2,1),
-        background 0.25s ease,
-        box-shadow 0.25s ease;
+        background 0.25s ease;
 }
 
 /* =========================
-   ✨ 顶部柔光（连续过渡）
+   💧 水滴顶部光（曲面高光）
 ========================= */
 .btn::before{
     content:"";
     position:absolute;
-    inset:-40%;
+    inset:-30%;
+
+    border-radius:inherit;
 
     background:
     radial-gradient(
         circle at 30% 20%,
-        rgba(255,255,255,0.26),
-        rgba(255,255,255,0.12) 40%,
-        rgba(255,255,255,0.04) 65%,
-        transparent 85%
+        rgba(255,255,255,0.38),
+        rgba(255,255,255,0.18) 30%,
+        rgba(255,255,255,0.06) 55%,
+        transparent 75%
     );
 
-    opacity:0.95;
+    mix-blend-mode: screen;
+    opacity:0.9;
+
     pointer-events:none;
 }
 
 /* =========================
-   🌈 边缘光衰减（关键修复）
+   🌊 水滴边缘曲率光场（核心）
+   👉 解决“层叠感”的关键
 ========================= */
 .btn::after{
     content:"";
     position:absolute;
     inset:0;
 
+    border-radius:inherit;
+
+    /* 四向连续衰减（模拟球面玻璃） */
     background:
     radial-gradient(
         circle at 50% 0%,
-        rgba(255,255,255,0.16),
-        transparent 70%
+        rgba(255,255,255,0.22),
+        transparent 68%
     ),
     radial-gradient(
         circle at 50% 100%,
-        rgba(0,0,0,0.22),
+        rgba(0,0,0,0.26),
+        transparent 72%
+    ),
+    radial-gradient(
+        circle at 0% 50%,
+        rgba(255,255,255,0.12),
+        transparent 70%
+    ),
+    radial-gradient(
+        circle at 100% 50%,
+        rgba(0,0,0,0.20),
         transparent 70%
     );
 
@@ -150,24 +169,24 @@ canvas{
 }
 
 /* =========================
-   🌊 hover（轻浮）
+   🌊 hover
 ========================= */
 .btn:hover{
     transform:translateY(-2px);
 }
 
 /* =========================
-   🧠 按压（材质变化）
+   🧠 按压（液体压缩）
 ========================= */
 .btn:active{
-    transform:scale(0.96);
+    transform:scale(0.965);
 
     background:rgba(255,255,255,0.07);
 
     box-shadow:
         0 12px 28px rgba(0,0,0,0.55),
-        inset 0 16px 30px rgba(0,0,0,0.25),
-        inset 0 0 15px rgba(255,255,255,0.08);
+        inset 0 22px 45px rgba(0,0,0,0.28),
+        inset 0 0 18px rgba(255,255,255,0.08);
 }
 
 /* =========================
@@ -189,7 +208,7 @@ canvas{
 <!-- 🌈 背景 -->
 <canvas id="bg"></canvas>
 
-<!-- 🧊 环境玻璃 -->
+<!-- 🧊 环境 -->
 <div class="glass-bg"></div>
 
 <div class="title">📚 Study System</div>
@@ -204,7 +223,7 @@ canvas{
 
 </div>
 
-<div class="tip">Apple Liquid Glass · Refined Edition</div>
+<div class="tip">Liquid Glass · Droplet Curvature System</div>
 
 <script>
 
