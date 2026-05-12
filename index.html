@@ -4,11 +4,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apple Glass UI</title>
+<title>Liquid Glass System</title>
 
 <style>
 
-/* 🚫 系统基础 */
+/* =======================
+   🍏 BASE SYSTEM RESET
+======================= */
 *{
     margin:0;
     padding:0;
@@ -17,40 +19,46 @@
 }
 
 body{
-    font-family:-apple-system, BlinkMacSystemFont;
-    background:#0b0f18;
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display";
+    background:#070a12;
     overflow:hidden;
 }
 
-/* 🌈 1. 光场背景（不是彩虹，是“光源空间”） */
+/* =======================
+   🌈 LIGHT FIELD BACKGROUND
+======================= */
 .bg{
     position:fixed;
     inset:-80%;
     z-index:-3;
 
+    /* 🌈 苹果“光场”核心 */
     background:
-    radial-gradient(circle at 20% 25%, rgba(255,100,130,0.35), transparent 45%),
-    radial-gradient(circle at 70% 30%, rgba(80,160,255,0.35), transparent 50%),
-    radial-gradient(circle at 40% 80%, rgba(120,255,200,0.25), transparent 55%),
-    radial-gradient(circle at 80% 70%, rgba(200,120,255,0.25), transparent 55%);
+    radial-gradient(circle at 20% 20%, rgba(255, 90, 120, 0.30), transparent 45%),
+    radial-gradient(circle at 70% 25%, rgba(80, 160, 255, 0.28), transparent 50%),
+    radial-gradient(circle at 45% 80%, rgba(90, 255, 190, 0.22), transparent 55%),
+    radial-gradient(circle at 80% 70%, rgba(200, 120, 255, 0.25), transparent 55%),
+    radial-gradient(circle at 10% 85%, rgba(255, 230, 120, 0.18), transparent 55%);
 
-    filter: blur(140px) saturate(160%);
-    animation: drift 18s ease-in-out infinite;
+    filter: blur(160px) saturate(160%);
+    animation: float 20s ease-in-out infinite;
 }
 
-@keyframes drift{
+/* 🌊 光场漂移 */
+@keyframes float{
 0%{transform:translate(0,0) scale(1);}
-50%{transform:translate(-3%,2%) scale(1.2);}
+50%{transform:translate(-3%,2%) scale(1.18);}
 100%{transform:translate(0,0) scale(1);}
 }
 
-/* 🧊 2. 玻璃“折射层”（核心） */
+/* =======================
+   🧊 GLOBAL GLASS LAYER
+======================= */
 .glass-layer{
     position:fixed;
     inset:0;
 
-    /* 👉 苹果关键：低透明 + 强blur */
-    background:rgba(255,255,255,0.05);
+    background:rgba(255,255,255,0.04);
 
     backdrop-filter: blur(70px) saturate(180%);
     -webkit-backdrop-filter: blur(70px);
@@ -58,38 +66,43 @@ body{
     z-index:-2;
 }
 
-/* 📌 标题 */
+/* =======================
+   📌 TITLE
+======================= */
 h1{
     text-align:center;
-    margin-top:50px;
-    color:rgba(255,255,255,0.9);
-    font-size:28px;
+    margin-top:55px;
+    font-size:30px;
     font-weight:600;
+    color:rgba(255,255,255,0.92);
 }
 
-/* 📦 容器 */
+/* =======================
+   📦 CONTAINER
+======================= */
 .container{
     width:90%;
     max-width:360px;
-    margin:35px auto;
+    margin:40px auto;
 }
 
-/* 🍏 3. Apple Glass Button（核心） */
+/* =======================
+   🧊 LIQUID GLASS BUTTON
+======================= */
 .glass-btn{
     position:relative;
     padding:18px;
     margin:14px 0;
 
-    /* 🧠 squircle感（苹果按钮形状） */
-    border-radius:28px;
+    border-radius:32px;
 
-    /* 🧊 玻璃主体 */
+    /* 🧊 核心：真实透明玻璃 */
     background:rgba(255,255,255,0.06);
 
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
+    backdrop-filter: blur(45px) saturate(180%);
+    -webkit-backdrop-filter: blur(45px);
 
-    border:1px solid rgba(255,255,255,0.15);
+    border:1px solid rgba(255,255,255,0.16);
 
     color:rgba(255,255,255,0.92);
     font-size:16px;
@@ -97,59 +110,81 @@ h1{
 
     text-align:center;
 
-    overflow:hidden;
-
-    /* 🌌 深度 */
+    /* 🌌 深度层 */
     box-shadow:
-        0 30px 80px rgba(0,0,0,0.6),
-        inset 0 1px 0 rgba(255,255,255,0.15);
+        0 40px 90px rgba(0,0,0,0.65),
+        inset 0 1px 0 rgba(255,255,255,0.12);
 
     cursor:pointer;
 
-    transition: all 0.25s cubic-bezier(.2,.9,.2,1);
+    overflow:hidden;
+
+    transition:none;
 }
 
-/* ✨ 4. 高光（不是线，是光面） */
+/* =======================
+   ✨ SPECULAR LIGHT (关键)
+======================= */
 .glass-btn::before{
     content:"";
     position:absolute;
-    inset:-50%;
+    inset:-60%;
 
     background:
     radial-gradient(circle at 30% 20%,
         rgba(255,255,255,0.22),
-        transparent 55%);
+        transparent 60%);
 
     opacity:0.9;
 }
 
-/* 🌊 hover轻浮 */
+/* =======================
+   🌊 HOVER FLOAT
+======================= */
 .glass-btn:hover{
-    transform: translateY(-3px);
+    transform:translateY(-3px);
 }
 
-/* 🧠 5. 苹果级“形变按压”（关键） */
+/* =======================
+   🧠 TRUE APPLE PRESS
+   （材质变化，不是动画）
+======================= */
 .glass-btn:active{
 
-    /* 👉 不是缩放，是“压扁” */
-    transform: scale(0.96) translateY(2px);
-
-    /* 👉 玻璃变厚（更实） */
-    background:rgba(255,255,255,0.10);
-
-    /* 👉 光变暗（像被按住） */
-    box-shadow:
-        0 15px 30px rgba(0,0,0,0.7),
-        inset 0 10px 30px rgba(0,0,0,0.3),
-        inset 0 0 20px rgba(255,255,255,0.08);
+    animation: press 160ms cubic-bezier(.2,1.8,.2,1) forwards;
 }
 
-/* 🌫 小字 */
+/* ⚡ 弹性回弹（苹果系统级感觉） */
+@keyframes press{
+
+0%{
+    transform:scale(1);
+    background:rgba(255,255,255,0.06);
+}
+
+40%{
+    transform:scale(0.86) translateY(6px);
+    background:rgba(255,255,255,0.10);
+}
+
+70%{
+    transform:scale(1.05) translateY(-2px);
+}
+
+100%{
+    transform:scale(1) translateY(0);
+}
+
+}
+
+/* =======================
+   🌫 FOOTER
+======================= */
 .tip{
     text-align:center;
-    color:rgba(255,255,255,0.5);
-    font-size:12px;
     margin-top:20px;
+    font-size:12px;
+    color:rgba(255,255,255,0.45);
 }
 
 </style>
@@ -173,7 +208,7 @@ h1{
 
 </div>
 
-<div class="tip">Apple Liquid Glass (True Material Simulation)</div>
+<div class="tip">Apple Liquid Glass – Full Material Simulation</div>
 
 <script>
 
