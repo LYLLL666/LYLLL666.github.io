@@ -39,4 +39,12 @@ h1{ margin-top:60px; }
 <div class="card" onclick="location.href='chat.html'">💬 情景对话 AI</div>
 
 </body>
+<script>
+window.onerror = function(msg, src, line, col, err){
+    document.body.innerHTML =
+    "<h2 style='color:red'>JS报错</h2>" +
+    "<pre>" + msg + "</pre>" +
+    "<br>行号：" + line;
+};
+</script>
 </html>
