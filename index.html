@@ -2,208 +2,249 @@
 <html lang="zh">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Liquid Water UI</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Liquid Glass Study System Pro</title>
 
-<style>
+    <style>
+        /* =========================
+           🧼 基础重置
+        ========================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-/* =========================
-   🧼 BASE
-========================= */
-*{
-    margin:0;
-    padding:0;
-    user-select:none;
-    -webkit-tap-highlight-color: transparent;
-}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #030509;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-body{
-    font-family:-apple-system, BlinkMacSystemFont;
-    background:#05070d;
-    overflow:hidden;
-}
+        /* =========================
+           🌈 背景层
+        ========================= */
+        canvas {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+        }
 
-/* =========================
-   🌈 BACKGROUND
-========================= */
-canvas{
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    z-index:-2;
-}
+        .glass-bg {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(60px) saturate(180%);
+            -webkit-backdrop-filter: blur(60px);
+            z-index: -2;
+        }
 
-/* =========================
-   📦 CONTAINER
-========================= */
-.container{
-    width:90%;
-    max-width:360px;
-    margin:120px auto;
-}
+        /* =========================
+           📌 布局内容
+        ========================= */
+        .title {
+            margin-top: 80px;
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.5px;
+            text-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
 
-/* =========================
-   💧 WATER DROPLET BUTTON
-   👉 只剩轮廓高光
-========================= */
-.btn{
-    position:relative;
-    height:56px;
-    margin:18px 0;
+        .container {
+            width: 90%;
+            max-width: 380px;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
 
-    border-radius:999px;
-    background:transparent;
-    cursor:pointer;
+        /* =========================
+           🧊 核心：液体玻璃按钮
+        ========================= */
+        .btn {
+            position: relative;
+            padding: 20px;
+            border-radius: 24px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.2, 1.2), box-shadow 0.2s ease;
 
-    overflow:hidden;
+            /* 玻璃本体 */
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            
+            /* 模拟精细边框 */
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            
+            /* 文字样式 */
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 17px;
+            font-weight: 500;
+            text-align: center;
+            letter-spacing: 0.5px;
 
-    transition: transform 0.25s ease;
-}
+            /* 深度阴影 */
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        }
 
-/* 💎 轮廓水滴高光 */
-.btn::before{
-    content:"";
-    position:absolute;
-    inset:0;
+        /* ✨ 动态交互光源 (通过JS控制) */
+        .btn::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                circle at var(--x, 50%) var(--y, 50%), 
+                rgba(255, 255, 255, 0.15) 0%, 
+                transparent 60%
+            );
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
 
-    border-radius:inherit;
+        .btn:hover::after {
+            opacity: 1;
+        }
 
-    /* 只保留“边缘体积感” */
-    box-shadow:
-        0 0 0 1px rgba(255,255,255,0.22),
-        0 0 22px rgba(120,200,255,0.35),
-        inset 0 0 14px rgba(255,255,255,0.08);
+        /* 🍎 按压动效 */
+        .btn:active {
+            transform: scale(0.97) translateY(2px);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.5),
+                inset 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
 
-    /* 水滴折射感 */
-    background:
-        radial-gradient(circle at 30% 20%,
-            rgba(255,255,255,0.35),
-            transparent 60%
-        ),
-        radial-gradient(circle at 70% 80%,
-            rgba(255,255,255,0.12),
-            transparent 70%
-        );
+        .tip {
+            margin-top: auto;
+            margin-bottom: 40px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 300;
+        }
 
-    filter: blur(0.25px);
-
-    pointer-events:none;
-}
-
-/* 内部完全透明 */
-.btn::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:transparent;
-    pointer-events:none;
-}
-
-/* hover 浮起 */
-.btn:hover{
-    transform:translateY(-2px);
-}
-
-/* press 水滴压扁 */
-.btn:active{
-    transform:scale(0.93);
-}
-
-.btn:active::before{
-    box-shadow:
-        0 0 0 1px rgba(255,255,255,0.35),
-        0 0 28px rgba(120,200,255,0.55),
-        inset 0 10px 20px rgba(0,0,0,0.25),
-        inset 0 -8px 20px rgba(255,255,255,0.1);
-}
-
-</style>
-
+    </style>
 </head>
 
 <body>
 
-<canvas id="bg"></canvas>
+    <canvas id="bg"></canvas>
+    <div class="glass-bg"></div>
 
-<div class="container">
-    <div class="btn"></div>
-    <div class="btn"></div>
-    <div class="btn"></div>
-    <div class="btn"></div>
-    <div class="btn"></div>
-</div>
+    <div class="title">Study System</div>
 
-<script>
+    <div class="container">
+        <div class="btn" onclick="go('word.html')">📖 单词学习</div>
+        <div class="btn" onclick="go('quiz.html')">🧠 练习模式</div>
+        <div class="btn" onclick="go('favorites.html')">⭐ 收藏中心</div>
+        <div class="btn" onclick="go('wronglist.html')">❌ 错题笔记本</div>
+        <div class="btn" onclick="go('review.html')">🔁 复习巩固</div>
+    </div>
 
-/* =========================
-   🌈 彩色流动背景
-========================= */
-const canvas = document.getElementById("bg");
-const ctx = canvas.getContext("2d");
+    <div class="tip">Experimental Liquid UI · 2026</div>
 
-let w,h;
-function resize(){
-    w = canvas.width = innerWidth;
-    h = canvas.height = innerHeight;
-}
-resize();
-addEventListener("resize", resize);
+    <script>
+        /* =========================
+           🌈 彩虹光场 (优化性能版)
+        ========================= */
+        const canvas = document.getElementById("bg");
+        const ctx = canvas.getContext("2d");
 
-let points = [];
+        let w, h;
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener("resize", resize);
 
-for(let i=0;i<90;i++){
-    points.push({
-        x:Math.random()*w,
-        y:Math.random()*h,
-        vx:(Math.random()-0.5)*0.6,
-        vy:(Math.random()-0.5)*0.6,
-        hue:Math.random()*360,
-        r:Math.random()*150+60
-    });
-}
+        // 减少粒子数量到 60 以提升移动端性能，增大半径
+        let points = [];
+        for (let i = 0; i < 60; i++) {
+            points.push({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                vx: (Math.random() - 0.5) * 0.4,
+                vy: (Math.random() - 0.5) * 0.4,
+                hue: Math.random() * 360,
+                r: Math.random() * 150 + 100
+            });
+        }
 
-function animate(){
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            ctx.globalCompositeOperation = "lighter";
 
-/* 🌫 稍微亮一点的底色（减少黑） */
-ctx.fillStyle = "rgba(10,18,30,0.35)";
-ctx.fillRect(0,0,w,h);
+            for (let p of points) {
+                p.x += p.vx;
+                p.y += p.vy;
 
-ctx.globalCompositeOperation="lighter";
+                if (p.x < -100 || p.x > w + 100) p.vx *= -1;
+                if (p.y < -100 || p.y > h + 100) p.vy *= -1;
 
-for(let p of points){
+                p.hue += 0.2;
 
-p.x+=p.vx;
-p.y+=p.vy;
+                let g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+                g.addColorStop(0, `hsla(${p.hue}, 80%, 60%, 0.25)`);
+                g.addColorStop(1, "transparent");
 
-if(p.x<0||p.x>w)p.vx*=-1;
-if(p.y<0||p.y>h)p.vy*=-1;
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
 
-p.hue+=0.6;
+        /* =========================
+           🖱 鼠标光源追踪逻辑
+        ========================= */
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(btn => {
+            const handleMove = (e) => {
+                const rect = btn.getBoundingClientRect();
+                // 兼容触摸屏和鼠标
+                const xPos = e.touches ? e.touches[0].clientX : e.clientX;
+                const yPos = e.touches ? e.touches[0].clientY : e.clientY;
+                
+                const x = ((xPos - rect.left) / rect.width) * 100;
+                const y = ((yPos - rect.top) / rect.height) * 100;
+                
+                btn.style.setProperty('--x', `${x}%`);
+                btn.style.setProperty('--y', `${y}%`);
+            };
 
-/* 🌈 流动彩色能量 */
-let g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+            btn.addEventListener('mousemove', handleMove);
+            btn.addEventListener('touchmove', handleMove, {passive: true});
+        });
 
-g.addColorStop(0,`hsla(${p.hue},100%,70%,0.45)`);
-g.addColorStop(0.4,`hsla(${p.hue+40},100%,60%,0.18)`);
-g.addColorStop(1,"transparent");
-
-ctx.fillStyle=g;
-ctx.beginPath();
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-ctx.fill();
-
-}
-
-ctx.globalCompositeOperation="source-over";
-
-requestAnimationFrame(animate);
-}
-
-animate();
-
-</script>
+        /* =========================
+           📱 触感反馈与跳转
+        ========================= */
+        function go(page) {
+            if (navigator.vibrate) {
+                navigator.vibrate(10); // 短促震动
+            }
+            
+            // 延迟跳转，让用户看清点击效果
+            setTimeout(() => {
+                console.log("Navigating to:", page);
+                // location.href = page; // 实际使用时取消注释
+            }, 150);
+        }
+    </script>
 
 </body>
 </html>
