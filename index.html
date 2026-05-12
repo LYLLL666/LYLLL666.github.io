@@ -4,66 +4,100 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>英语学习系统</title>
+<title>学习系统</title>
 
 <style>
 
-/* 🌈 整体浅色背景 */
 body{
     margin:0;
-    font-family:Arial, sans-serif;
-    background: linear-gradient(180deg,#f0f9ff,#ecfdf5);
-    text-align:center;
+    font-family:Arial;
+    overflow:hidden;
+    background:#0b1020;
     color:#0f172a;
 }
 
-/* 🧠 标题 */
-h1{
-    margin-top:40px;
-    font-size:26px;
-    font-weight:bold;
+/* 🌈 混乱彩虹背景 */
+.bg{
+    position:fixed;
+    top:-40%;
+    left:-40%;
+    width:180%;
+    height:180%;
+    z-index:-3;
+
+    background:
+    radial-gradient(circle at 20% 20%, #ff4d6d, transparent 45%),
+    radial-gradient(circle at 70% 30%, #ffd166, transparent 50%),
+    radial-gradient(circle at 40% 80%, #4cc9f0, transparent 50%),
+    radial-gradient(circle at 80% 70%, #b5179e, transparent 55%),
+    radial-gradient(circle at 10% 80%, #06d6a0, transparent 50%);
+
+    filter: blur(90px) saturate(160%);
+    opacity:0.85;
+
+    animation: drift 20s ease-in-out infinite;
 }
 
-/* 📦 卡片容器 */
+@keyframes drift{
+0%{transform:translate(0,0) scale(1);}
+50%{transform:translate(-4%,3%) scale(1.15);}
+100%{transform:translate(0,0) scale(1);}
+}
+
+/* 🧊 磨砂层 */
+.glass{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    backdrop-filter: blur(35px);
+    background:rgba(255,255,255,0.05);
+    z-index:-2;
+}
+
+/* 📦 主布局 */
+h1{
+    text-align:center;
+    margin-top:40px;
+    color:white;
+    font-size:26px;
+}
+
 .container{
     width:90%;
     max-width:360px;
     margin:30px auto;
 }
 
-/* 🎯 按钮卡片 */
-.card-btn{
-    background:white;
-    margin:14px 0;
+/* 🎯 卡片按钮 */
+.card{
+    background:rgba(255,255,255,0.85);
+    margin:12px 0;
     padding:16px;
     border-radius:16px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.06);
-    cursor:pointer;
-    transition:all 0.15s ease;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.15);
+    text-align:center;
     font-size:16px;
-    user-select:none;
+    cursor:pointer;
+    transition:0.15s;
 }
 
-/* ✨ 点击效果（轻微震动感） */
-.card-btn:active{
+/* ✨ 点击反馈 */
+.card:active{
     transform:scale(0.97);
-    box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
-/* 🧩 图标 */
 .icon{
-    font-size:20px;
+    margin-right:8px;
 }
 
-/* 🌿 底部提示 */
 .tip{
-    margin-top:20px;
+    text-align:center;
+    color:white;
     font-size:12px;
-    color:#64748b;
+    margin-top:20px;
+    opacity:0.7;
 }
 
 </style>
@@ -72,29 +106,18 @@ h1{
 
 <body>
 
+<div class="bg"></div>
+<div class="glass"></div>
+
 <h1>📚 英语学习系统</h1>
 
 <div class="container">
 
-<div class="card-btn" onclick="go('word.html')">
-<span class="icon">📖</span> 单词学习
-</div>
-
-<div class="card-btn" onclick="go('quiz.html')">
-<span class="icon">🧠</span> 练习模式
-</div>
-
-<div class="card-btn" onclick="go('favorites.html')">
-<span class="icon">⭐</span> 我的收藏
-</div>
-
-<div class="card-btn" onclick="go('wronglist.html')">
-<span class="icon">❌</span> 错题本
-</div>
-
-<div class="card-btn" onclick="go('review.html')">
-<span class="icon">🔁</span> 错题复习
-</div>
+<div class="card" onclick="go('word.html')">📖 单词学习</div>
+<div class="card" onclick="go('quiz.html')">🧠 练习模式</div>
+<div class="card" onclick="go('favorites.html')">⭐ 收藏</div>
+<div class="card" onclick="go('wronglist.html')">❌ 错题本</div>
+<div class="card" onclick="go('review.html')">🔁 错题复习</div>
 
 </div>
 
@@ -104,7 +127,6 @@ h1{
 
 function go(page){
 
-// 📳 轻触反馈（手机震动）
 if(navigator.vibrate){
 navigator.vibrate(15);
 }
