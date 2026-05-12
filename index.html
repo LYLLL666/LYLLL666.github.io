@@ -78,64 +78,42 @@ button{
 <script>
 
 let words = [];
-let index = 0;
-
-// 📦 本地数据
+let queue = []; // 🔥 打乱后的队列
 let learned = JSON.parse(localStorage.getItem("learned") || "[]");
 let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-
-// 🚫 用于“降低重复率”
-let recent = []; // 记录最近2个单词
-const MAX_RECENT = 2;
 
 // 📥 加载词库
 fetch("words.json")
 .then(res => res.json())
 .then(data => {
     words = data;
+    shuffleWords();
     nextWord();
 });
 
-// 📳 震动
-function vibrate(){
-    if(navigator.vibrate){
-        navigator.vibrate(80);
+// 🔀 洗牌函数（关键）
+function shuffleWords(){
+
+    queue = [...words];
+
+    for(let i = queue.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [queue[i], queue[j]] = [queue[j], queue[i]];
     }
 }
 
-// 📌 获取不重复单词
-function getRandomWord(){
-
-    if(words.length === 0) return null;
-
-    let w;
-
-    do {
-        const i = Math.floor(Math.random() * words.length);
-        w = words[i];
-    } while(recent.includes(w.word));
-
-    // 更新最近记录
-    recent.push(w.word);
-    if(recent.length > MAX_RECENT){
-        recent.shift();
-    }
-
-    return w;
-}
-
-// 📌 普通学习
+// 📌 下一个单词（核心改造）
 function nextWord(){
 
-    vibrate();
+    if(queue.length === 0){
+        shuffleWords(); // 用完重新打乱
+    }
 
-    const w = getRandomWord();
-    if(!w) return;
+    const w = queue.pop(); // 顺序取，不再随机重复
 
     document.getElementById("word").innerText = w.word;
     document.getElementById("meaning").innerText = w.meaning;
 
-    // 学习记录
     if(!learned.includes(w.word)){
         learned.push(w.word);
         localStorage.setItem("learned", JSON.stringify(learned));
@@ -144,13 +122,11 @@ function nextWord(){
     updateStats();
 }
 
-// ⭐ 收藏
+// ⭐ 收藏（保持不变）
 function collectWord(){
 
-    vibrate();
-
-    const currentWord = document.getElementById("word").innerText;
-    const w = words.find(i => i.word === currentWord);
+    const current = document.getElementById("word").innerText;
+    const w = words.find(i => i.word === current);
 
     if(w && !favorites.find(i => i.word === w.word)){
         favorites.push(w);
@@ -160,73 +136,10 @@ function collectWord(){
     updateStats();
 }
 
-// 📊 更新统计
+// 📊 更新
 function updateStats(){
     document.getElementById("count").innerText = learned.length;
     document.getElementById("favCount").innerText = favorites.length;
-}
-
-// 📖 收藏练习（重点升级）
-function openFavorites(){
-
-    vibrate();
-
-    if(favorites.length === 0){
-        alert("暂无收藏");
-        return;
-    }
-
-    let i = 0;
-
-    // 🔥 进入“练习模式UI”
-    document.body.innerHTML = `
-        <div style="text-align:center;margin-top:100px;font-family:Arial;">
-            <h1>⭐ 收藏练习模式</h1>
-
-            <div style="
-                width:300px;
-                margin:30px auto;
-                padding:30px;
-                background:#ecfdf5;
-                border-radius:20px;
-                color:#065f46;
-            ">
-                <div id="fword" style="font-size:40px;"></div>
-                <div id="fmeaning" style="font-size:20px;margin-top:10px;"></div>
-            </div>
-
-            <button onclick="nextFav()" style="
-                padding:12px 25px;
-                background:#10b981;
-                color:white;
-                border:none;
-                border-radius:10px;
-                font-size:16px;
-            ">下一个</button>
-
-            <br><br>
-
-            <button onclick="location.reload()">退出练习</button>
-        </div>
-    `;
-
-    window.nextFav = function(){
-
-        vibrate();
-
-        const w = favorites[i];
-
-        document.getElementById("fword").innerText = w.word;
-        document.getElementById("fmeaning").innerText = w.meaning;
-
-        i++;
-
-        if(i >= favorites.length){
-            i = 0; // 循环练习
-        }
-    };
-
-    nextFav();
 }
 
 </script>
