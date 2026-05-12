@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title>我的收藏</title>
+<title>收藏练习</title>
 
 <style>
 body{
@@ -19,7 +19,6 @@ body{
     background:white;
     padding:15px;
     border-radius:15px;
-    box-shadow:0 5px 10px rgba(0,0,0,0.1);
 }
 
 button{
@@ -41,38 +40,36 @@ button{
 
 <div id="list"></div>
 
-<button onclick="practice()">开始练习</button>
-<button onclick="back()">返回学习</button>
+<button id="practiceBtn">开始练习</button>
+<button onclick="back()">返回</button>
 
 <script>
 
-// ✅ 必须从 localStorage 读取
 let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 
 function render(){
 
     const list = document.getElementById("list");
-    list.innerHTML = "";
 
     if(favorites.length === 0){
         list.innerHTML = "<p>暂无收藏</p >";
         return;
     }
 
-    favorites.forEach(w => {
+    list.innerHTML = "";
 
+    favorites.forEach(w => {
         const div = document.createElement("div");
         div.className = "card";
         div.innerHTML = `<b>${w.word}</b><br>${w.meaning}`;
         list.appendChild(div);
-
     });
 }
 
 render();
 
-// 📚 练习模式（修复版）
-function practice(){
+// ✅ 关键修复：用 addEventListener（避免onclick失效）
+document.getElementById("practiceBtn").addEventListener("click", function(){
 
     if(favorites.length === 0){
         alert("没有收藏单词");
@@ -95,9 +92,8 @@ function practice(){
     }
 
     show();
-}
+});
 
-// 🔙 返回
 function back(){
     window.location.href = "index.html";
 }
