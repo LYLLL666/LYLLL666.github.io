@@ -4,161 +4,148 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>学习系统</title>
+<title>Study UI</title>
 
 <style>
 
-/* 🚫 系统级去选中 */
+/* 🚫 系统级清理 */
 *{
+    margin:0;
+    padding:0;
     -webkit-tap-highlight-color: transparent;
-    user-select: none;
+    user-select:none;
 }
 
 body{
-    margin:0;
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", Arial;
-    background:#05070d;
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display";
+    background:#0b0f17;
     overflow:hidden;
 }
 
-/* 🌈 苹果“光场彩虹背景” */
+/* 🌈 苹果“光场环境”（不是彩虹，是空间光） */
 .bg{
     position:fixed;
-    inset:-60%;
+    inset:-80%;
     z-index:-3;
 
     background:
-    radial-gradient(circle at 20% 20%, rgba(255, 120, 160, 0.35), transparent 45%),
-    radial-gradient(circle at 70% 30%, rgba(120, 180, 255, 0.35), transparent 50%),
-    radial-gradient(circle at 40% 80%, rgba(120, 255, 200, 0.3), transparent 55%),
-    radial-gradient(circle at 80% 70%, rgba(200, 140, 255, 0.3), transparent 55%),
-    radial-gradient(circle at 10% 80%, rgba(255, 220, 120, 0.25), transparent 50%);
+    radial-gradient(circle at 20% 25%, rgba(255, 90, 120, 0.35), transparent 45%),
+    radial-gradient(circle at 70% 30%, rgba(80, 160, 255, 0.35), transparent 50%),
+    radial-gradient(circle at 45% 80%, rgba(80, 255, 180, 0.25), transparent 55%),
+    radial-gradient(circle at 85% 70%, rgba(190, 120, 255, 0.25), transparent 55%);
 
-    filter: blur(130px) saturate(140%);
-    opacity:0.95;
-
-    animation: flow 22s ease-in-out infinite;
+    filter: blur(140px) saturate(150%);
+    animation: drift 18s ease-in-out infinite;
 }
 
-@keyframes flow{
+@keyframes drift{
 0%{transform:translate(0,0) scale(1);}
-50%{transform:translate(-3%,2%) scale(1.15);}
+50%{transform:translate(-3%,2%) scale(1.2);}
 100%{transform:translate(0,0) scale(1);}
 }
 
-/* 🧊 visionOS玻璃层 */
-.glass-layer{
+/* 🧊 真实玻璃环境层（关键） */
+.environment{
     position:fixed;
     inset:0;
-    background:rgba(255,255,255,0.06);
-    backdrop-filter: blur(55px) saturate(180%);
-    -webkit-backdrop-filter: blur(55px);
+
+    /* 👉 苹果关键：不是白，是“空气感” */
+    background:rgba(255,255,255,0.04);
+
+    backdrop-filter: blur(60px) saturate(180%);
+    -webkit-backdrop-filter: blur(60px);
+
     z-index:-2;
 }
 
-/* 📌 标题 */
-h1{
+/* 📌 标题（Apple SF风） */
+.title{
     text-align:center;
-    margin-top:50px;
+    margin-top:55px;
     font-size:28px;
     font-weight:600;
-    color:#f8fafc;
+    color:rgba(255,255,255,0.92);
+    letter-spacing:0.3px;
 }
 
 /* 📦 容器 */
 .container{
     width:90%;
     max-width:360px;
-    margin:30px auto;
+    margin:35px auto;
 }
 
-/* 🍏 真·苹果玻璃按钮 */
+/* 🍏 Liquid Glass Card（真正苹果版） */
 .glass-btn{
     position:relative;
     padding:18px;
     margin:14px 0;
 
-    border-radius:28px;
+    border-radius:30px;
 
-    /* 🌈 关键：真正透明 */
-    background:rgba(255,255,255,0.06);
+    /* 🧊 核心：透明+环境色 */
+    background:rgba(255,255,255,0.07);
 
-    backdrop-filter: blur(38px);
-    -webkit-backdrop-filter: blur(38px);
+    backdrop-filter: blur(45px) saturate(180%);
+    -webkit-backdrop-filter: blur(45px);
 
+    /* ✨ 苹果边界光 */
     border:1px solid rgba(255,255,255,0.18);
 
-    color:#f8fafc;
+    color:rgba(255,255,255,0.95);
     font-size:16px;
     font-weight:500;
 
     text-align:center;
 
-    /* 🧊 空间阴影 */
+    /* 🌌 空间阴影 */
     box-shadow:
-        0 25px 60px rgba(0,0,0,0.55),
+        0 30px 80px rgba(0,0,0,0.55),
         inset 0 1px 0 rgba(255,255,255,0.12);
-
-    cursor:pointer;
 
     overflow:hidden;
 
-    /* ⚡瞬时响应（关键） */
-    transition:none;
+    cursor:pointer;
+
+    transition: transform 0.25s cubic-bezier(.2,.9,.2,1);
 }
 
-/* ✨ 光折射层 */
+/* ✨ 真实高光（苹果玻璃关键） */
 .glass-btn::before{
     content:"";
     position:absolute;
     inset:-60%;
 
-    background:radial-gradient(
-        circle at 30% 20%,
-        rgba(255,255,255,0.2),
-        transparent 55%
-    );
+    background:
+    radial-gradient(circle at 30% 20%,
+        rgba(255,255,255,0.18),
+        transparent 55%);
 
-    opacity:0.7;
+    opacity:0.9;
 }
 
 /* 🌊 hover轻浮 */
 .glass-btn:hover{
-    transform: translateY(-2px);
+    transform: translateY(-3px);
 }
 
-/* 🧠 🍏 苹果级真实按压（核心） */
+/* 🧠 苹果级按压（真实系统感） */
 .glass-btn:active{
-    animation: press 180ms cubic-bezier(.2,1.6,.2,1) forwards;
-}
+    transform: scale(0.94) translateY(2px);
 
-/* ⚡ 强弹性回弹（像系统按钮） */
-@keyframes press{
+    background:rgba(255,255,255,0.10);
 
-0%{
-    transform:scale(1);
-}
-
-40%{
-    transform:scale(0.85) translateY(6px);
-}
-
-70%{
-    transform:scale(1.06) translateY(-2px);
-}
-
-100%{
-    transform:scale(1) translateY(0);
-}
-
+    box-shadow:
+        0 10px 25px rgba(0,0,0,0.65),
+        inset 0 10px 25px rgba(0,0,0,0.25);
 }
 
 /* 🌫 小字 */
-.tip{
+.footer{
     text-align:center;
-    color:#94a3b8;
+    margin-top:25px;
     font-size:12px;
-    margin-top:20px;
+    color:rgba(255,255,255,0.5);
 }
 
 </style>
@@ -168,29 +155,28 @@ h1{
 <body>
 
 <div class="bg"></div>
-<div class="glass-layer"></div>
+<div class="environment"></div>
 
-<h1>📚 学习系统</h1>
+<div class="title">📚 Study System</div>
 
 <div class="container">
 
-<div class="glass-btn" onclick="go('word.html')">📖 单词学习</div>
-<div class="glass-btn" onclick="go('quiz.html')">🧠 练习模式</div>
-<div class="glass-btn" onclick="go('favorites.html')">⭐ 收藏</div>
-<div class="glass-btn" onclick="go('wronglist.html')">❌ 错题本</div>
-<div class="glass-btn" onclick="go('review.html')">🔁 错题复习</div>
+<div class="glass-btn" onclick="go('word.html')">📖 Word Study</div>
+<div class="glass-btn" onclick="go('quiz.html')">🧠 Practice</div>
+<div class="glass-btn" onclick="go('favorites.html')">⭐ Favorites</div>
+<div class="glass-btn" onclick="go('wronglist.html')">❌ Mistakes</div>
+<div class="glass-btn" onclick="go('review.html')">🔁 Review</div>
 
 </div>
 
-<div class="tip">Apple Vision Glass UI System</div>
+<div class="footer">Apple Vision-inspired Liquid Glass UI</div>
 
 <script>
 
 function go(page){
 
-// ⚡瞬时反馈
 if(navigator.vibrate){
-navigator.vibrate(10);
+navigator.vibrate(12);
 }
 
 location.href = page;
