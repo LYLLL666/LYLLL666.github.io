@@ -117,19 +117,20 @@ h1{
 
 <script>
 
-// 单词
+// 单词数据
 let words = [];
 
-// 当前题号
-let current = 0;
+// ⭐ 当前题号（会话保存）
+let current =
+parseInt(sessionStorage.getItem("quizCurrent")) || 0;
+
+// ⭐ 历史记录（会话保存）
+let history =
+JSON.parse(sessionStorage.getItem("quizHistory") || "[]");
 
 // 收藏
 let favorites =
 JSON.parse(localStorage.getItem("favorites") || "[]");
-
-// ⭐ 会话记录（网站关闭后自动清空）
-let history =
-JSON.parse(sessionStorage.getItem("quizHistory") || "[]");
 
 // 加载词库
 fetch("words.json")
@@ -138,7 +139,26 @@ fetch("words.json")
 
     words = data;
 
-    shuffle(words);
+    // 第一次进入时才打乱
+    if(!sessionStorage.getItem("quizStarted")){
+
+        shuffle(words);
+
+        sessionStorage.setItem(
+            "quizWords",
+            JSON.stringify(words)
+        );
+
+        sessionStorage.setItem(
+            "quizStarted",
+            "yes"
+        );
+
+    }else{
+
+        words =
+        JSON.parse(sessionStorage.getItem("quizWords"));
+    }
 
     showWord();
 });
@@ -150,7 +170,8 @@ function shuffle(arr){
 
         let j = Math.floor(Math.random() * (i + 1));
 
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+        [arr[i], arr[j]] =
+        [arr[j], arr[i]];
     }
 }
 
@@ -177,7 +198,9 @@ function showWord(){
     while(options.length < 4){
 
         let random =
-        words[Math.floor(Math.random() * words.length)].meaning;
+        words[
+            Math.floor(Math.random() * words.length)
+        ].meaning;
 
         if(!options.includes(random)){
 
@@ -207,17 +230,17 @@ function showWord(){
         box.appendChild(div);
     });
 
-    // 如果做过这题，恢复状态
+    // 恢复记录
     restoreHistory();
 }
 
 // 选择答案
 function selectAnswer(opt){
 
-    let w = words[current];
-
-    // 已经做过就不重复选择
+    // 已做过则禁止重复选择
     if(history[current]) return;
+
+    let w = words[current];
 
     let correct = opt === w.meaning;
 
@@ -229,13 +252,12 @@ function selectAnswer(opt){
         correct: correct
     };
 
-    // 保存会话
     sessionStorage.setItem(
         "quizHistory",
         JSON.stringify(history)
     );
 
-    // 错题自动收藏
+    // 错误加入收藏
     if(!correct){
 
         if(!favorites.find(i => i.word === w.word)){
@@ -284,7 +306,7 @@ function renderAnswer(){
             btn.classList.add("correct");
         }
 
-        // 错误选择
+        // 错误答案
         if(text === record.selected &&
            text !== w.meaning){
 
@@ -305,7 +327,7 @@ function renderAnswer(){
     }
 }
 
-// 恢复记录
+// 恢复状态
 function restoreHistory(){
 
     if(history[current]){
@@ -321,6 +343,11 @@ function nextWord(){
 
         current++;
 
+        sessionStorage.setItem(
+            "quizCurrent",
+            current
+        );
+
         showWord();
     }
 }
@@ -332,6 +359,11 @@ function prevWord(){
 
         current--;
 
+        sessionStorage.setItem(
+            "quizCurrent",
+            current
+        );
+
         showWord();
     }
 }
@@ -341,12 +373,6 @@ function exitQuiz(){
 
     location.href = "index.html";
 }
-
-// ⭐ 网站关闭时清空练习记录
-//window.addEventListener("beforeunload", () => {
-
-  //  sessionStorage.removeItem("quizHistory");
-//});
 
 </script>
 
