@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>练习模式</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#ecfdf5;
+    text-align:center;
+}
+
+.card{
+    width:300px;
+    margin:30px auto;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+}
+
+button{
+    display:block;
+    width:80%;
+    margin:10px auto;
+    padding:10px;
+    border-radius:10px;
+    border:1px solid #d1d5db;
+    background:white;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🧠 练习模式</h1>
+
+<div class="card">
+    <div id="word" style="font-size:40px;"></div>
+    <div id="opts"></div>
+</div>
+
+<button onclick="next()">下一题</button>
+<button onclick="location.href='index.html'">退出</button>
+
+<script>
+
+let words=[];
+let i=0;
+let ans=null;
+let favorites=JSON.parse(localStorage.getItem("favorites")||"[]");
+
+fetch("words.json").then(r=>r.json()).then(d=>{
+    words=d;
+    show();
+});
+
+function show(){
+    let w=words[i];
+    ans=w;
+
+    document.getElementById("word").innerText=w.word;
+
+    let opts=[w.meaning];
+
+    while(opts.length<4){
+        let r=words[Math.floor(Math.random()*words.length)].meaning;
+        if(!opts.includes(r)) opts.push(r);
+    }
+
+    opts.sort(()=>Math.random()-0.5);
+
+    let box=document.getElementById("opts");
+    box.innerHTML="";
+
+    opts.forEach(o=>{
+        let b=document.createElement("button");
+        b.innerText=o;
+
+        b.onclick=()=>{
+            if(o===ans.meaning){
+                b.style.background="#dcfce7";
+            }else{
+                b.style.background="#fee2e2";
+
+                if(!favorites.find(i=>i.word===ans.word)){
+                    favorites.push(ans);
+                    localStorage.setItem("favorites",JSON.stringify(favorites));
+                }
+            }
+        };
+
+        box.appendChild(b);
+    });
+}
+
+function next(){
+    i++;
+    if(i>=words.length) i=0;
+    show();
+}
+
+</script>
+
+</body>
+</html>
