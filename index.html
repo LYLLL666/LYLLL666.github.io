@@ -238,11 +238,7 @@ function checkAnswer(btn, opt){
         btn.style.background = "#22c55e";
         btn.innerText = "✔ 正确";
 
-        result.innerHTML = "<h2 style='color:green'>回答正确 🎉</h2>";
-
-        setTimeout(() => {
-            nextQuiz();
-        }, 800);
+        result.innerHTML = "<h2 style='color:green'>正确 🎉</h2>";
 
     }else{
 
@@ -250,7 +246,7 @@ function checkAnswer(btn, opt){
         btn.style.background = "#ef4444";
         btn.innerText = "❌ 错误";
 
-        result.innerHTML = "<h2 style='color:red'>已加入收藏 ❗</h2>";
+        result.innerHTML = "<h2 style='color:red'>错误，已加入收藏</h2>";
 
         // 自动加入收藏
         if(!favorites.find(i => i.word === quizAnswer.word)){
@@ -259,11 +255,12 @@ function checkAnswer(btn, opt){
         }
 
         updateStats();
-
-        setTimeout(() => {
-            nextQuiz();
-        }, 1000);
     }
+
+    // 🚀 关键：无论对错，都进入下一题
+    setTimeout(() => {
+        nextQuiz();
+    }, 500);
 }
 
 // 🔙 返回主界面
