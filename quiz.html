@@ -57,10 +57,6 @@ body{
     color:#065f46;
 }
 
-.bottom{
-    margin-top:20px;
-}
-
 .bottom button{
     padding:10px 20px;
     margin:5px;
@@ -69,6 +65,10 @@ body{
     background:#10b981;
     color:white;
     cursor:pointer;
+}
+
+.disabled{
+    opacity:0.5;
 }
 
 </style>
@@ -80,7 +80,7 @@ body{
 
 <div class="card">
 
-    <div id="word">加载中...</div>
+    <div id="word"></div>
 
     <div id="options"></div>
 
@@ -89,7 +89,7 @@ body{
 </div>
 
 <div class="bottom">
-    <button onclick="prevWord()">上一题</button>
+    <button id="prevBtn" onclick="prevWord()">上一题</button>
     <button onclick="nextWord()">下一题</button>
     <button onclick="location.href='index.html'">退出</button>
 </div>
@@ -97,8 +97,14 @@ body{
 <script>
 
 let words = [];
+
 let current = 0;
-let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+let favorites =
+JSON.parse(localStorage.getItem("favorites") || "[]");
+
+// ⭐ 当前练习记录（退出即消失）
+let history = [];
 
 // 加载词库
 fetch("words.json")
@@ -112,10 +118,13 @@ fetch("words.json")
     showWord();
 });
 
-// 打乱数组
+// 打乱
 function shuffle(arr){
+
     for(let i = arr.length - 1; i > 0; i--){
+
         let j = Math.floor(Math.random() * (i + 1));
+
         [arr[i], arr[j]] = [arr[j], arr[i]];
     }
 }
@@ -129,6 +138,22 @@ function showWord(){
 
     document.getElementById("msg").innerText = "";
 
+    // 第一题不能上一题
+    let prevBtn = document.getElementById("prevBtn");
+
+    if(current === 0){
+
+        prevBtn.disabled = true;
+
+        prevBtn.classList.add("disabled");
+
+    }else{
+
+        prevBtn.disabled = false;
+
+        prevBtn.classList.remove("disabled");
+    }
+
     let options = [w.meaning];
 
     while(options.length < 4){
@@ -137,6 +162,7 @@ function showWord(){
         words[Math.floor(Math.random() * words.length)].meaning;
 
         if(!options.includes(random)){
+
             options.push(random);
         }
     }
@@ -155,45 +181,33 @@ function showWord(){
 
         btn.innerText = opt;
 
-        btn.onclick = () => checkAnswer(btn, opt);
+        btn.onclick = () => checkAnswer(opt);
 
         box.appendChild(btn);
     });
+
+    // ⭐ 如果做过这题，恢复状态
+    restoreHistory(options);
 }
 
 // 检查答案
-function checkAnswer(btn, opt){
+function checkAnswer(opt){
 
     let w = words[current];
 
-    let all = document.querySelectorAll(".option");
+    let correct = opt === w.meaning;
 
-    all.forEach(i => i.onclick = null);
+    // 保存历史
+    history[current] = {
 
-    // 正确
-    if(opt === w.meaning){
+        selected: opt,
 
-        btn.classList.add("correct");
+        correct: correct
+    };
 
-        document.getElementById("msg").innerText =
-        "✅ 回答正确";
+    // 错题收藏
+    if(!correct){
 
-    }else{
-
-        btn.classList.add("wrong");
-
-        // 显示正确答案
-        all.forEach(i => {
-
-            if(i.innerText === w.meaning){
-                i.classList.add("correct");
-            }
-        });
-
-        document.getElementById("msg").innerText =
-        "❌ 回答错误，已加入收藏";
-
-        // 自动加入收藏
         if(!favorites.find(i => i.word === w.word)){
 
             favorites.push(w);
@@ -205,40 +219,90 @@ function checkAnswer(btn, opt){
         }
     }
 
+    renderAnswer();
+    
     // 自动下一题
     setTimeout(() => {
 
-        nextWord();
+        if(current < words.length - 1){
+
+            nextWord();
+        }
 
     }, 1200);
+}
+
+// 渲染答案
+function renderAnswer(){
+
+    let w = words[current];
+
+    let record = history[current];
+
+    let all = document.querySelectorAll(".option");
+
+    all.forEach(btn => {
+
+        btn.onclick = null;
+
+        let text = btn.innerText;
+
+        // 正确答案
+        if(text === w.meaning){
+
+            btn.classList.add("correct");
+        }
+
+        // 用户选错
+        if(text === record.selected &&
+           text !== w.meaning){
+
+            btn.classList.add("wrong");
+        }
+    });
+
+    // 提示
+    if(record.correct){
+
+        document.getElementById("msg").innerText =
+        "✅ 回答正确";
+
+    }else{
+
+        document.getElementById("msg").innerText =
+        "❌ 回答错误，已加入收藏";
+    }
+}
+
+// 恢复历史
+function restoreHistory(){
+
+    if(history[current]){
+
+        renderAnswer();
+    }
 }
 
 // 下一题
 function nextWord(){
 
-    current++;
+    if(current < words.length - 1){
 
-    if(current >= words.length){
+        current++;
 
-        current = 0;
-
-        shuffle(words);
+        showWord();
     }
-
-    showWord();
 }
 
 // 上一题
 function prevWord(){
 
-    current--;
+    if(current > 0){
 
-    if(current < 0){
+        current--;
 
-        current = words.length - 1;
+        showWord();
     }
-
-    showWord();
 }
 
 </script>
