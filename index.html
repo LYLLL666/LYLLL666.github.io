@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Liquid Glass Study System Pro</title>
+    <title>Liquid Glass Study System</title>
 
     <style>
         /* =========================
@@ -19,8 +19,9 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #030509;
+            /* 苹果典型的深色模式背景色，非纯黑 */
+            background: #121217; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
             overflow: hidden;
             height: 100vh;
             display: flex;
@@ -29,109 +30,106 @@
         }
 
         /* =========================
-           🌈 背景层
+           🌈 背景层 (减弱流动感，增加优雅感)
         ========================= */
         canvas {
             position: fixed;
             inset: 0;
             z-index: -3;
+            filter: blur(40px); /* 额外的模糊让流动更丝滑 */
         }
 
         .glass-bg {
             position: fixed;
             inset: 0;
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(60px) saturate(180%);
-            -webkit-backdrop-filter: blur(60px);
+            /* 增加一点白色的蒙版，减少纯黑感 */
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(80px) saturate(150%);
+            -webkit-backdrop-filter: blur(80px);
             z-index: -2;
         }
 
         /* =========================
-           📌 布局内容
+           📌 标题
         ========================= */
         .title {
-            margin-top: 80px;
-            font-size: 32px;
-            font-weight: 700;
-            color: #fff;
+            margin-top: 70px;
+            font-size: 28px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
             letter-spacing: -0.5px;
-            text-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-
-        .container {
-            width: 90%;
-            max-width: 380px;
-            margin-top: 50px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
         }
 
         /* =========================
-           🧊 核心：液体玻璃按钮
+           🧊 苹果级液态玻璃按键
         ========================= */
-        .btn {
-            position: relative;
-            padding: 20px;
-            border-radius: 24px;
-            cursor: pointer;
-            overflow: hidden;
-            transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.2, 1.2), box-shadow 0.2s ease;
-
-            /* 玻璃本体 */
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            
-            /* 模拟精细边框 */
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            
-            /* 文字样式 */
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 17px;
-            font-weight: 500;
-            text-align: center;
-            letter-spacing: 0.5px;
-
-            /* 深度阴影 */
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.4),
-                inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        .container {
+            width: 90%;
+            max-width: 360px;
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
 
-        /* ✨ 动态交互光源 (通过JS控制) */
-        .btn::after {
+        .btn {
+            position: relative;
+            padding: 18px 24px;
+            border-radius: 22px;
+            cursor: pointer;
+            
+            /* 核心：高通透玻璃材质 */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            
+            /* 苹果标志性的“高光边框” */
+            border: 0.5px solid rgba(255, 255, 255, 0.25);
+            
+            color: #fff;
+            font-size: 17px;
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+
+            /* 阴影：非常轻薄的投影 */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        /* 按键内部的光效 */
+        .btn::before {
             content: "";
             position: absolute;
             inset: 0;
-            background: radial-gradient(
-                circle at var(--x, 50%) var(--y, 50%), 
-                rgba(255, 255, 255, 0.15) 0%, 
-                transparent 60%
-            );
+            border-radius: 22px;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), 
+                        rgba(255, 255, 255, 0.12) 0%, 
+                        transparent 70%);
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.4s;
         }
 
-        .btn:hover::after {
+        .btn:hover::before {
             opacity: 1;
         }
 
-        /* 🍎 按压动效 */
+        /* 🍎 苹果标准的交互缩放 */
         .btn:active {
-            transform: scale(0.97) translateY(2px);
-            background: rgba(255, 255, 255, 0.12);
-            box-shadow: 
-                0 5px 15px rgba(0, 0, 0, 0.5),
-                inset 0 2px 10px rgba(0, 0, 0, 0.2);
+            transform: scale(0.96);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .tip {
             margin-top: auto;
             margin-bottom: 40px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.4);
-            font-weight: 300;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
     </style>
@@ -142,21 +140,21 @@
     <canvas id="bg"></canvas>
     <div class="glass-bg"></div>
 
-    <div class="title">Study System</div>
+    <div class="title">学习系统</div>
 
     <div class="container">
-        <div class="btn" onclick="go('word.html')">📖 单词学习</div>
-        <div class="btn" onclick="go('quiz.html')">🧠 练习模式</div>
-        <div class="btn" onclick="go('favorites.html')">⭐ 收藏中心</div>
-        <div class="btn" onclick="go('wronglist.html')">❌ 错题笔记本</div>
-        <div class="btn" onclick="go('review.html')">🔁 复习巩固</div>
+        <div class="btn" onclick="go('word.html')"><span>📖</span> 单词学习</div>
+        <div class="btn" onclick="go('quiz.html')"><span>🧠</span> 练习模式</div>
+        <div class="btn" onclick="go('favorites.html')"><span>⭐</span> 收藏中心</div>
+        <div class="btn" onclick="go('wronglist.html')"><span>❌</span> 错题本</div>
+        <div class="btn" onclick="go('review.html')"><span>🔁</span> 复习巩固</div>
     </div>
 
-    <div class="tip">Experimental Liquid UI · 2026</div>
+    <div class="tip">Designed for iOS 18 Interface</div>
 
     <script>
         /* =========================
-           🌈 彩虹光场 (优化性能版)
+           🌈 背景逻辑：减弱了速度和亮度
         ========================= */
         const canvas = document.getElementById("bg");
         const ctx = canvas.getContext("2d");
@@ -169,34 +167,32 @@
         resize();
         window.addEventListener("resize", resize);
 
-        // 减少粒子数量到 60 以提升移动端性能，增大半径
         let points = [];
-        for (let i = 0; i < 60; i++) {
+        for (let i = 0; i < 40; i++) { // 减少粒子数量，让背景更干净
             points.push({
                 x: Math.random() * w,
                 y: Math.random() * h,
-                vx: (Math.random() - 0.5) * 0.4,
-                vy: (Math.random() - 0.5) * 0.4,
+                vx: (Math.random() - 0.5) * 0.2, // 速度减慢一倍
+                vy: (Math.random() - 0.5) * 0.2,
                 hue: Math.random() * 360,
-                r: Math.random() * 150 + 100
+                r: Math.random() * 200 + 150
             });
         }
 
         function animate() {
             ctx.clearRect(0, 0, w, h);
-            ctx.globalCompositeOperation = "lighter";
+            ctx.globalCompositeOperation = "screen"; // 改用 screen 让色彩更柔和，不那么暗
 
             for (let p of points) {
                 p.x += p.vx;
                 p.y += p.vy;
-
                 if (p.x < -100 || p.x > w + 100) p.vx *= -1;
                 if (p.y < -100 || p.y > h + 100) p.vy *= -1;
 
-                p.hue += 0.2;
-
+                p.hue += 0.1;
                 let g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
-                g.addColorStop(0, `hsla(${p.hue}, 80%, 60%, 0.25)`);
+                // 降低了颜色的透明度(0.1)，减少“黑色块”感
+                g.addColorStop(0, `hsla(${p.hue}, 60%, 70%, 0.1)`); 
                 g.addColorStop(1, "transparent");
 
                 ctx.fillStyle = g;
@@ -209,42 +205,25 @@
         animate();
 
         /* =========================
-           🖱 鼠标光源追踪逻辑
+           🖱 光源交互控制
         ========================= */
-        const buttons = document.querySelectorAll('.btn');
-        buttons.forEach(btn => {
-            const handleMove = (e) => {
+        document.querySelectorAll('.btn').forEach(btn => {
+            const move = (e) => {
                 const rect = btn.getBoundingClientRect();
-                // 兼容触摸屏和鼠标
                 const xPos = e.touches ? e.touches[0].clientX : e.clientX;
                 const yPos = e.touches ? e.touches[0].clientY : e.clientY;
-                
-                const x = ((xPos - rect.left) / rect.width) * 100;
-                const y = ((yPos - rect.top) / rect.height) * 100;
-                
-                btn.style.setProperty('--x', `${x}%`);
-                btn.style.setProperty('--y', `${y}%`);
+                btn.style.setProperty('--x', `${xPos - rect.left}px`);
+                btn.style.setProperty('--y', `${yPos - rect.top}px`);
             };
-
-            btn.addEventListener('mousemove', handleMove);
-            btn.addEventListener('touchmove', handleMove, {passive: true});
+            btn.addEventListener('mousemove', move);
+            btn.addEventListener('touchstart', move, {passive: true});
         });
 
-        /* =========================
-           📱 触感反馈与跳转
-        ========================= */
         function go(page) {
-            if (navigator.vibrate) {
-                navigator.vibrate(10); // 短促震动
-            }
-            
-            // 延迟跳转，让用户看清点击效果
-            setTimeout(() => {
-                console.log("Navigating to:", page);
-                // location.href = page; // 实际使用时取消注释
-            }, 150);
+            if (navigator.vibrate) navigator.vibrate(8);
+            // 这里可以添加页面跳转逻辑
         }
     </script>
-
 </body>
+
 </html>
