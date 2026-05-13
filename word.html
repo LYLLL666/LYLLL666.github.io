@@ -175,7 +175,7 @@ body::before{
 /* 例句 */
 .example-card{
     margin-top:18px;
-    width:300px;
+    width:250px;
     padding:20px;
     border-radius:24px;
 
@@ -249,7 +249,7 @@ body::before{
 <div class="top">单词学习</div>
 
 <div class="card">
-    <div class="audio-btn" onclick="playAudio()">🔊</div>
+    <div class="audio-btn" onclick="speak()">🔊</div>
 
     <div id="word">加载中...</div>
     <div id="phonetic"></div>
@@ -385,14 +385,14 @@ function playAudio(){
 function nextWord(){
     index = (index + 1) % words.length;
     render();
-    autoPlay();
+    speak();
 }
 
 function prevWord(){
     if(index > 0){
         index--;
         render();
-        autoPlay();
+        speak();
     }
 }
 
@@ -428,7 +428,42 @@ function autoPlay(){
 
     speechSynthesis.speak(utter);
 }
+//新发声
+function speak(){
 
+    let w = words[index];
+    if(!w || !w.word) return;
+
+    let word = w.word.toLowerCase().trim();
+
+    // 🥇 优先音频（最稳定）
+    let audio = new Audio(
+        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${word}--_us_1.mp3`
+    );
+
+    audio.play().catch(() => {
+
+        // 🥈 TTS兜底
+        window.speechSynthesis.cancel();
+
+        let utter = new SpeechSynthesisUtterance(w.word);
+        utter.lang = "en-US";
+        utter.rate = 0.95;
+
+        speechSynthesis.speak(utter);
+    });
+
+    audio.onerror = function(){
+
+        window.speechSynthesis.cancel();
+
+        let utter = new SpeechSynthesisUtterance(w.word);
+        utter.lang = "en-US";
+        utter.rate = 0.95;
+
+        speechSynthesis.speak(utter);
+    };
+}
 
 </script>
 
