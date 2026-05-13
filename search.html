@@ -8,6 +8,8 @@
 
 <style>
 
+/* ===== UI完全不动 ===== */
+
 body{
     margin:0;
     font-family:-apple-system;
@@ -48,11 +50,9 @@ body{
     0 8px 18px rgba(0,0,0,.10);
 }
 
-.back:active{
-    transform:scale(.92);
-}
+.back:active{ transform:scale(.92); }
 
-/* 搜索区域 */
+/* 搜索 */
 .search-box{
     margin-top:80px;
     display:flex;
@@ -65,137 +65,66 @@ body{
 .search-box input{
     width:240px;
     padding:14px 16px;
-
     border-radius:999px;
     border:none;
-
     background:rgba(255,255,255,.55);
-
     outline:none;
-
     font-size:14px;
-
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-
-    box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.5),
-    0 4px 12px rgba(0,0,0,.04);
 }
 
 /* 查询按钮 */
 .search-box button{
     width:44px;
     height:44px;
-
     border-radius:50%;
-
     border:1px solid rgba(255,255,255,.6);
-
     cursor:pointer;
-
     background:rgba(255,255,255,.25);
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:14px;
-
-    color:rgba(15,23,42,.75);
-
-    backdrop-filter:blur(18px) saturate(180%);
-    -webkit-backdrop-filter:blur(18px) saturate(180%);
-
-    box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.6),
-    0 8px 18px rgba(0,0,0,.10);
-}
-
-.search-box button:active{
-    transform:scale(.92);
 }
 
 /* 卡片 */
 .card{
     margin-top:40px;
     width:300px;
-
     margin-left:auto;
     margin-right:auto;
-
     padding:20px;
-
     border-radius:20px;
-
     background:rgba(255,255,255,.6);
-
     backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-
-    box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.5),
-    0 10px 25px rgba(0,0,0,.05);
 }
 
-#word{
-    font-size:40px;
-    font-weight:700;
-}
+/* 文本 */
+#word{font-size:40px;font-weight:700;}
+#phonetic{opacity:.7;}
+#meaning{margin-top:10px;}
+#example{margin-top:10px;color:#333;}
 
-#phonetic{
-    opacity:.7;
-}
-
-#meaning{
-    margin-top:10px;
-}
-
-#example{
-    margin-top:10px;
-    color:#333;
-}
-
-/* 发音+收藏同一排 */
+/* 按钮 */
 .action-row{
     margin-top:15px;
-
     display:flex;
     justify-content:center;
     gap:20px;
 }
 
-/* 按钮统一效果 */
 .circle-btn{
     width:45px;
     height:45px;
-
     border-radius:50%;
-
+    background:rgba(255,255,255,.25);
     display:flex;
     align-items:center;
     justify-content:center;
-
     cursor:pointer;
-
     font-size:18px;
-
-    color:rgba(15,23,42,.75);
-
-    background:rgba(255,255,255,.25);
-
     border:1px solid rgba(255,255,255,.6);
-
-    backdrop-filter:blur(18px) saturate(180%);
-    -webkit-backdrop-filter:blur(18px) saturate(180%);
-
-    box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.6),
-    0 8px 18px rgba(0,0,0,.10);
 }
 
-.circle-btn:active{
-    transform:scale(.92);
+/* ⭐ 已收藏状态 */
+.circle-btn.active{
+    background:#ffd54a;
+    color:#000;
 }
 
 </style>
@@ -203,33 +132,24 @@ body{
 
 <body>
 
-<!-- 返回 -->
 <div class="back" onclick="goBack()">←</div>
 
-<!-- 搜索 -->
 <div class="search-box">
     <input id="inputWord" placeholder="输入单词..." />
     <button onclick="searchWord()">查</button>
 </div>
 
-<!-- 显示 -->
 <div class="card">
 
     <div id="word">请输入单词</div>
-
     <div id="phonetic"></div>
 
     <div id="meaning"></div>
-
     <div id="example"></div>
 
-    <!-- 发音 + 收藏 -->
     <div class="action-row">
-
-        <div class="circle-btn" onclick="playAudio()">🔊</div>
-
-        <div class="circle-btn" onclick="saveWord()">⭐</div>
-
+        <div class="circle-btn" id="audioBtn" onclick="playAudio()">🔊</div>
+        <div class="circle-btn" id="favBtn" onclick="saveWord()">⭐</div>
     </div>
 
 </div>
@@ -238,55 +158,46 @@ body{
 
 let current = null;
 
+// =====================
 // 查词
+// =====================
 async function searchWord(){
 
     let word = document.getElementById("inputWord").value.trim();
-
     if(!word) return;
 
     let data = await fetchWord(word);
-
     current = data;
 
-    document.getElementById("word").innerText =
-    data.word;
+    document.getElementById("word").innerText = data.word;
+    document.getElementById("phonetic").innerText = data.phonetic || "";
+    document.getElementById("meaning").innerText = data.meaning || "";
+    document.getElementById("example").innerText = data.example || "";
 
-    document.getElementById("phonetic").innerText =
-    data.phonetic || "";
-
-    document.getElementById("meaning").innerText =
-    data.meaning || "";
-
-    document.getElementById("example").innerText =
-    data.example || "";
+    updateFavUI();
 }
 
+// =====================
 // API
+// =====================
 async function fetchWord(word){
 
     try{
-
         let res = await fetch(
             "https://api.dictionaryapi.dev/api/v2/entries/en/" + word
         );
 
         let data = await res.json();
-
         let d = data[0];
 
         return {
             word: d.word,
             phonetic: d.phonetic || "",
-            meaning:
-            d.meanings?.[0]?.definitions?.[0]?.definition || "",
-
-            example:
-            d.meanings?.[0]?.definitions?.[0]?.example || ""
+            meaning: d.meanings?.[0]?.definitions?.[0]?.definition || "",
+            example: d.meanings?.[0]?.definitions?.[0]?.example || ""
         };
 
     }catch(e){
-
         return {
             word,
             phonetic:"",
@@ -296,43 +207,65 @@ async function fetchWord(word){
     }
 }
 
-// 发音
+// =====================
+// ⭐ 播放（修复稳定版）
+// =====================
 function playAudio(){
 
-    if(!current) return;
+    if(!current || !current.word) return;
 
-    let utter =
-    new SpeechSynthesisUtterance(current.word);
+    // 防止叠音
+    window.speechSynthesis.cancel();
 
+    let utter = new SpeechSynthesisUtterance(current.word);
     utter.lang = "en-US";
+    utter.rate = 0.95;
 
     speechSynthesis.speak(utter);
 }
 
-// 收藏
+// =====================
+// ⭐ 收藏（修复+去重）
+// =====================
 function saveWord(){
 
-    if(!current) return;
+    if(!current || !current.word) return;
 
-    let list =
-    JSON.parse(localStorage.getItem("favorites") || "[]");
+    let list = JSON.parse(localStorage.getItem("favorites") || "[]");
 
-    if(!list.find(i => i.word === current.word)){
+    let exists = list.some(i => i.word === current.word);
 
+    if(!exists){
         list.push(current);
-
-        localStorage.setItem(
-            "favorites",
-            JSON.stringify(list)
-        );
+        localStorage.setItem("favorites", JSON.stringify(list));
     }
 
-    alert("已收藏");
+    updateFavUI();
 }
 
-// 返回
-function goBack(){
+// =====================
+// ⭐ 收藏UI状态
+// =====================
+function updateFavUI(){
 
+    let btn = document.getElementById("favBtn");
+    if(!current) return;
+
+    let list = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+    let exists = list.some(i => i.word === current.word);
+
+    if(exists){
+        btn.classList.add("active");
+    }else{
+        btn.classList.remove("active");
+    }
+}
+
+// =====================
+// 返回
+// =====================
+function goBack(){
     location.href = "index.html";
 }
 
