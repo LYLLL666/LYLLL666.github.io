@@ -7,7 +7,6 @@
 <title>单词学习</title>
 
 <style>
-
 /* =========================
    BASE
 ========================= */
@@ -49,7 +48,7 @@ body::before{
 }
 
 /* =========================
-   返回按钮（不动UI）
+   返回按钮
 ========================= */
 .back{
     position:fixed;
@@ -101,7 +100,7 @@ body::before{
 ========================= */
 .card{
     margin-top:90px;
-    width:280px;
+    width:300px;
     padding:22px;
     border-radius:24px;
 
@@ -146,7 +145,7 @@ body::before{
 }
 
 /* =========================
-   卡片内发音按钮（新增）
+   卡片内发音按钮
 ========================= */
 .audio-btn{
     position:absolute;
@@ -185,7 +184,7 @@ body::before{
 ========================= */
 .example-card{
     margin-top:18px;
-    width:280px;
+    width:300px;
     padding:20px;
     border-radius:24px;
 
@@ -202,6 +201,17 @@ body::before{
 
     margin-left:auto;
     margin-right:auto;
+}
+
+#exampleTitle{
+    font-weight:600;
+    margin-bottom:8px;
+}
+
+#example, #exampleTranslation{
+    margin-top:6px;
+    font-size:14px;
+    color:rgba(31,41,55,.85);
 }
 
 /* =========================
@@ -261,20 +271,16 @@ body::before{
     opacity:.25;
     pointer-events:none;
 }
-
 </style>
 </head>
 
 <body>
 
 <div class="back" onclick="back()">←</div>
-
 <div class="top">单词学习</div>
 
 <!-- 主卡 -->
 <div class="card">
-
-    <!-- ⭐发音按钮放在卡片内部 -->
     <div class="audio-btn" onclick="playAudio()">🔊</div>
 
     <div id="word">加载中...</div>
@@ -287,17 +293,14 @@ body::before{
 <div class="example-card">
     <div id="exampleTitle">例句</div>
     <div id="example"></div>
+    <div id="exampleTranslation"></div>
 </div>
 
 <!-- 按钮 -->
 <div class="bottom-bar">
-
     <div id="prevBtn" class="btn" onclick="prevWord()">←</div>
-
     <div class="btn" onclick="saveWord()">⭐</div>
-
     <div class="btn" onclick="nextWord()">→</div>
-
 </div>
 
 <script>
@@ -305,68 +308,37 @@ let words = [];
 let index = Number(localStorage.getItem("word_index") || 0);
 let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
-// 加载 words.json
-fetch("words.json")
-.then(res => res.json())
-.then(data => {
-    words = data;
-    if(index >= words.length) index = 0;
-    render();
-});
+// 使用内置 JSON 数据
+words = [
+  {
+    "word": "abandon",
+    "phonetic": "/əˈbændən/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/aba/abandon.mp3",
+    "pos": "verb",
+    "definition": "放弃，遗弃，中止",
+    "example": "He had to abandon his plan due to lack of funds.",
+    "example_translation": "由于资金不足，他不得不放弃计划。"
+  },
+  {
+    "word": "abstract",
+    "phonetic": "/ˈæbstrækt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/abs/abstract.mp3",
+    "pos": "adjective",
+    "definition": "抽象的，理论的；摘要",
+    "example": "The report provides an abstract summary of the research findings.",
+    "example_translation": "报告提供了研究结果的摘要。"
+  }
+];
 
-// 渲染单词卡片
+if(index >= words.length) index = 0;
+render();
+
 function render(){
     if(words.length === 0) return;
 
     let w = words[index];
 
-    document.getElementById("word").innerText = w.word || "";
+    document.getElementById("word").innerText = w.word;
     document.getElementById("phonetic").innerText = w.phonetic || "";
     document.getElementById("pos").innerText = w.pos || "";
-    document.getElementById("meaning").innerText = w.definition || "";
-    
-    // 显示例句 + 翻译
-    if(w.example){
-        let ex = w.example;
-        if(w.example_translation) ex += "\n" + w.example_translation;
-        document.getElementById("example").innerText = ex;
-    } else {
-        document.getElementById("example").innerText = "";
-    }
-
-    // 保存当前索引
-    localStorage.setItem("word_index", index);
-
-    // 前一个按钮禁用判断
-    let prevBtn = document.getElementById("prevBtn");
-    if(index === 0){
-        prevBtn.classList.add("disabled");
-    } else {
-        prevBtn.classList.remove("disabled");
-    }
-}
-
-// 播放音频
-function playAudio(){
-    let w = words[index];
-    if(!w.audio) return;
-
-    let audio = new Audio(w.audio);
-    audio.play();
-}
-
-// 下一单词
-function nextWord(){
-    index = (index + 1) % words.length;
-    render();
-}
-
-// 上一单词
-function prevWord(){
-    if(index > 0){
-        index--;
-        render();
-    }
-}
-
-// 收藏单
+    document.getElementById("meaning").innerText =
