@@ -51,41 +51,6 @@ body::before{
 }
 
 /* =========================
-   APP 容器（关键）
-========================= */
-.app{
-    width:100%;
-    min-height:100vh;
-
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-
-    position:relative;
-}
-
-/* =========================
-   安卓优化（最终稳定版）
-========================= */
-html.is-android body{
-    display:flex;
-    justify-content:center;
-}
-
-/* 🔥只缩 app，不动 body */
-html.is-android .app{
-    transform: scale(0.78);
-    transform-origin: top center;
-    width: 128%;
-}
-
-/* 防止安卓字体抖动 */
-html.is-android *{
-    -webkit-font-smoothing: antialiased;
-    text-rendering: geometricPrecision;
-}
-
-/* =========================
    返回按钮
 ========================= */
 .back{
@@ -123,7 +88,11 @@ html.is-android *{
    标题
 ========================= */
 .top{
-    margin-top:18px;
+    position:absolute;
+    top:18px;
+    width:100%;
+    text-align:center;
+
     font-size:18px;
     font-weight:600;
     color:rgba(15,23,42,.75);
@@ -133,7 +102,7 @@ html.is-android *{
    主卡片
 ========================= */
 .card{
-    margin-top:70px;
+    margin-top:90px;
     width:300px;
     padding:22px;
     border-radius:24px;
@@ -148,6 +117,9 @@ html.is-android *{
     box-shadow:
         inset 0 1px 1px rgba(255,255,255,.4),
         0 10px 30px rgba(0,0,0,.06);
+
+    margin-left:auto;
+    margin-right:auto;
 
     position:relative;
 }
@@ -229,19 +201,27 @@ html.is-android *{
     box-shadow:
         inset 0 1px 1px rgba(255,255,255,.3),
         0 10px 25px rgba(0,0,0,.05);
+
+    margin-left:auto;
+    margin-right:auto;
 }
 
 /* =========================
    按钮区
 ========================= */
 .bottom-bar{
-    position:fixed;
+    position:absolute;
+
     left:50%;
     transform:translateX(-50%);
-    bottom:80px;
+
+    bottom:140px;
 
     display:flex;
     gap:80px;
+
+    align-items:center;
+    justify-content:center;
 }
 
 /* =========================
@@ -254,7 +234,8 @@ html.is-android *{
 
     border:1px solid rgba(255,255,255,.35);
 
-    background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
+    background:
+    linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
 
     backdrop-filter:blur(18px) saturate(170%);
     -webkit-backdrop-filter:blur(18px) saturate(170%);
@@ -283,16 +264,37 @@ html.is-android *{
     pointer-events:none;
 }
 
+/* =========================
+   安卓专属优化（核心）
+========================= */
+body.android .card{
+    width: 92%;
+    margin-top: 70px;
+    padding: 18px;
+}
+
+body.android .example-card{
+    width: 92%;
+}
+
+body.android #word{
+    font-size: 38px;
+}
+
+body.android .bottom-bar{
+    bottom: 110px;
+    gap: 60px;
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="app">
-
 <div class="back" onclick="back()">←</div>
 <div class="top">单词学习</div>
 
+<!-- 主卡 -->
 <div class="card">
     <div class="audio-btn" onclick="speak()">🔊</div>
 
@@ -302,18 +304,18 @@ html.is-android *{
     <div id="meaning"></div>
 </div>
 
+<!-- 例句卡 -->
 <div class="example-card">
     <div id="exampleTitle">例句</div>
     <div id="example"></div>
     <div id="exampleTranslation"></div>
 </div>
 
+<!-- 按钮 -->
 <div class="bottom-bar">
     <div class="btn" onclick="prevWord()">←</div>
     <div class="btn" onclick="saveWord()">⭐</div>
     <div class="btn" onclick="nextWord()">→</div>
-</div>
-
 </div>
 
 <script>
@@ -324,10 +326,9 @@ let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
 /* 安卓识别 */
 if (/Android/i.test(navigator.userAgent)) {
-    document.documentElement.classList.add("is-android");
+    document.body.classList.add("android");
 }
 
-/* 加载词库 */
 fetch("words.json")
 .then(res => res.json())
 .then(data => {
@@ -347,43 +348,22 @@ function render(){
     document.getElementById("meaning").innerText = w.definition || "";
 
     document.getElementById("example").innerText = w.example || "";
-    document.getElementById("exampleTranslation").innerText = w.example_translation || "";
 }
 
-/* 发音 */
 function speak(){
 
     let w = words[index];
     if(!w || !w.word) return;
 
-    let word = w.word.toLowerCase().trim();
+    window.speechSynthesis.cancel();
 
-    let audio = new Audio(
-        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${word}--_us_1.mp3`
-    );
+    let utter = new SpeechSynthesisUtterance(w.word);
+    utter.lang = "en-US";
+    utter.rate = 0.95;
 
-    audio.play().catch(() => {
-        window.speechSynthesis.cancel();
-
-        let u = new SpeechSynthesisUtterance(w.word);
-        u.lang = "en-US";
-        u.rate = 0.95;
-
-        speechSynthesis.speak(u);
-    });
-
-    audio.onerror = function(){
-        window.speechSynthesis.cancel();
-
-        let u = new SpeechSynthesisUtterance(w.word);
-        u.lang = "en-US";
-        u.rate = 0.95;
-
-        speechSynthesis.speak(u);
-    };
+    speechSynthesis.speak(utter);
 }
 
-/* 切换 */
 function nextWord(){
     index = (index + 1) % words.length;
     render();
@@ -398,7 +378,6 @@ function prevWord(){
     }
 }
 
-/* 收藏 */
 function saveWord(){
     let w = words[index];
 
@@ -408,7 +387,6 @@ function saveWord(){
     }
 }
 
-/* 返回 */
 function back(){
     location.href = "index.html";
 }
