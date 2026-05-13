@@ -259,13 +259,13 @@ async function searchWord(){
     // meaning翻译
     translate(data.meaning || "").then(zh => {
         document.getElementById("meaning").innerText =
-            data.meaning + "\n中文：" + zh;
+            data.meaning + " \n " + zh;
     });
 
     // example翻译
     translate(data.example || "").then(zh => {
         document.getElementById("example").innerText =
-            data.example + "\n中文：" + zh;
+            data.example + " \n " + zh;
     });
 }
 
