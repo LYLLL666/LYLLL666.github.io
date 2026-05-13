@@ -376,10 +376,41 @@ function prevWord(){
 /* 收藏 */
 function saveWord(){
     let w = words[index];
+    if(!w || !w.word) return;
 
-    if(!favorites.find(i => i.word === w.word)){
+    // 确保 favorites 是数组
+    let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
+
+    // 查重（更稳）
+    let exists = favorites.some(item => item.word === w.word);
+
+    if(!exists){
         favorites.push(w);
         localStorage.setItem("favorites_list", JSON.stringify(favorites));
+
+        // ✅视觉反馈（不会影响UI结构）
+        let btn = document.querySelector(".btn:nth-child(2)");
+        if(btn){
+            btn.style.transform = "scale(1.2)";
+            btn.innerText = "⭐已收藏";
+
+            setTimeout(() => {
+                btn.style.transform = "scale(1)";
+                btn.innerText = "⭐";
+            }, 800);
+        }
+
+    }else{
+
+        // 已存在提示
+        let btn = document.querySelector(".btn:nth-child(2)");
+        if(btn){
+            btn.innerText = "⚠️已收藏";
+
+            setTimeout(() => {
+                btn.innerText = "⭐";
+            }, 800);
+        }
     }
 }
 
@@ -388,23 +419,21 @@ function back(){
     location.href = "index.html";
 }
 //去掉蓝色选中
-/* =========================
-   🔥 去掉点击蓝色框 / 选中高亮
-========================= */
-
-/* 移动端点击高亮 */
 * {
     -webkit-tap-highlight-color: transparent;
 }
 
-/* 去掉按钮/元素 focus 外框 */
-button, div, span {
+/* 只针对可交互元素去 outline，不影响 div 渲染 */
+button, .btn, .audio-btn, .back {
     outline: none;
 }
 
-/* 防止点击后出现蓝色边框（部分安卓/Chrome） */
-*:focus {
-    outline: none !important;
+/* focus 时也不显示蓝框（安全版） */
+button:focus,
+.btn:focus,
+.audio-btn:focus,
+.back:focus {
+    outline: none;
 }
 
 </script>
