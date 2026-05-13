@@ -284,8 +284,27 @@ let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 fetch("words.json")
 .then(res => res.json())
 .then(data => {
-    words = data;
+
+    // =========================
+    // 🔥 只在进入页面时随机一次
+    // =========================
+    let savedOrder = localStorage.getItem("words_order");
+
+    if(savedOrder){
+        try{
+            words = JSON.parse(savedOrder);
+        }catch(e){
+            words = data;
+            localStorage.removeItem("words_order");
+        }
+    }else{
+        // 🎲 随机排序（只执行一次）
+        words = [...data].sort(() => Math.random() - 0.5);
+        localStorage.setItem("words_order", JSON.stringify(words));
+    }
+
     if(index >= words.length) index = 0;
+
     render();
 
     // 🔥 进入页面自动读第一个单词
