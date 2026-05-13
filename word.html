@@ -8,77 +8,45 @@
 
 <style>
 
-/* =========================
-   BASE
-========================= */
 body{
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
 
-    background: radial-gradient(
-        circle at top,
-        #dff3ff 0%,
-        #f4fbff 40%,
-        #eaf4ff 70%,
-        #e3efff 100%
-    );
-
+    background: radial-gradient(circle at top,#dff3ff,#f4fbff,#eaf4ff,#e3efff);
     height:100vh;
     overflow:hidden;
-
     text-align:center;
     color:#0f172a;
-
-    position:relative;
 }
 
-/* 柔光层 */
-body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-
-    background:
-    radial-gradient(
-        circle at top,
-        rgba(255,255,255,.45),
-        rgba(255,255,255,.10),
-        rgba(0,0,0,.02)
-    );
-
-    pointer-events:none;
-}
-
-/* =========================
-   TITLE
-========================= */
-h1{
-    margin-top:22px;
-    font-size:22px;
+/* 顶部标题 */
+.top{
+    position:absolute;
+    top:18px;
+    width:100%;
+    text-align:center;
+    font-size:18px;
     font-weight:600;
-    color:rgba(15,23,42,.85);
 }
 
-/* =========================
-   WORD CARD（保持原逻辑）
-========================= */
+/* 返回按钮（左上角固定） */
+.back{
+    position:absolute;
+    left:16px;
+    top:16px;
+    font-size:26px;
+    cursor:pointer;
+}
+
+/* 单词卡 */
 .card{
     margin-top:60px;
     width:320px;
     padding:30px;
     border-radius:24px;
-
     background:rgba(255,255,255,.55);
-
-    backdrop-filter:blur(18px) saturate(160%);
-    -webkit-backdrop-filter:blur(18px) saturate(160%);
-
+    backdrop-filter:blur(18px);
     border:1px solid rgba(255,255,255,.35);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.4),
-        0 10px 30px rgba(0,0,0,.06);
-
     margin-left:auto;
     margin-right:auto;
 }
@@ -91,101 +59,42 @@ h1{
 #meaning{
     margin-top:14px;
     font-size:16px;
-    color:rgba(51,65,85,.9);
 }
 
-/* =========================
-   ⭐ 按钮区（关键修改：位置）
-========================= */
-
-/* 👉 不贴底，放在中下 */
+/* 按钮区 */
 .bottom-bar{
     position:absolute;
-
     left:50%;
     transform:translateX(-50%);
-
-    bottom:120px; /* ⭐ 重点：从底部抬上来 */
-
+    bottom:120px;
     display:flex;
-    gap:80px;
-
-    align-items:center;
-    justify-content:center;
+    gap:60px;
 }
 
-/* =========================
-   圆形玻璃按钮（完全保留你的原风格）
-========================= */
+/* 圆形按钮 */
 .btn{
     width:52px;
     height:52px;
-
     border-radius:50%;
-
     border:1px solid rgba(255,255,255,.35);
-
-    background:
-    linear-gradient(
-        to bottom,
-        rgba(255,255,255,.18),
-        rgba(255,255,255,.06)
-    );
-
-    backdrop-filter:blur(18px) saturate(170%);
-    -webkit-backdrop-filter:blur(18px) saturate(170%);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.4),
-        0 8px 18px rgba(0,0,0,.08);
-
+    background:rgba(255,255,255,.2);
+    backdrop-filter:blur(18px);
     cursor:pointer;
-
     font-size:22px;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
-    transition:all .18s ease;
-
-    color:rgba(15,23,42,.75);
-}
-
-.btn:hover{
-    transform:translateY(-2px);
+    transition:.2s;
 }
 
 .btn:active{
     transform:scale(.92);
 }
 
-/* =========================
-   返回按钮
-========================= */
-.back{
-    position:absolute;
-    left:16px;
-    top:16px;
-
-    font-size:26px;
-    cursor:pointer;
-
-    color:rgba(15,23,42,.7);
-}
-
-/* =========================
-   标题
-========================= */
-.top{
-    position:absolute;
-    top:18px;
-    width:100%;
-    text-align:center;
-
-    font-size:18px;
-    font-weight:600;
-    color:rgba(15,23,42,.75);
+/* 禁用状态 */
+.btn.disabled{
+    opacity:.3;
+    pointer-events:none;
 }
 
 </style>
@@ -201,10 +110,15 @@ h1{
     <div id="meaning"></div>
 </div>
 
-<!-- ⭐ 改动重点：仍然圆形，但位置上移 -->
 <div class="bottom-bar">
 
+    <!-- ⭐ 上一个 -->
+    <div id="prevBtn" class="btn" onclick="prevWord()">←</div>
+
+    <!-- 收藏 -->
     <div class="btn" onclick="saveWord()">⭐</div>
+
+    <!-- 下一个 -->
     <div class="btn" onclick="nextWord()">→</div>
 
 </div>
@@ -212,7 +126,7 @@ h1{
 <script>
 
 let words = [];
-let index = 0;
+let index = Number(localStorage.getItem("word_index") || 0);
 
 let favorites =
 JSON.parse(localStorage.getItem("favorites_list") || "[]");
@@ -228,8 +142,33 @@ function render(){
     if(words.length === 0) return;
 
     let w = words[index];
+
     document.getElementById("word").innerText = w.word;
     document.getElementById("meaning").innerText = w.meaning;
+
+    // ⭐ 保存进度
+    localStorage.setItem("word_index", index);
+
+    // ⭐ 控制“上一个”按钮状态
+    let prevBtn = document.getElementById("prevBtn");
+
+    if(index === 0){
+        prevBtn.classList.add("disabled");
+    }else{
+        prevBtn.classList.remove("disabled");
+    }
+}
+
+function nextWord(){
+    index = (index + 1) % words.length;
+    render();
+}
+
+function prevWord(){
+    if(index > 0){
+        index--;
+        render();
+    }
 }
 
 function saveWord(){
@@ -249,17 +188,10 @@ document.getElementById("meaning").innerText =
 "⭐ 已加入收藏";
 
 }else{
-
 document.getElementById("meaning").innerText =
 "⚠️ 已收藏过";
-
 }
 
-}
-
-function nextWord(){
-    index = (index + 1) % words.length;
-    render();
 }
 
 function back(){
