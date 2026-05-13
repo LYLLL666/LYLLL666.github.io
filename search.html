@@ -32,27 +32,38 @@ body{
     cursor:pointer;
 }
 
-/* 搜索 */
+/* 搜索区域 */
 .search-box{
     margin-top:80px;
     display:flex;
     justify-content:center;
     gap:10px;
+    align-items:center;
 }
 
+/* 输入框（加大+更圆润） */
 .search-box input{
-    width:200px;
-    padding:10px;
-    border-radius:12px;
+    width:240px;
+    padding:14px 16px;
+    border-radius:999px;
     border:none;
-    background:rgba(255,255,255,.5);
+    background:rgba(255,255,255,.55);
     outline:none;
+    font-size:14px;
 }
 
+/* 查询按钮（改成圆形） */
 .search-box button{
-    padding:10px 14px;
+    width:44px;
+    height:44px;
+    border-radius:50%;
     border:none;
-    border-radius:12px;
+    cursor:pointer;
+    background:rgba(255,255,255,.55); /* 不改颜色体系 */
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:14px;
 }
 
 /* 卡片 */
@@ -71,34 +82,24 @@ body{
 #meaning{margin-top:10px;}
 #example{margin-top:10px;color:#333;}
 
-/* 发音按钮 */
-.audio-btn{
-    margin-top:10px;
-    width:45px;
-    height:45px;
-    border-radius:50%;
-    background:white;
+/* 发音+收藏同一排 */
+.action-row{
+    margin-top:15px;
     display:flex;
-    align-items:center;
     justify-content:center;
-    cursor:pointer;
-    margin-left:auto;
-    margin-right:auto;
+    gap:20px;
 }
 
-/* 收藏 */
-.fav{
-    margin-top:15px;
+/* 按钮统一 */
+.circle-btn{
     width:45px;
     height:45px;
     border-radius:50%;
     background:white;
     display:flex;
-    justify-content:center;
     align-items:center;
+    justify-content:center;
     cursor:pointer;
-    margin-left:auto;
-    margin-right:auto;
 }
 
 </style>
@@ -106,12 +107,13 @@ body{
 
 <body>
 
+<!-- 返回 -->
 <div class="back" onclick="goBack()">←</div>
 
 <!-- 搜索 -->
 <div class="search-box">
     <input id="inputWord" placeholder="输入单词..." />
-    <button onclick="searchWord()">查词</button>
+    <button onclick="searchWord()">查</button>
 </div>
 
 <!-- 显示 -->
@@ -123,11 +125,13 @@ body{
     <div id="meaning"></div>
     <div id="example"></div>
 
-    <!-- 发音 -->
-    <div class="audio-btn" onclick="playAudio()">🔊</div>
+    <!-- ⭐ 发音 + 收藏（同一排） -->
+    <div class="action-row">
 
-    <!-- 收藏 -->
-    <div class="fav" onclick="saveWord()">⭐</div>
+        <div class="circle-btn" onclick="playAudio()">🔊</div>
+        <div class="circle-btn" onclick="saveWord()">⭐</div>
+
+    </div>
 
 </div>
 
@@ -135,9 +139,7 @@ body{
 
 let current = null;
 
-// =========================
 // 查词
-// =========================
 async function searchWord(){
 
     let word = document.getElementById("inputWord").value.trim();
@@ -152,9 +154,7 @@ async function searchWord(){
     document.getElementById("example").innerText = data.example || "";
 }
 
-// =========================
-// 英文词典 API
-// =========================
+// API
 async function fetchWord(word){
 
     try{
@@ -182,21 +182,15 @@ async function fetchWord(word){
     }
 }
 
-// =========================
-// 发音（系统TTS）
-// =========================
+// 发音
 function playAudio(){
-
     if(!current) return;
-
     let utter = new SpeechSynthesisUtterance(current.word);
     utter.lang = "en-US";
     speechSynthesis.speak(utter);
 }
 
-// =========================
 // 收藏
-// =========================
 function saveWord(){
 
     if(!current) return;
@@ -211,9 +205,7 @@ function saveWord(){
     alert("已收藏");
 }
 
-// =========================
 // 返回
-// =========================
 function goBack(){
     location.href = "index.html";
 }
