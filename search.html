@@ -201,16 +201,13 @@ body{
 
 <body>
 
-<!-- 返回 -->
 <div class="back" onclick="goBack()">←</div>
 
-<!-- 搜索 -->
 <div class="search-box">
     <input id="inputWord" placeholder="输入单词..." />
     <button onclick="searchWord()">查</button>
 </div>
 
-<!-- 显示 -->
 <div class="card">
 
     <div id="word">请输入单词</div>
@@ -245,10 +242,21 @@ async function searchWord(){
     document.getElementById("phonetic").innerText = data.phonetic || "";
     document.getElementById("meaning").innerText = data.meaning || "";
     document.getElementById("example").innerText = data.example || "";
+
+    // ⭐ 加中文翻译
+    translate(data.meaning || data.word).then(zh=>{
+        document.getElementById("meaning").innerText =
+        data.meaning + "\n\n中文：" + zh;
+    });
+
+    translate(data.example || "").then(zh=>{
+        document.getElementById("example").innerText =
+        data.example + "\n\n中文：" + zh;
+    });
 }
 
 // =====================
-// API
+// 英文词典API
 // =====================
 async function fetchWord(word){
 
@@ -278,7 +286,36 @@ async function fetchWord(word){
 }
 
 // =====================
-// 🔊 发音（修复叠音）
+// 🔥 翻译API（新增）
+// =====================
+async function translate(text){
+
+    if(!text) return "";
+
+    try{
+        let res = await fetch("https://libretranslate.de/translate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                q: text,
+                source: "en",
+                target: "zh",
+                format: "text"
+            })
+        });
+
+        let data = await res.json();
+        return data.translatedText || "";
+
+    }catch(e){
+        return "";
+    }
+}
+
+// =====================
+// 发音（防重叠）
 // =====================
 function playAudio(){
 
@@ -294,7 +331,7 @@ function playAudio(){
 }
 
 // =====================
-// ⭐ 收藏（去重修复）
+// 收藏
 // =====================
 function saveWord(){
 
