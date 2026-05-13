@@ -19,7 +19,14 @@
 }
 
 body{
-    overflow:hidden;
+
+    /* ⭐ 允许上下滑动 */
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    min-height:100vh;
+    padding-bottom:40px;
+
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
 
     background: radial-gradient(
@@ -297,22 +304,29 @@ const ctx = canvas.getContext("2d");
 let w,h;
 
 function resize(){
+
     w = canvas.width = window.innerWidth;
     h = canvas.height = window.innerHeight;
 }
 
 resize();
+
 window.addEventListener("resize",resize);
 
 let points=[];
 
 for(let i=0;i<75;i++){
+
     points.push({
+
         x:Math.random()*w,
         y:Math.random()*h,
+
         vx:(Math.random()-.5)*.22,
         vy:(Math.random()-.5)*.22,
+
         hue:Math.random()*360,
+
         r:Math.random()*180+90
     });
 }
@@ -320,6 +334,7 @@ for(let i=0;i<75;i++){
 function draw(){
 
     ctx.clearRect(0,0,w,h);
+
     ctx.globalCompositeOperation="lighter";
 
     for(let p of points){
@@ -355,11 +370,20 @@ function draw(){
         ctx.fillStyle = g;
 
         ctx.beginPath();
-        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.r,
+            0,
+            Math.PI*2
+        );
+
         ctx.fill();
     }
 
     ctx.globalCompositeOperation="source-over";
+
     requestAnimationFrame(draw);
 }
 
@@ -372,6 +396,7 @@ draw();
 function go(page){
 
     if(navigator.vibrate){
+
         navigator.vibrate(10);
     }
 
