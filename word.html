@@ -322,9 +322,25 @@ function render(){
 
 /* ====== 发音 ====== */
 function playAudio(){
+
     let w = words[index];
-    if(!w.audio) return;
-    new Audio(w.audio).play();
+    if(!w || !w.word) return;
+
+    // 停掉上一句（避免叠音）
+    window.speechSynthesis.cancel();
+
+    let utter = new SpeechSynthesisUtterance(w.word);
+
+    // 美式英语发音
+    utter.lang = "en-US";
+
+    // 语速（可调）
+    utter.rate = 0.95;
+
+    // 音调（可调）
+    utter.pitch = 1;
+
+    speechSynthesis.speak(utter);
 }
 
 /* ====== 切换 ====== */
