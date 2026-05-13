@@ -47,9 +47,7 @@ body::before{
     pointer-events:none;
 }
 
-/* =========================
-   返回按钮
-========================= */
+/* 返回按钮 */
 .back{
     position:fixed;
     left:16px;
@@ -81,9 +79,7 @@ body::before{
     z-index:99999;
 }
 
-/* =========================
-   标题
-========================= */
+/* 标题 */
 .top{
     position:absolute;
     top:18px;
@@ -95,9 +91,7 @@ body::before{
     color:rgba(15,23,42,.75);
 }
 
-/* =========================
-   主卡片
-========================= */
+/* 主卡片 */
 .card{
     margin-top:90px;
     width:300px;
@@ -118,7 +112,7 @@ body::before{
     margin-left:auto;
     margin-right:auto;
 
-    position:relative; /* ⭐为了放发音按钮 */
+    position:relative;
 }
 
 #word{
@@ -144,9 +138,7 @@ body::before{
     color:rgba(51,65,85,.9);
 }
 
-/* =========================
-   卡片内发音按钮
-========================= */
+/* 发音按钮 */
 .audio-btn{
     position:absolute;
     top:12px;
@@ -179,9 +171,7 @@ body::before{
     transform:scale(.92);
 }
 
-/* =========================
-   例句卡
-========================= */
+/* 例句 */
 .example-card{
     margin-top:18px;
     width:300px;
@@ -203,38 +193,17 @@ body::before{
     margin-right:auto;
 }
 
-#exampleTitle{
-    font-weight:600;
-    margin-bottom:8px;
-}
-
-#example, #exampleTranslation{
-    margin-top:6px;
-    font-size:14px;
-    color:rgba(31,41,55,.85);
-}
-
-/* =========================
-   按钮区
-========================= */
+/* 按钮 */
 .bottom-bar{
     position:absolute;
-
     left:50%;
     transform:translateX(-50%);
-
     bottom:140px;
 
     display:flex;
     gap:80px;
-
-    align-items:center;
-    justify-content:center;
 }
 
-/* =========================
-   按钮
-========================= */
 .btn{
     width:52px;
     height:52px;
@@ -242,8 +211,7 @@ body::before{
 
     border:1px solid rgba(255,255,255,.35);
 
-    background:
-    linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
+    background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
 
     backdrop-filter:blur(18px) saturate(170%);
     -webkit-backdrop-filter:blur(18px) saturate(170%);
@@ -271,7 +239,6 @@ body::before{
     opacity:.25;
     pointer-events:none;
 }
-
 </style>
 </head>
 
@@ -280,7 +247,6 @@ body::before{
 <div class="back" onclick="back()">←</div>
 <div class="top">单词学习</div>
 
-<!-- 主卡 -->
 <div class="card">
     <div class="audio-btn" onclick="playAudio()">🔊</div>
 
@@ -290,14 +256,12 @@ body::before{
     <div id="meaning"></div>
 </div>
 
-<!-- 例句卡 -->
 <div class="example-card">
     <div id="exampleTitle">例句</div>
     <div id="example"></div>
     <div id="exampleTranslation"></div>
 </div>
 
-<!-- 按钮 -->
 <div class="bottom-bar">
     <div id="prevBtn" class="btn" onclick="prevWord()">←</div>
     <div class="btn" onclick="saveWord()">⭐</div>
@@ -305,19 +269,34 @@ body::before{
 </div>
 
 <script>
+
 let words = [];
 let index = Number(localStorage.getItem("word_index") || 0);
 let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
-// 加载 JSON 文件
+/* ====== 加载词库（已修复） ====== */
 fetch("words.json")
-.then(res => res.json())
+.then(res => {
+    if(!res.ok) throw new Error("words.json加载失败");
+    return res.json();
+})
 .then(data => {
     words = data;
+
+    if(!Array.isArray(words)){
+        throw new Error("words.json不是数组");
+    }
+
     if(index >= words.length) index = 0;
+
     render();
+})
+.catch(err => {
+    console.log(err);
+    document.getElementById("word").innerText = "加载失败";
 });
 
+/* ====== 渲染 ====== */
 function render(){
     if(words.length === 0) return;
 
@@ -336,19 +315,19 @@ function render(){
     let prevBtn = document.getElementById("prevBtn");
     if(index === 0){
         prevBtn.classList.add("disabled");
-    } else {
+    }else{
         prevBtn.classList.remove("disabled");
     }
 }
 
+/* ====== 发音 ====== */
 function playAudio(){
     let w = words[index];
     if(!w.audio) return;
-
-    let audio = new Audio(w.audio);
-    audio.play();
+    new Audio(w.audio).play();
 }
 
+/* ====== 切换 ====== */
 function nextWord(){
     index = (index + 1) % words.length;
     render();
@@ -361,7 +340,25 @@ function prevWord(){
     }
 }
 
+/* ====== 收藏（已修复完整） ====== */
 function saveWord(){
     let w = words[index];
 
-    if(!favorites.find(i =>
+    if(!favorites.find(i => i.word === w.word)){
+        favorites.push(w);
+        localStorage.setItem("favorites_list", JSON.stringify(favorites));
+        document.getElementById("meaning").innerText = "⭐ 已加入收藏";
+    }else{
+        document.getElementById("meaning").innerText = "⚠️ 已收藏过";
+    }
+}
+
+/* ====== 返回 ====== */
+function back(){
+    location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>
