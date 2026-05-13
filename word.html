@@ -4,9 +4,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>单词学习</title>
 
 <style>
+
 /* =========================
    BASE
 ========================= */
@@ -194,7 +196,7 @@ body::before{
     margin-right:auto;
 }
 
-/* 按钮 */
+/* 按钮区 */
 .bottom-bar{
     position:absolute;
     left:50%;
@@ -205,6 +207,7 @@ body::before{
     gap:80px;
 }
 
+/* 按钮 */
 .btn{
     width:52px;
     height:52px;
@@ -236,10 +239,28 @@ body::before{
     transform:scale(.92);
 }
 
-.btn.disabled{
-    opacity:.25;
-    pointer-events:none;
+/* =========================
+   安卓优化（唯一保留）
+========================= */
+body.android .card{
+    width: 92%;
+    margin-top: 70px;
+    padding: 18px;
 }
+
+body.android .example-card{
+    width: 92%;
+}
+
+body.android #word{
+    font-size: 38px;
+}
+
+body.android .bottom-bar{
+    bottom: 120px;
+    gap: 60px;
+}
+
 </style>
 </head>
 
@@ -264,7 +285,7 @@ body::before{
 </div>
 
 <div class="bottom-bar">
-    <div id="prevBtn" class="btn" onclick="prevWord()">←</div>
+    <div class="btn" onclick="prevWord()">←</div>
     <div class="btn" onclick="saveWord()">⭐</div>
     <div class="btn" onclick="nextWord()">→</div>
 </div>
@@ -275,52 +296,20 @@ let words = [];
 let index = Number(localStorage.getItem("word_index") || 0);
 let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
-/* ====== 加载词库（已修复） ====== */
+/* 安卓识别 */
+if (/Android/i.test(navigator.userAgent)) {
+    document.body.classList.add("android");
+}
+
+/* 加载词库 */
 fetch("words.json")
-.then(res => {
-    if(!res.ok) throw new Error("words.json加载失败");
-    return res.json();
-})
+.then(res => res.json())
 .then(data => {
-
-    let saved = localStorage.getItem("words_order");
-
-    // 🔥 默认用原始数据
-    let finalWords = data;
-
-    if(saved){
-        try {
-            let parsed = JSON.parse(saved);
-
-            // 确保数据有效
-            if(Array.isArray(parsed) && parsed.length > 0){
-                finalWords = parsed;
-            }
-
-        } catch(e){
-            console.log("缓存损坏，已重置");
-            localStorage.removeItem("words_order");
-        }
-    };
-
-    // 如果没有缓存 → 随机一次
-    if(!saved){
-        finalWords = data.sort(() => Math.random() - 0.5);
-        localStorage.setItem("words_order", JSON.stringify(finalWords));
-    }
-
-    words = finalWords;
-
+    words = data;
     if(index >= words.length) index = 0;
-
     render();
-})
-.catch(err => {
-    console.log(err);
-    document.getElementById("word").innerText = "加载失败";
 });
 
-/* ====== 渲染 ====== */
 function render(){
     if(words.length === 0) return;
 
@@ -333,55 +322,38 @@ function render(){
 
     document.getElementById("example").innerText = w.example || "";
     document.getElementById("exampleTranslation").innerText = w.example_translation || "";
-
-    localStorage.setItem("word_index", index);
-
-    let prevBtn = document.getElementById("prevBtn");
-    if(index === 0){
-        prevBtn.classList.add("disabled");
-    }else{
-        prevBtn.classList.remove("disabled");
-    }
 }
 
-/* ====== 发音 ====== */
-function playAudio(){
+function speak(){
+
+    if(!words.length) return;
 
     let w = words[index];
     if(!w || !w.word) return;
 
     let word = w.word.toLowerCase().trim();
 
-    // 🥇 第一方案：Google Oxford 音频（稳定优先）
     let audio = new Audio(
         `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${word}--_us_1.mp3`
     );
 
     audio.play().catch(() => {
-
-        // 🥈 兜底：浏览器 TTS
         window.speechSynthesis.cancel();
-
-        let utter = new SpeechSynthesisUtterance(w.word);
-        utter.lang = "en-US";
-        utter.rate = 0.95;
-
-        speechSynthesis.speak(utter);
+        let u = new SpeechSynthesisUtterance(w.word);
+        u.lang = "en-US";
+        u.rate = 0.95;
+        speechSynthesis.speak(u);
     });
 
-    // ❗如果音频 404，也走兜底
     audio.onerror = function(){
         window.speechSynthesis.cancel();
-
-        let utter = new SpeechSynthesisUtterance(w.word);
-        utter.lang = "en-US";
-        utter.rate = 0.95;
-
-        speechSynthesis.speak(utter);
+        let u = new SpeechSynthesisUtterance(w.word);
+        u.lang = "en-US";
+        u.rate = 0.95;
+        speechSynthesis.speak(u);
     };
 }
 
-/* ====== 切换 ====== */
 function nextWord(){
     index = (index + 1) % words.length;
     render();
@@ -396,99 +368,17 @@ function prevWord(){
     }
 }
 
-/* ====== 收藏（已修复完整） ====== */
 function saveWord(){
     let w = words[index];
 
     if(!favorites.find(i => i.word === w.word)){
         favorites.push(w);
         localStorage.setItem("favorites_list", JSON.stringify(favorites));
-        document.getElementById("meaning").innerText = "⭐ 已加入收藏";
-    }else{
-        document.getElementById("meaning").innerText = "⚠️ 已收藏过";
     }
 }
 
-/* ====== 返回 ====== */
 function back(){
     location.href = "index.html";
-}
-//自动阅读
-function autoPlay(){
-
-    let w = words[index];
-    if(!w || !w.word) return;
-
-    // 防止叠音
-    window.speechSynthesis.cancel();
-
-    let utter = new SpeechSynthesisUtterance(w.word);
-    utter.lang = "en-US";
-    utter.rate = 0.95;
-
-    speechSynthesis.speak(utter);
-}
-//新发声
-function speak(){
-
-    let w = words[index];
-    if(!w || !w.word) return;
-
-    let word = w.word.toLowerCase().trim();
-
-    // 🥇 优先音频（最稳定）
-    let audio = new Audio(
-        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${word}--_us_1.mp3`
-    );
-
-    audio.play().catch(() => {
-
-        // 🥈 TTS兜底
-        window.speechSynthesis.cancel();
-
-        let utter = new SpeechSynthesisUtterance(w.word);
-        utter.lang = "en-US";
-        utter.rate = 0.95;
-
-        speechSynthesis.speak(utter);
-    });
-
-    audio.onerror = function(){
-
-        window.speechSynthesis.cancel();
-
-        let utter = new SpeechSynthesisUtterance(w.word);
-        utter.lang = "en-US";
-        utter.rate = 0.95;
-
-        speechSynthesis.speak(utter);
-    };
-}
-
-@media screen and (max-width: 500px) {
-
-    /* 安卓/小屏优化 */
-    .card{
-        width: 92%;
-        margin-top: 70px;
-        padding: 18px;
-    }
-
-    .example-card{
-        width: 92%;
-    }
-
-    .bottom-bar{
-        bottom: 110px;
-        gap: 60px;
-    }
-
-    #word{
-        font-size: 38px;
-    }
-}
-@supports (-webkit-touch-callout: none) {
-    /* iOS忽略 */
 }
 
 </script>
