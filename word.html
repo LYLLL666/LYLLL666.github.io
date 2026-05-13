@@ -375,50 +375,91 @@ function prevWord(){
 
 /* 收藏 */
 function saveWord(){
+
     let w = words[index];
     if(!w || !w.word) return;
 
-    // 确保 favorites 是数组
     let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
-    // 查重（更稳）
     let exists = favorites.some(item => item.word === w.word);
 
+    let btn = document.getElementById("favBtn") 
+              || document.querySelector(".btn:nth-child(2)");
+
     if(!exists){
+
         favorites.push(w);
         localStorage.setItem("favorites_list", JSON.stringify(favorites));
 
-        // ✅视觉反馈（不会影响UI结构）
-        let btn = document.querySelector(".btn:nth-child(2)");
         if(btn){
-            btn.style.transform = "scale(1.2)";
-            btn.innerText = "⭐已收藏";
+            // ⭐轻微动画 + 状态变化
+            btn.style.transform = "scale(1.15)";
+            btn.style.opacity = "0.9";
+            btn.innerText = "⭐";
 
             setTimeout(() => {
                 btn.style.transform = "scale(1)";
-                btn.innerText = "⭐";
-            }, 800);
+                btn.style.opacity = "1";
+            }, 200);
         }
+
+        showMiniTip("已收藏 ⭐");
 
     }else{
 
-        // 已存在提示
-        let btn = document.querySelector(".btn:nth-child(2)");
-        if(btn){
-            btn.innerText = "⚠️已收藏";
+        showMiniTip("已经收藏过了");
 
+        if(btn){
+            btn.style.transform = "scale(0.95)";
             setTimeout(() => {
-                btn.innerText = "⭐";
-            }, 800);
+                btn.style.transform = "scale(1)";
+            }, 150);
         }
     }
 }
-
 /* 返回 */
 function back(){
     location.href = "index.html";
 }
-//去掉蓝色选中
+//收藏效果
+function showMiniTip(text){
+
+    let tip = document.createElement("div");
+
+    tip.innerText = text;
+
+    tip.style.position = "fixed";
+    tip.style.left = "50%";
+    tip.style.bottom = "140px";
+    tip.style.transform = "translateX(-50%)";
+
+    tip.style.padding = "6px 12px";
+    tip.style.borderRadius = "10px";
+
+    tip.style.fontSize = "13px";
+    tip.style.color = "#fff";
+    tip.style.background = "rgba(0,0,0,0.65)";
+    tip.style.zIndex = "99999";
+
+    tip.style.opacity = "0";
+    tip.style.transition = "all 0.2s ease";
+
+    document.body.appendChild(tip);
+
+    setTimeout(() => {
+        tip.style.opacity = "1";
+        tip.style.transform = "translateX(-50%) translateY(-6px)";
+    }, 10);
+
+    setTimeout(() => {
+        tip.style.opacity = "0";
+        tip.style.transform = "translateX(-50%)";
+    }, 900);
+
+    setTimeout(() => {
+        tip.remove();
+    }, 1200);
+}
 
 
 </script>
