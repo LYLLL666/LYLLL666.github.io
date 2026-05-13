@@ -242,6 +242,7 @@ async function searchWord(){
     // 1. 英文原文显示
     // =====================
     document.getElementById("word").innerText = data.word;
+    document.getElementById("phonetic").innerText = data.phonetic || "";
     document.getElementById("meaning").innerText = data.meaning || "";
     document.getElementById("example").innerText = data.example || "";
 
