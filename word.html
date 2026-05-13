@@ -50,25 +50,12 @@ body::before{
 }
 
 /* =========================
-   TITLE
-========================= */
-.top{
-    position:absolute;
-    top:18px;
-    width:100%;
-    text-align:center;
-    font-size:18px;
-    font-weight:600;
-    color:rgba(15,23,42,.75);
-}
-
-/* =========================
-   BACK BUTTON（UI不变，只修复可见性）
+   返回按钮（独立层）
 ========================= */
 .back{
     position:absolute;
     left:16px;
-    top:8px;
+    top:28px;
 
     width:44px;
     height:44px;
@@ -97,10 +84,28 @@ body::before{
 }
 
 /* =========================
-   CARD（UI不变）
+   标题（已独立于卡片）
+========================= */
+.top{
+    position:absolute;
+    top:18px;
+    left:0;
+    width:100%;
+
+    text-align:center;
+
+    font-size:18px;
+    font-weight:600;
+    color:rgba(15,23,42,.75);
+
+    z-index:9998;
+}
+
+/* =========================
+   单词卡
 ========================= */
 .card{
-    margin-top:60px;
+    margin-top:80px;
     width:320px;
     padding:30px;
     border-radius:24px;
@@ -132,13 +137,13 @@ body::before{
 }
 
 /* =========================
-   BUTTON AREA（UI不变，只保留你结构）
+   按钮区域（UI不变）
 ========================= */
 .bottom-bar{
     position:absolute;
     left:50%;
     transform:translateX(-50%);
-    bottom:140px; /* 已上移 */
+    bottom:140px;
 
     display:flex;
     gap:80px;
@@ -147,7 +152,7 @@ body::before{
 }
 
 /* =========================
-   BUTTON STYLE（不改UI）
+   圆形按钮（UI不变）
 ========================= */
 .btn{
     width:52px;
@@ -195,25 +200,25 @@ body::before{
 
 <body>
 
-<!-- 返回按钮 -->
+<!-- 返回 -->
 <div class="back" onclick="back()">←</div>
 
+<!-- 标题（已移出卡片） -->
 <div class="top">单词学习</div>
 
+<!-- 单词卡 -->
 <div class="card">
     <div id="word">加载中...</div>
     <div id="meaning"></div>
 </div>
 
+<!-- 底部按钮 -->
 <div class="bottom-bar">
 
-    <!-- 上一个 -->
     <div id="prevBtn" class="btn" onclick="prevWord()">←</div>
 
-    <!-- 收藏 -->
     <div class="btn" onclick="saveWord()">⭐</div>
 
-    <!-- 下一个 -->
     <div class="btn" onclick="nextWord()">→</div>
 
 </div>
@@ -244,10 +249,10 @@ function render(){
     document.getElementById("word").innerText = w.word;
     document.getElementById("meaning").innerText = w.meaning;
 
-    // ⭐ 保存进度（退出也能恢复）
+    // 保存进度
     localStorage.setItem("word_index", index);
 
-    // ⭐ 上一个按钮控制
+    // 上一个按钮控制
     let prevBtn = document.getElementById("prevBtn");
 
     if(index === 0){
@@ -277,10 +282,7 @@ if(!favorites.find(i => i.word === w.word)){
 
 favorites.push(w);
 
-localStorage.setItem(
-"favorites_list",
-JSON.stringify(favorites)
-);
+localStorage.setItem("favorites_list", JSON.stringify(favorites));
 
 document.getElementById("meaning").innerText =
 "⭐ 已加入收藏";
