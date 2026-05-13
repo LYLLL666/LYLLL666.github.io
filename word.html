@@ -4,12 +4,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>单词学习</title>
 
 <style>
 
 /* =========================
-   BASE（核心修复：居中系统）
+   BASE
 ========================= */
 body{
     margin:0;
@@ -24,23 +25,20 @@ body{
     );
 
     min-height:100vh;
-    overflow-x:hidden;
     overflow-y:auto;
-
-    display:flex;
-    flex-direction:column;
-    align-items:center;   /* ⭐关键：水平绝对居中 */
-    justify-content:flex-start;
+    overflow-x:hidden;
 
     text-align:center;
     color:#0f172a;
+
+    position:relative;
 }
 
-/* 背景光层 */
 body::before{
     content:"";
     position:fixed;
     inset:0;
+
     background:
     radial-gradient(
         circle at top,
@@ -48,11 +46,47 @@ body::before{
         rgba(255,255,255,.10),
         rgba(0,0,0,.02)
     );
+
     pointer-events:none;
 }
 
 /* =========================
-   返回按钮（固定，不参与居中计算）
+   APP 容器（关键）
+========================= */
+.app{
+    width:100%;
+    min-height:100vh;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    position:relative;
+}
+
+/* =========================
+   安卓优化（最终稳定版）
+========================= */
+html.is-android body{
+    display:flex;
+    justify-content:center;
+}
+
+/* 🔥只缩 app，不动 body */
+html.is-android .app{
+    transform: scale(0.78);
+    transform-origin: top center;
+    width: 128%;
+}
+
+/* 防止安卓字体抖动 */
+html.is-android *{
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+}
+
+/* =========================
+   返回按钮
 ========================= */
 .back{
     position:fixed;
@@ -71,14 +105,18 @@ body::before{
     cursor:pointer;
 
     color:#0f172a;
+
     background:rgba(255,255,255,.35);
     border:1px solid rgba(255,255,255,.6);
 
     backdrop-filter:blur(18px);
     -webkit-backdrop-filter:blur(18px);
 
-    box-shadow:0 8px 18px rgba(0,0,0,.12);
-    z-index:9999;
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.12),
+        inset 0 1px 1px rgba(255,255,255,.6);
+
+    z-index:99999;
 }
 
 /* =========================
@@ -92,17 +130,16 @@ body::before{
 }
 
 /* =========================
-   主卡片（核心修复：max-width + 不用固定300）
+   主卡片
 ========================= */
 .card{
-    width:90%;
-    max-width:320px;
-
     margin-top:70px;
+    width:300px;
     padding:22px;
     border-radius:24px;
 
     background:rgba(255,255,255,.55);
+
     backdrop-filter:blur(18px) saturate(160%);
     -webkit-backdrop-filter:blur(18px) saturate(160%);
 
@@ -115,7 +152,6 @@ body::before{
     position:relative;
 }
 
-/* 文本 */
 #word{
     font-size:44px;
     font-weight:700;
@@ -140,7 +176,7 @@ body::before{
 }
 
 /* =========================
-   发音按钮（不动）
+   发音按钮
 ========================= */
 .audio-btn{
     position:absolute;
@@ -149,6 +185,7 @@ body::before{
 
     width:38px;
     height:38px;
+
     border-radius:50%;
 
     display:flex;
@@ -156,46 +193,60 @@ body::before{
     justify-content:center;
 
     cursor:pointer;
+
     font-size:16px;
 
     background:rgba(255,255,255,.35);
     border:1px solid rgba(255,255,255,.6);
 
     backdrop-filter:blur(12px);
-    box-shadow:0 6px 12px rgba(0,0,0,.10);
+
+    box-shadow:
+        0 6px 12px rgba(0,0,0,.10),
+        inset 0 1px 1px rgba(255,255,255,.6);
+}
+
+.audio-btn:active{
+    transform:scale(.92);
 }
 
 /* =========================
-   例句卡（同宽逻辑）
+   例句卡
 ========================= */
 .example-card{
-    width:90%;
-    max-width:320px;
-
     margin-top:18px;
+    width:300px;
     padding:20px;
     border-radius:24px;
 
     background:rgba(255,255,255,.45);
+
     backdrop-filter:blur(18px) saturate(160%);
+    -webkit-backdrop-filter:blur(18px) saturate(160%);
 
     border:1px solid rgba(255,255,255,.35);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.3),
+        0 10px 25px rgba(0,0,0,.05);
 }
 
 /* =========================
-   按钮区（真正稳定关键）
+   按钮区
 ========================= */
 .bottom-bar{
-    position:fixed;   /* ⭐关键：脱离布局，不会歪 */
-    bottom:120px;
+    position:fixed;
     left:50%;
     transform:translateX(-50%);
+    bottom:80px;
 
     display:flex;
-    gap:70px;
+    gap:80px;
 }
 
-/* 按钮 */
+/* =========================
+   按钮
+========================= */
 .btn{
     width:52px;
     height:52px;
@@ -205,14 +256,21 @@ body::before{
 
     background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
 
-    backdrop-filter:blur(18px);
-    box-shadow:0 8px 18px rgba(0,0,0,.08);
+    backdrop-filter:blur(18px) saturate(170%);
+    -webkit-backdrop-filter:blur(18px) saturate(170%);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.4),
+        0 8px 18px rgba(0,0,0,.08);
+
+    cursor:pointer;
+
+    font-size:22px;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    font-size:22px;
     color:rgba(15,23,42,.75);
 }
 
@@ -220,18 +278,19 @@ body::before{
     transform:scale(.92);
 }
 
-/* =========================
-   安卓/IOS 不再区分（关键优化）
-   👉 统一布局 = 不再歪
-========================= */
+.btn.disabled{
+    opacity:.25;
+    pointer-events:none;
+}
 
 </style>
 </head>
 
 <body>
 
-<div class="back" onclick="back()">←</div>
+<div class="app">
 
+<div class="back" onclick="back()">←</div>
 <div class="top">单词学习</div>
 
 <div class="card">
@@ -244,6 +303,7 @@ body::before{
 </div>
 
 <div class="example-card">
+    <div id="exampleTitle">例句</div>
     <div id="example"></div>
     <div id="exampleTranslation"></div>
 </div>
@@ -254,11 +314,18 @@ body::before{
     <div class="btn" onclick="nextWord()">→</div>
 </div>
 
+</div>
+
 <script>
 
 let words = [];
 let index = Number(localStorage.getItem("word_index") || 0);
 let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
+
+/* 安卓识别 */
+if (/Android/i.test(navigator.userAgent)) {
+    document.documentElement.classList.add("is-android");
+}
 
 /* 加载词库 */
 fetch("words.json")
@@ -278,25 +345,45 @@ function render(){
     document.getElementById("phonetic").innerText = w.phonetic || "";
     document.getElementById("pos").innerText = w.pos || "";
     document.getElementById("meaning").innerText = w.definition || "";
+
     document.getElementById("example").innerText = w.example || "";
     document.getElementById("exampleTranslation").innerText = w.example_translation || "";
 }
 
+/* 发音 */
 function speak(){
+
     let w = words[index];
-    if(!w) return;
+    if(!w || !w.word) return;
+
+    let word = w.word.toLowerCase().trim();
 
     let audio = new Audio(
-        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${w.word.toLowerCase()}--_us_1.mp3`
+        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${word}--_us_1.mp3`
     );
 
     audio.play().catch(() => {
+        window.speechSynthesis.cancel();
+
         let u = new SpeechSynthesisUtterance(w.word);
         u.lang = "en-US";
+        u.rate = 0.95;
+
         speechSynthesis.speak(u);
     });
+
+    audio.onerror = function(){
+        window.speechSynthesis.cancel();
+
+        let u = new SpeechSynthesisUtterance(w.word);
+        u.lang = "en-US";
+        u.rate = 0.95;
+
+        speechSynthesis.speak(u);
+    };
 }
 
+/* 切换 */
 function nextWord(){
     index = (index + 1) % words.length;
     render();
@@ -311,14 +398,17 @@ function prevWord(){
     }
 }
 
+/* 收藏 */
 function saveWord(){
     let w = words[index];
+
     if(!favorites.find(i => i.word === w.word)){
         favorites.push(w);
         localStorage.setItem("favorites_list", JSON.stringify(favorites));
     }
 }
 
+/* 返回 */
 function back(){
     location.href = "index.html";
 }
