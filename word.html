@@ -264,28 +264,6 @@ body::before{
     pointer-events:none;
 }
 
-/* =========================
-   安卓专属优化（核心）
-========================= */
-body.android .card{
-    width: 92%;
-    margin-top: 70px;
-    padding: 18px;
-}
-
-body.android .example-card{
-    width: 92%;
-}
-
-body.android #word{
-    font-size: 38px;
-}
-
-body.android .bottom-bar{
-    bottom: 110px;
-    gap: 60px;
-}
-
 </style>
 </head>
 
@@ -304,7 +282,7 @@ body.android .bottom-bar{
     <div id="meaning"></div>
 </div>
 
-<!-- 例句卡 -->
+<!-- 例句 -->
 <div class="example-card">
     <div id="exampleTitle">例句</div>
     <div id="example"></div>
@@ -323,11 +301,6 @@ body.android .bottom-bar{
 let words = [];
 let index = Number(localStorage.getItem("word_index") || 0);
 let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
-
-/* 安卓识别 */
-if (/Android/i.test(navigator.userAgent)) {
-    document.body.classList.add("android");
-}
 
 fetch("words.json")
 .then(res => res.json())
@@ -351,7 +324,6 @@ function render(){
 }
 
 function speak(){
-
     let w = words[index];
     if(!w || !w.word) return;
 
