@@ -1,0 +1,92 @@
+[
+  {
+    "word": "abandon",
+    "phonetic": "/əˈbændən/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/aba/abandon.mp3",
+    "pos": "verb",
+    "definition": "放弃，遗弃，中止",
+    "example": "He had to abandon his plan due to lack of funds.",
+    "example_translation": "由于资金不足，他不得不放弃计划。"
+  },
+  {
+    "word": "abstract",
+    "phonetic": "/ˈæbstrækt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/abs/abstract.mp3",
+    "pos": "adjective",
+    "definition": "抽象的，理论的；摘要",
+    "example": "The report provides an abstract summary of the research findings.",
+    "example_translation": "报告提供了研究结果的摘要。"
+  },
+  {
+    "word": "access",
+    "phonetic": "/ˈækses/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/acc/access.mp3",
+    "pos": "noun/verb",
+    "definition": "入口；使用或接近的机会；访问",
+    "example": "Students can access the library resources online.",
+    "example_translation": "学生可以在线访问图书馆资源。"
+  },
+  {
+    "word": "accompany",
+    "phonetic": "/əˈkʌmpəni/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/acc/accompany.mp3",
+    "pos": "verb",
+    "definition": "陪伴，伴随，随同",
+    "example": "She accompanied him to the airport.",
+    "example_translation": "她陪他去了机场。"
+  },
+  {
+    "word": "accumulate",
+    "phonetic": "/əˈkjuːmjəleɪt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/acc/accumulate.mp3",
+    "pos": "verb",
+    "definition": "积累，堆积，累积",
+    "example": "Over the years, he accumulated a large collection of stamps.",
+    "example_translation": "多年来，他积累了大量邮票。"
+  },
+  {
+    "word": "adapt",
+    "phonetic": "/əˈdæpt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/ada/adapt.mp3",
+    "pos": "verb",
+    "definition": "适应，改编，调整",
+    "example": "The novel was adapted into a movie.",
+    "example_translation": "这部小说被改编成了电影。"
+  },
+  {
+    "word": "adequate",
+    "phonetic": "/ˈædɪkwət/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/ade/adequate.mp3",
+    "pos": "adjective",
+    "definition": "足够的，适当的，胜任的",
+    "example": "He did not have adequate time to finish the project.",
+    "example_translation": "他没有足够的时间完成这个项目。"
+  },
+  {
+    "word": "adjacent",
+    "phonetic": "/əˈdʒeɪsənt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/adj/adjacent.mp3",
+    "pos": "adjective",
+    "definition": "邻近的，毗连的，接近的",
+    "example": "Our school is adjacent to the park.",
+    "example_translation": "我们的学校紧邻公园。"
+  },
+  {
+    "word": "adjust",
+    "phonetic": "/əˈdʒʌst/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/adj/adjust.mp3",
+    "pos": "verb",
+    "definition": "调整，适应，校准",
+    "example": "He adjusted the seat to make it more comfortable.",
+    "example_translation": "他调整了座椅，使其更舒适。"
+  },
+  {
+    "word": "advocate",
+    "phonetic": "/ˈædvəkeɪt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/adv/advocate.mp3",
+    "pos": "verb/noun",
+    "definition": "提倡，主张；拥护者，辩护者",
+    "example": "She advocates for environmental protection.",
+    "example_translation": "她倡导环保。"
+  }
+]
