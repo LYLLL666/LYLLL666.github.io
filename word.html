@@ -26,13 +26,10 @@ body{
     height:100vh;
     overflow:hidden;
 
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    align-items:center;
-
     text-align:center;
     color:#0f172a;
+
+    position:relative;
 }
 
 /* 柔光层 */
@@ -63,13 +60,12 @@ h1{
 }
 
 /* =========================
-   WORD CARD（居中上半区）
+   WORD CARD（保持原逻辑）
 ========================= */
 .card{
     margin-top:60px;
     width:320px;
     padding:30px;
-
     border-radius:24px;
 
     background:rgba(255,255,255,.55);
@@ -82,6 +78,9 @@ h1{
     box-shadow:
         inset 0 1px 1px rgba(255,255,255,.4),
         0 10px 30px rgba(0,0,0,.06);
+
+    margin-left:auto;
+    margin-right:auto;
 }
 
 #word{
@@ -96,72 +95,97 @@ h1{
 }
 
 /* =========================
-   底部操作栏
+   ⭐ 按钮区（关键修改：位置）
 ========================= */
+
+/* 👉 不贴底，放在中下 */
 .bottom-bar{
-    width:100%;
-    padding:22px 0 34px 0;
+    position:absolute;
+
+    left:50%;
+    transform:translateX(-50%);
+
+    bottom:120px; /* ⭐ 重点：从底部抬上来 */
 
     display:flex;
+    gap:80px;
+
+    align-items:center;
     justify-content:center;
-    gap:90px;
-
-    background:rgba(255,255,255,.15);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-
-    border-top:1px solid rgba(255,255,255,.25);
 }
 
-/* 极简箭头按钮 */
+/* =========================
+   圆形玻璃按钮（完全保留你的原风格）
+========================= */
 .btn{
-    font-size:28px;
-    font-weight:300;
+    width:52px;
+    height:52px;
+
+    border-radius:50%;
+
+    border:1px solid rgba(255,255,255,.35);
+
+    background:
+    linear-gradient(
+        to bottom,
+        rgba(255,255,255,.18),
+        rgba(255,255,255,.06)
+    );
+
+    backdrop-filter:blur(18px) saturate(170%);
+    -webkit-backdrop-filter:blur(18px) saturate(170%);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.4),
+        0 8px 18px rgba(0,0,0,.08);
 
     cursor:pointer;
-    user-select:none;
+
+    font-size:22px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    transition:all .18s ease;
 
     color:rgba(15,23,42,.75);
-
-    transition:transform .15s ease;
 }
 
-/* hover */
 .btn:hover{
     transform:translateY(-2px);
 }
 
-/* active */
 .btn:active{
-    transform:scale(.85);
-}
-
-/* 收藏按钮（中间稍突出） */
-.save{
-    font-size:30px;
+    transform:scale(.92);
 }
 
 /* =========================
-   TOP TITLE
+   返回按钮
 ========================= */
-.top{
-    position:absolute;
-    top:18px;
-    font-size:18px;
-    font-weight:600;
-    color:rgba(15,23,42,.75);
-}
-
-/* 返回按钮（左上角极简） */
 .back{
     position:absolute;
     left:16px;
     top:16px;
 
-    font-size:24px;
+    font-size:26px;
     cursor:pointer;
 
     color:rgba(15,23,42,.7);
+}
+
+/* =========================
+   标题
+========================= */
+.top{
+    position:absolute;
+    top:18px;
+    width:100%;
+    text-align:center;
+
+    font-size:18px;
+    font-weight:600;
+    color:rgba(15,23,42,.75);
 }
 
 </style>
@@ -170,7 +194,6 @@ h1{
 <body>
 
 <div class="back" onclick="back()">←</div>
-
 <div class="top">单词学习</div>
 
 <div class="card">
@@ -178,10 +201,10 @@ h1{
     <div id="meaning"></div>
 </div>
 
-<!-- 底部操作 -->
+<!-- ⭐ 改动重点：仍然圆形，但位置上移 -->
 <div class="bottom-bar">
 
-    <div class="btn save" onclick="saveWord()">⭐</div>
+    <div class="btn" onclick="saveWord()">⭐</div>
     <div class="btn" onclick="nextWord()">→</div>
 
 </div>
@@ -194,7 +217,6 @@ let index = 0;
 let favorites =
 JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
-// 加载
 fetch("words.json")
 .then(res => res.json())
 .then(data => {
@@ -202,17 +224,14 @@ fetch("words.json")
     render();
 });
 
-// 渲染
 function render(){
     if(words.length === 0) return;
 
     let w = words[index];
-
     document.getElementById("word").innerText = w.word;
     document.getElementById("meaning").innerText = w.meaning;
 }
 
-// 收藏
 function saveWord(){
 
 let w = words[index];
@@ -238,13 +257,11 @@ document.getElementById("meaning").innerText =
 
 }
 
-// 下一个
 function nextWord(){
     index = (index + 1) % words.length;
     render();
 }
 
-// 返回
 function back(){
     location.href = "index.html";
 }
