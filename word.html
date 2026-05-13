@@ -15,7 +15,6 @@ body{
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
 
-    /* 🌿 学习沉浸背景 */
     background: radial-gradient(
         circle at top,
         #dff3ff 0%,
@@ -24,9 +23,16 @@ body{
         #e3efff 100%
     );
 
+    height:100vh;
+    overflow:hidden;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    align-items:center;
+
     text-align:center;
     color:#0f172a;
-    overflow:hidden;
 }
 
 /* 柔光层 */
@@ -50,19 +56,19 @@ body::before{
    TITLE
 ========================= */
 h1{
-    margin-top:24px;
+    margin-top:22px;
     font-size:22px;
     font-weight:600;
     color:rgba(15,23,42,.85);
 }
 
 /* =========================
-   CARD
+   WORD CARD（居中上半区）
 ========================= */
 .card{
+    margin-top:60px;
     width:320px;
-    margin:22px auto;
-    padding:28px;
+    padding:30px;
 
     border-radius:24px;
 
@@ -78,14 +84,11 @@ h1{
         0 10px 30px rgba(0,0,0,.06);
 }
 
-/* 单词 */
 #word{
     font-size:44px;
     font-weight:700;
-    letter-spacing:1px;
 }
 
-/* 释义 */
 #meaning{
     margin-top:14px;
     font-size:16px;
@@ -93,91 +96,72 @@ h1{
 }
 
 /* =========================
-   圆形按钮栏（重点改造）
+   底部操作栏
 ========================= */
-.btn-bar{
-    margin-top:18px;
+.bottom-bar{
+    width:100%;
+    padding:22px 0 34px 0;
+
     display:flex;
     justify-content:center;
-    gap:18px;
+    gap:90px;
+
+    background:rgba(255,255,255,.15);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    border-top:1px solid rgba(255,255,255,.25);
 }
 
-/* 圆形玻璃按钮 */
+/* 极简箭头按钮 */
 .btn{
-    width:52px;
-    height:52px;
-
-    border-radius:50%;
-
-    border:1px solid rgba(255,255,255,.35);
-
-    background:
-    linear-gradient(
-        to bottom,
-        rgba(255,255,255,.18),
-        rgba(255,255,255,.06)
-    );
-
-    backdrop-filter:blur(18px) saturate(170%);
-    -webkit-backdrop-filter:blur(18px) saturate(170%);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.4),
-        0 8px 18px rgba(0,0,0,.08);
+    font-size:28px;
+    font-weight:300;
 
     cursor:pointer;
+    user-select:none;
 
-    font-size:20px;
+    color:rgba(15,23,42,.75);
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    transition:all .18s ease;
+    transition:transform .15s ease;
 }
 
 /* hover */
 .btn:hover{
     transform:translateY(-2px);
-    border-color:rgba(255,255,255,.5);
 }
 
 /* active */
 .btn:active{
-    transform:scale(.92);
+    transform:scale(.85);
+}
+
+/* 收藏按钮（中间稍突出） */
+.save{
+    font-size:30px;
 }
 
 /* =========================
-   TOP BACK BUTTON
+   TOP TITLE
 ========================= */
-.top-btn{
+.top{
+    position:absolute;
+    top:18px;
+    font-size:18px;
+    font-weight:600;
+    color:rgba(15,23,42,.75);
+}
+
+/* 返回按钮（左上角极简） */
+.back{
     position:absolute;
     left:16px;
-    top:14px;
+    top:16px;
 
-    width:44px;
-    height:44px;
-    border-radius:50%;
-
-    border:none;
-
-    background:rgba(255,255,255,.4);
-    backdrop-filter:blur(16px);
-
-    font-size:18px;
-
+    font-size:24px;
     cursor:pointer;
 
-    box-shadow:0 6px 14px rgba(0,0,0,.08);
-}
-
-/* =========================
-   SMALL TEXT
-========================= */
-.tip{
-    margin-top:14px;
-    font-size:12px;
-    color:rgba(71,85,105,.7);
+    color:rgba(15,23,42,.7);
 }
 
 </style>
@@ -185,23 +169,20 @@ h1{
 
 <body>
 
-<h1>📖 单词学习</h1>
+<div class="back" onclick="back()">←</div>
 
-<button class="top-btn" onclick="back()">⬅</button>
+<div class="top">单词学习</div>
 
 <div class="card">
-
-<div id="word">加载中...</div>
-<div id="meaning"></div>
-
-<div class="btn-bar">
-
-    <button class="btn" onclick="saveWord()">⭐</button>
-    <button class="btn" onclick="nextWord()">➡</button>
-
+    <div id="word">加载中...</div>
+    <div id="meaning"></div>
 </div>
 
-<div class="tip">点击按钮进行学习操作</div>
+<!-- 底部操作 -->
+<div class="bottom-bar">
+
+    <div class="btn save" onclick="saveWord()">⭐</div>
+    <div class="btn" onclick="nextWord()">→</div>
 
 </div>
 
