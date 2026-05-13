@@ -387,6 +387,25 @@ function saveWord(){
 function back(){
     location.href = "index.html";
 }
+//去掉蓝色选中
+/* =========================
+   🔥 去掉点击蓝色框 / 选中高亮
+========================= */
+
+/* 移动端点击高亮 */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 去掉按钮/元素 focus 外框 */
+button, div, span {
+    outline: none;
+}
+
+/* 防止点击后出现蓝色边框（部分安卓/Chrome） */
+*:focus {
+    outline: none !important;
+}
 
 </script>
 
