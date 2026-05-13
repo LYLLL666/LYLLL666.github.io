@@ -10,14 +10,14 @@
 
 body{
     margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
+    font-family:-apple-system;
     background: radial-gradient(circle at top,#dff3ff,#f4fbff,#e3efff);
     height:100vh;
     overflow:hidden;
     text-align:center;
 }
 
-/* 返回按钮 */
+/* 返回 */
 .back{
     position:fixed;
     left:16px;
@@ -27,7 +27,6 @@ body{
     height:44px;
     border-radius:50%;
     background:rgba(255,255,255,.4);
-    backdrop-filter:blur(10px);
 
     display:flex;
     align-items:center;
@@ -36,26 +35,7 @@ body{
     cursor:pointer;
 }
 
-/* 学习按钮 */
-.learn{
-    position:fixed;
-    right:16px;
-    top:20px;
-
-    width:44px;
-    height:44px;
-    border-radius:50%;
-    background:rgba(255,255,255,.4);
-    backdrop-filter:blur(10px);
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    cursor:pointer;
-}
-
-/* 搜索框 */
+/* 搜索 */
 .search-box{
     margin-top:80px;
     display:flex;
@@ -68,15 +48,14 @@ body{
     padding:10px;
     border-radius:12px;
     border:none;
-    outline:none;
     background:rgba(255,255,255,.5);
+    outline:none;
 }
 
 .search-box button{
     padding:10px 14px;
     border:none;
     border-radius:12px;
-    cursor:pointer;
 }
 
 /* 卡片 */
@@ -88,29 +67,15 @@ body{
     padding:20px;
     border-radius:20px;
     background:rgba(255,255,255,.6);
-    backdrop-filter:blur(12px);
 }
 
-#word{
-    font-size:40px;
-    font-weight:700;
-}
+#word{font-size:40px;font-weight:700;}
+#phonetic{opacity:.7;}
+#meaning{margin-top:10px;}
+#example{margin-top:10px;color:#333;}
+#cn{font-size:13px;color:#666;margin-top:6px;}
 
-#phonetic{
-    opacity:.7;
-}
-
-#meaning{
-    margin-top:10px;
-}
-
-#example{
-    margin-top:10px;
-    color:#333;
-    font-size:14px;
-}
-
-/* 收藏按钮 */
+/* 收藏 */
 .fav{
     margin-top:15px;
     width:45px;
@@ -125,21 +90,12 @@ body{
     margin-right:auto;
 }
 
-.trans{
-    font-size:13px;
-    color:#666;
-}
-
 </style>
 </head>
 
 <body>
 
-<!-- 返回 -->
 <div class="back" onclick="goBack()">←</div>
-
-<!-- 学习入口 -->
-<div class="learn" onclick="goLearn()">📚</div>
 
 <!-- 搜索 -->
 <div class="search-box">
@@ -154,10 +110,10 @@ body{
     <div id="phonetic"></div>
 
     <div id="meaning"></div>
-    <div id="meaningCN" class="trans"></div>
+    <div id="cn"></div>
 
     <div id="example"></div>
-    <div id="exampleCN" class="trans"></div>
+    <div id="exampleCN"></div>
 
     <div class="fav" onclick="saveWord()">⭐</div>
 
@@ -165,54 +121,66 @@ body{
 
 <script>
 
-let currentWordData = null;
-let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+let current = null;
 
-// ======================
+// =========================
 // 查词
-// ======================
+// =========================
 async function searchWord(){
 
     let word = document.getElementById("inputWord").value.trim();
     if(!word) return;
 
     let data = await fetchWord(word);
-
-    currentWordData = data;
+    current = data;
 
     document.getElementById("word").innerText = data.word;
     document.getElementById("phonetic").innerText = data.phonetic || "";
-    document.getElementById("meaning").innerText = data.meaning;
-    document.getElementById("example").innerText = data.example;
+    document.getElementById("meaning").innerText = data.meaning || "";
+    document.getElementById("example").innerText = data.example || "";
 
-    // 中文翻译
-    document.getElementById("meaningCN").innerText = "翻译：" + (await translate(data.meaning));
-    document.getElementById("exampleCN").innerText = "例句翻译：" + (await translate(data.example));
+    // ⭐ 强制中文翻译（关键修复）
+    document.getElementById("cn").innerText =
+        "中文：" + await translate(data.meaning || data.word);
+
+    document.getElementById("exampleCN").innerText =
+        "例句：" + await translate(data.example || "");
 }
 
-// ======================
-// API查词
-// ======================
+// =========================
+// API
+// =========================
 async function fetchWord(word){
 
-    let res = await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + word);
-    let data = await res.json();
-    let d = data[0];
+    try{
+        let res = await fetch(
+            "https://api.dictionaryapi.dev/api/v2/entries/en/" + word
+        );
 
-    return {
-        word: d.word,
-        phonetic: d.phonetic || "",
-        meaning: d.meanings?.[0]?.definitions?.[0]?.definition || "暂无释义",
-        example: d.meanings?.[0]?.definitions?.[0]?.example || "暂无例句"
-    };
+        let data = await res.json();
+        let d = data[0];
+
+        return {
+            word: d.word,
+            phonetic: d.phonetic || "",
+            meaning: d.meanings?.[0]?.definitions?.[0]?.definition || "",
+            example: d.meanings?.[0]?.definitions?.[0]?.example || ""
+        };
+
+    }catch(e){
+        return {
+            word,
+            phonetic:"",
+            meaning:"查询失败",
+            example:""
+        };
+    }
 }
 
-// ======================
-// 翻译（免费版浏览器接口）
-// ======================
+// =========================
+// 翻译（稳定版）
+// =========================
 async function translate(text){
-
-    if(!text) return "";
 
     try{
         let res = await fetch(
@@ -229,34 +197,29 @@ async function translate(text){
     }
 }
 
-// ======================
-// 收藏
-// ======================
+// =========================
+// 收藏 → 跳页面
+// =========================
 function saveWord(){
 
-    if(!currentWordData) return;
+    if(!current) return;
 
-    if(!favorites.find(i => i.word === currentWordData.word)){
-        favorites.push(currentWordData);
-        localStorage.setItem("favorites", JSON.stringify(favorites));
-        alert("已收藏");
-    }else{
-        alert("已收藏过");
+    let list = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+    if(!list.find(i => i.word === current.word)){
+        list.push(current);
+        localStorage.setItem("favorites", JSON.stringify(list));
     }
+
+    // ⭐ 直接跳 favorites.html
+    location.href = "favorites.html";
 }
 
-// ======================
-// 返回主界面
-// ======================
+// =========================
+// 返回
+// =========================
 function goBack(){
     location.href = "index.html";
-}
-
-// ======================
-// 去学习页面
-// ======================
-function goLearn(){
-    location.href = "word.html";
 }
 
 </script>
