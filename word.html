@@ -50,7 +50,36 @@ body::before{
     pointer-events:none;
 }
 
-/* 返回按钮 */
+/* =========================
+   APP 容器（关键）
+========================= */
+.app{
+    width:100%;
+    min-height:100vh;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    position:relative;
+}
+
+/* =========================
+   安卓缩放（修复版，不歪）
+========================= */
+html.android-scale body{
+    display:flex;
+    justify-content:center;
+}
+
+html.android-scale .app{
+    transform: scale(0.75);
+    transform-origin: top center;
+}
+
+/* =========================
+   返回按钮
+========================= */
 .back{
     position:fixed;
     left:16px;
@@ -82,21 +111,21 @@ body::before{
     z-index:99999;
 }
 
-/* 标题 */
+/* =========================
+   标题
+========================= */
 .top{
-    position:absolute;
-    top:18px;
-    width:100%;
-    text-align:center;
-
+    margin-top:18px;
     font-size:18px;
     font-weight:600;
     color:rgba(15,23,42,.75);
 }
 
-/* 主卡片 */
+/* =========================
+   主卡片
+========================= */
 .card{
-    margin-top:90px;
+    margin-top:70px;
     width:300px;
     padding:22px;
     border-radius:24px;
@@ -111,9 +140,6 @@ body::before{
     box-shadow:
         inset 0 1px 1px rgba(255,255,255,.4),
         0 10px 30px rgba(0,0,0,.06);
-
-    margin-left:auto;
-    margin-right:auto;
 
     position:relative;
 }
@@ -141,7 +167,9 @@ body::before{
     color:rgba(51,65,85,.9);
 }
 
-/* 发音按钮 */
+/* =========================
+   发音按钮
+========================= */
 .audio-btn{
     position:absolute;
     top:12px;
@@ -174,10 +202,12 @@ body::before{
     transform:scale(.92);
 }
 
-/* 例句 */
+/* =========================
+   例句卡
+========================= */
 .example-card{
     margin-top:18px;
-    width:250px;
+    width:300px;
     padding:20px;
     border-radius:24px;
 
@@ -191,23 +221,24 @@ body::before{
     box-shadow:
         inset 0 1px 1px rgba(255,255,255,.3),
         0 10px 25px rgba(0,0,0,.05);
-
-    margin-left:auto;
-    margin-right:auto;
 }
 
-/* 按钮区 */
+/* =========================
+   按钮区
+========================= */
 .bottom-bar{
-    position:absolute;
+    position:fixed;
     left:50%;
     transform:translateX(-50%);
-    bottom:300px;
+    bottom:80px;
 
     display:flex;
     gap:80px;
 }
 
-/* 按钮 */
+/* =========================
+   按钮
+========================= */
 .btn{
     width:52px;
     height:52px;
@@ -239,13 +270,9 @@ body::before{
     transform:scale(.92);
 }
 
-/* =========================
-   🔥 安卓整体缩放75%（核心）
-========================= */
-html.android-scale{
-    transform: scale(0.75);
-    transform-origin: top center;
-    width: 133.33%;
+.btn.disabled{
+    opacity:.25;
+    pointer-events:none;
 }
 
 </style>
@@ -253,7 +280,10 @@ html.android-scale{
 
 <body>
 
+<div class="app">
+
 <div class="back" onclick="back()">←</div>
+
 <div class="top">单词学习</div>
 
 <div class="card">
@@ -277,6 +307,8 @@ html.android-scale{
     <div class="btn" onclick="nextWord()">→</div>
 </div>
 
+</div>
+
 <script>
 
 let words = [];
@@ -284,7 +316,7 @@ let index = Number(localStorage.getItem("word_index") || 0);
 let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
 /* =========================
-   安卓识别（关键）
+   安卓识别
 ========================= */
 if (/Android/i.test(navigator.userAgent)) {
     document.documentElement.classList.add("android-scale");
@@ -312,11 +344,13 @@ function render(){
     document.getElementById("meaning").innerText = w.definition || "";
 
     document.getElementById("example").innerText = w.example || "";
+    document.getElementById("exampleTranslation").innerText = w.example_translation || "";
 }
 
+/* =========================
+   发音（稳定版）
+========================= */
 function speak(){
-
-    if(!words.length) return;
 
     let w = words[index];
     if(!w || !w.word) return;
@@ -348,6 +382,9 @@ function speak(){
     };
 }
 
+/* =========================
+   切换
+========================= */
 function nextWord(){
     index = (index + 1) % words.length;
     render();
@@ -362,6 +399,9 @@ function prevWord(){
     }
 }
 
+/* =========================
+   收藏
+========================= */
 function saveWord(){
     let w = words[index];
 
@@ -371,6 +411,9 @@ function saveWord(){
     }
 }
 
+/* =========================
+   返回
+========================= */
 function back(){
     location.href = "index.html";
 }
