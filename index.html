@@ -22,7 +22,6 @@ body{
     overflow:hidden;
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
 
-    /* 🌤 清晨学习氛围背景（已优化） */
     background: radial-gradient(
         circle at top,
         #d7ecff 0%,
@@ -43,7 +42,7 @@ canvas{
     z-index:-4;
 }
 
-/* 🌤 柔光层（降低压暗，增加自然光） */
+/* 柔光层 */
 .bg-dark{
     position:fixed;
     inset:0;
@@ -59,7 +58,7 @@ canvas{
     z-index:-3;
 }
 
-/* 全局玻璃层 */
+/* 玻璃层 */
 .glass-bg{
     position:fixed;
     inset:0;
@@ -101,27 +100,39 @@ canvas{
    CONTAINER
 ========================= */
 .container{
-    width:90%;
-    max-width:390px;
+
+    width:92%;
+    max-width:420px;
+
     margin:48px auto;
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:18px;
 }
 
 /* =========================
-   苹果 Liquid Glass Button（完全未改）
+   正方形 Liquid Glass Button
 ========================= */
 .btn{
 
     position:relative;
 
-    margin:20px 0;
+    aspect-ratio:1/1;
 
-    padding:26px;
-
-    border-radius:999px;
+    border-radius:34px;
 
     overflow:hidden;
 
     cursor:pointer;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    text-align:center;
 
     background:
     linear-gradient(
@@ -153,8 +164,6 @@ canvas{
     font-size:18px;
     font-weight:540;
 
-    text-align:center;
-
     letter-spacing:.2px;
 
     text-shadow:
@@ -171,10 +180,10 @@ canvas{
 .btn::before{
     content:"";
     position:absolute;
-    left:12px;
-    right:12px;
-    top:6px;
-    height:28%;
+    left:10px;
+    right:10px;
+    top:8px;
+    height:26%;
     border-radius:999px;
 
     background:
@@ -195,7 +204,7 @@ canvas{
     content:"";
     position:absolute;
     inset:0;
-    border-radius:999px;
+    border-radius:34px;
 
     box-shadow:
         inset 0 0 18px rgba(255,255,255,.10),
@@ -231,7 +240,7 @@ canvas{
    FOOTER
 ========================= */
 .tip{
-    margin-top:34px;
+    margin-top:24px;
     text-align:center;
     font-size:13px;
     color:rgba(255,255,255,.26);
@@ -259,10 +268,15 @@ canvas{
 <div class="container">
 
 <div class="btn" onclick="go('search.html')">🔍 查寻单词</div>
+
 <div class="btn" onclick="go('word.html')">📖 单词学习</div>
+
 <div class="btn" onclick="go('quiz.html')">🧠 练习模式</div>
+
 <div class="btn" onclick="go('favorites.html')">⭐ 收藏</div>
+
 <div class="btn" onclick="go('wronglist.html')">❌ 错题本</div>
+
 <div class="btn" onclick="go('review.html')">🔁 复习模式</div>
 
 </div>
@@ -274,7 +288,7 @@ Liquid Glass Interface
 <script>
 
 /* =========================
-   彩虹流光（已调成阳光柔彩）
+   彩虹流光
 ========================= */
 
 const canvas = document.getElementById("bg");
@@ -323,7 +337,6 @@ function draw(){
             p.x,p.y,p.r
         );
 
-        /* 🌤 阳光柔彩版本 */
         g.addColorStop(
             0,
             `hsla(${p.hue},85%,75%,0.14)`
@@ -357,9 +370,11 @@ draw();
 ========================= */
 
 function go(page){
+
     if(navigator.vibrate){
         navigator.vibrate(10);
     }
+
     location.href = page;
 }
 
