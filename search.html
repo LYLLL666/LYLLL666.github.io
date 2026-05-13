@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>单词查词</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
+    background: radial-gradient(circle at top,#dff3ff,#f4fbff,#e3efff);
+    height:100vh;
+    overflow:hidden;
+    text-align:center;
+}
+
+/* =========================
+   顶部标题
+========================= */
+.title{
+    margin-top:30px;
+    font-size:20px;
+    font-weight:600;
+    color:#0f172a;
+}
+
+/* =========================
+   搜索框
+========================= */
+.search-box{
+    margin-top:40px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+}
+
+.search-box input{
+    width:200px;
+    padding:10px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.6);
+    background:rgba(255,255,255,.4);
+    backdrop-filter:blur(10px);
+    outline:none;
+}
+
+.search-box button{
+    padding:10px 14px;
+    border-radius:12px;
+    border:none;
+    cursor:pointer;
+    background:rgba(255,255,255,.6);
+}
+
+/* =========================
+   结果卡片
+========================= */
+.card{
+    margin-top:40px;
+    width:300px;
+    padding:22px;
+    border-radius:20px;
+    margin-left:auto;
+    margin-right:auto;
+
+    background:rgba(255,255,255,.6);
+    backdrop-filter:blur(12px);
+}
+
+#word{
+    font-size:40px;
+    font-weight:700;
+}
+
+#phonetic{
+    margin-top:5px;
+    font-size:14px;
+    opacity:.7;
+}
+
+#meaning{
+    margin-top:10px;
+}
+
+#example{
+    margin-top:10px;
+    color:#555;
+}
+
+/* =========================
+   发音按钮
+========================= */
+.audio-btn{
+    margin-top:15px;
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="title">🔍 单词查词</div>
+
+<!-- 搜索 -->
+<div class="search-box">
+    <input id="inputWord" placeholder="输入单词..." />
+    <button onclick="searchWord()">查询</button>
+</div>
+
+<!-- 结果 -->
+<div class="card">
+
+    <div id="word">请输入单词</div>
+    <div id="phonetic"></div>
+    <div id="meaning"></div>
+    <div id="example"></div>
+
+    <div class="audio-btn" onclick="playAudio()">🔊</div>
+
+</div>
+
+<script>
+
+let currentAudio = "";
+
+// =========================
+// 查词
+// =========================
+async function searchWord(){
+
+    let word = document.getElementById("inputWord").value.trim();
+
+    if(!word) return;
+
+    let data = await fetchWord(word);
+
+    document.getElementById("word").innerText = data.word;
+    document.getElementById("phonetic").innerText = data.phonetic || "";
+    document.getElementById("meaning").innerText = data.meaning;
+    document.getElementById("example").innerText = data.example;
+
+    currentAudio = data.audio || "";
+}
+
+// =========================
+// API
+// =========================
+async function fetchWord(word){
+
+    try{
+        let res = await fetch(
+            "https://api.dictionaryapi.dev/api/v2/entries/en/" + word
+        );
+
+        let data = await res.json();
+        let d = data[0];
+
+        return {
+            word: d.word,
+            phonetic: d.phonetic || "",
+            meaning: d.meanings?.[0]?.definitions?.[0]?.definition || "暂无释义",
+            example: d.meanings?.[0]?.definitions?.[0]?.example || "暂无例句",
+            audio: d.phonetics?.find(p => p.audio)?.audio || ""
+        };
+
+    }catch(e){
+        return {
+            word,
+            phonetic:"",
+            meaning:"查询失败",
+            example:"",
+            audio:""
+        };
+    }
+}
+
+// =========================
+// 发音
+// =========================
+function playAudio(){
+
+    if(currentAudio){
+        new Audio(currentAudio).play();
+    }else{
+        let word = document.getElementById("word").innerText;
+        let utter = new SpeechSynthesisUtterance(word);
+        utter.lang = "en-US";
+        speechSynthesis.speak(utter);
+    }
+}
+
+</script>
+
+</body>
+</html>
