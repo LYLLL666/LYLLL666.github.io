@@ -465,6 +465,32 @@ function speak(){
     };
 }
 
+@media screen and (max-width: 500px) {
+
+    /* 安卓/小屏优化 */
+    .card{
+        width: 92%;
+        margin-top: 70px;
+        padding: 18px;
+    }
+
+    .example-card{
+        width: 92%;
+    }
+
+    .bottom-bar{
+        bottom: 110px;
+        gap: 60px;
+    }
+
+    #word{
+        font-size: 38px;
+    }
+}
+@supports (-webkit-touch-callout: none) {
+    /* iOS忽略 */
+}
+
 </script>
 
 </body>
