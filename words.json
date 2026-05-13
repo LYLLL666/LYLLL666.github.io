@@ -1,162 +1,162 @@
 [
   {
-    "word": "apple",
-    "phonetic": "/ˈæp.əl/",
-    "partOfSpeech": "n.",
-    "meaning": "苹果",
-    "example": "I eat an apple every day.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/apple--_us_1.mp3"
-  },
-  {
-    "word": "book",
-    "phonetic": "/bʊk/",
-    "partOfSpeech": "n.",
-    "meaning": "书",
-    "example": "I read a book before bed.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/book--_us_1.mp3"
-  },
-  {
-    "word": "school",
-    "phonetic": "/skuːl/",
-    "partOfSpeech": "n.",
-    "meaning": "学校",
-    "example": "She goes to school by bus.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/school--_us_1.mp3"
-  },
-  {
-    "word": "water",
-    "phonetic": "/ˈwɔː.tər/",
-    "partOfSpeech": "n.",
-    "meaning": "水",
-    "example": "Drink more water every day.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/water--_us_1.mp3"
-  },
-  {
-    "word": "computer",
-    "phonetic": "/kəmˈpjuː.tər/",
-    "partOfSpeech": "n.",
-    "meaning": "电脑",
-    "example": "I use a computer for study.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/computer--_us_1.mp3"
-  },
-  {
-    "word": "teacher",
-    "phonetic": "/ˈtiː.tʃər/",
-    "partOfSpeech": "n.",
-    "meaning": "老师",
-    "example": "My teacher is very kind.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/teacher--_us_1.mp3"
-  },
-  {
-    "word": "student",
-    "phonetic": "/ˈstjuː.dənt/",
-    "partOfSpeech": "n.",
-    "meaning": "学生",
-    "example": "He is a good student.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/student--_us_1.mp3"
-  },
-  {
-    "word": "friend",
-    "phonetic": "/frend/",
-    "partOfSpeech": "n.",
-    "meaning": "朋友",
-    "example": "She is my best friend.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/friend--_us_1.mp3"
-  },
-  {
-    "word": "family",
-    "phonetic": "/ˈfæm.ə.li/",
-    "partOfSpeech": "n.",
-    "meaning": "家庭",
-    "example": "I love my family.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/family--_us_1.mp3"
-  },
-  {
-    "word": "car",
-    "phonetic": "/kɑːr/",
-    "partOfSpeech": "n.",
-    "meaning": "汽车",
-    "example": "My father drives a car.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/car--_us_1.mp3"
-  },
-  {
-    "word": "dog",
-    "phonetic": "/dɔːɡ/",
-    "partOfSpeech": "n.",
-    "meaning": "狗",
-    "example": "The dog is very cute.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/dog--_us_1.mp3"
-  },
-  {
-    "word": "cat",
-    "phonetic": "/kæt/",
-    "partOfSpeech": "n.",
-    "meaning": "猫",
-    "example": "The cat sleeps on the sofa.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/cat--_us_1.mp3"
-  },
-  {
-    "word": "love",
-    "phonetic": "/lʌv/",
+    "word": "abandon",
+    "phonetic": "/əˈbæn.dən/",
     "partOfSpeech": "v.",
-    "meaning": "爱",
-    "example": "I love my parents.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/love--_us_1.mp3"
+    "meaning": "放弃；抛弃",
+    "example": "He had to abandon the plan.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/abandon--_us_1.mp3"
   },
   {
-    "word": "eat",
-    "phonetic": "/iːt/",
-    "partOfSpeech": "v.",
-    "meaning": "吃",
-    "example": "We eat lunch at noon.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/eat--_us_1.mp3"
+    "word": "ability",
+    "phonetic": "/əˈbɪl.ə.ti/",
+    "partOfSpeech": "n.",
+    "meaning": "能力",
+    "example": "She has the ability to solve problems.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/ability--_us_1.mp3"
   },
   {
-    "word": "run",
-    "phonetic": "/rʌn/",
-    "partOfSpeech": "v.",
-    "meaning": "跑",
-    "example": "I run every morning.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/run--_us_1.mp3"
+    "word": "absence",
+    "phonetic": "/ˈæb.səns/",
+    "partOfSpeech": "n.",
+    "meaning": "缺席；缺乏",
+    "example": "His absence was noticed.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/absence--_us_1.mp3"
   },
   {
-    "word": "make",
-    "phonetic": "/meɪk/",
-    "partOfSpeech": "v.",
-    "meaning": "制作",
-    "example": "She makes a cake.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/make--_us_1.mp3"
-  },
-  {
-    "word": "go",
-    "phonetic": "/ɡoʊ/",
-    "partOfSpeech": "v.",
-    "meaning": "去",
-    "example": "I go to school by bus.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/go--_us_1.mp3"
-  },
-  {
-    "word": "big",
-    "phonetic": "/bɪɡ/",
+    "word": "absolute",
+    "phonetic": "/ˈæb.sə.luːt/",
     "partOfSpeech": "adj.",
-    "meaning": "大的",
-    "example": "This is a big house.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/big--_us_1.mp3"
+    "meaning": "绝对的",
+    "example": "It is an absolute truth.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/absolute--_us_1.mp3"
   },
   {
-    "word": "small",
-    "phonetic": "/smɔːl/",
+    "word": "academic",
+    "phonetic": "/ˌæk.əˈdem.ɪk/",
     "partOfSpeech": "adj.",
-    "meaning": "小的",
-    "example": "This is a small cat.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/small--_us_1.mp3"
+    "meaning": "学术的",
+    "example": "He has strong academic skills.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/academic--_us_1.mp3"
   },
   {
-    "word": "happy",
-    "phonetic": "/ˈhæp.i/",
+    "word": "access",
+    "phonetic": "/ˈæk.ses/",
+    "partOfSpeech": "n./v.",
+    "meaning": "进入；访问",
+    "example": "You can access the system online.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/access--_us_1.mp3"
+  },
+  {
+    "word": "accompany",
+    "phonetic": "/əˈkʌm.pə.ni/",
+    "partOfSpeech": "v.",
+    "meaning": "陪伴",
+    "example": "I will accompany you home.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/accompany--_us_1.mp3"
+  },
+  {
+    "word": "accumulate",
+    "phonetic": "/əˈkjuː.mjə.leɪt/",
+    "partOfSpeech": "v.",
+    "meaning": "积累",
+    "example": "Dust accumulated on the table.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/accumulate--_us_1.mp3"
+  },
+  {
+    "word": "accurate",
+    "phonetic": "/ˈæk.jʊ.rət/",
     "partOfSpeech": "adj.",
-    "meaning": "开心的",
-    "example": "I am very happy today.",
-    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/happy--_us_1.mp3"
+    "meaning": "准确的",
+    "example": "The data is accurate.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/accurate--_us_1.mp3"
+  },
+  {
+    "word": "achieve",
+    "phonetic": "/əˈtʃiːv/",
+    "partOfSpeech": "v.",
+    "meaning": "实现",
+    "example": "She achieved her goal.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/achieve--_us_1.mp3"
+  },
+  {
+    "word": "acknowledge",
+    "phonetic": "/əkˈnɒl.ɪdʒ/",
+    "partOfSpeech": "v.",
+    "meaning": "承认",
+    "example": "He acknowledged the mistake.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/acknowledge--_us_1.mp3"
+  },
+  {
+    "word": "acquire",
+    "phonetic": "/əˈkwaɪər/",
+    "partOfSpeech": "v.",
+    "meaning": "获得",
+    "example": "He acquired new skills.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/acquire--_us_1.mp3"
+  },
+  {
+    "word": "adapt",
+    "phonetic": "/əˈdæpt/",
+    "partOfSpeech": "v.",
+    "meaning": "适应",
+    "example": "Animals adapt to environment.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/adapt--_us_1.mp3"
+  },
+  {
+    "word": "addict",
+    "phonetic": "/ˈæd.ɪkt/",
+    "partOfSpeech": "n.",
+    "meaning": "上瘾者",
+    "example": "He is a game addict.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/addict--_us_1.mp3"
+  },
+  {
+    "word": "adequate",
+    "phonetic": "/ˈæd.ɪ.kwət/",
+    "partOfSpeech": "adj.",
+    "meaning": "足够的",
+    "example": "The food is adequate.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/adequate--_us_1.mp3"
+  },
+  {
+    "word": "adjust",
+    "phonetic": "/əˈdʒʌst/",
+    "partOfSpeech": "v.",
+    "meaning": "调整",
+    "example": "Adjust the settings.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/adjust--_us_1.mp3"
+  },
+  {
+    "word": "administration",
+    "phonetic": "/ədˌmɪn.ɪˈstreɪ.ʃən/",
+    "partOfSpeech": "n.",
+    "meaning": "管理",
+    "example": "School administration is strict.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/administration--_us_1.mp3"
+  },
+  {
+    "word": "admire",
+    "phonetic": "/ədˈmaɪər/",
+    "partOfSpeech": "v.",
+    "meaning": "钦佩",
+    "example": "I admire her courage.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/admire--_us_1.mp3"
+  },
+  {
+    "word": "admit",
+    "phonetic": "/ədˈmɪt/",
+    "partOfSpeech": "v.",
+    "meaning": "承认",
+    "example": "He admitted his fault.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/admit--_us_1.mp3"
+  },
+  {
+    "word": "adopt",
+    "phonetic": "/əˈdɒpt/",
+    "partOfSpeech": "v.",
+    "meaning": "采用；收养",
+    "example": "They adopted a child.",
+    "audio": "https://ssl.gstatic.com/dictionary/static/sounds/oxford/adopt--_us_1.mp3"
   }
 ]
