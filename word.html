@@ -415,6 +415,10 @@ function autoPlay(){
     speechSynthesis.speak(utter);
 }
 
+document.body.addEventListener("click", () => {
+    speechSynthesis.getVoices();
+});
+
 </script>
 
 </body>
