@@ -32,7 +32,6 @@ body{
     position:relative;
 }
 
-/* 柔光层 */
 body::before{
     content:"";
     position:fixed;
@@ -50,11 +49,10 @@ body::before{
 }
 
 /* =========================
-   返回按钮（固定不进卡片）
+   返回按钮（不动UI）
 ========================= */
 .back{
     position:fixed;
-
     left:16px;
     top:20px;
 
@@ -99,7 +97,7 @@ body::before{
 }
 
 /* =========================
-   主卡片（单词信息）
+   主卡片
 ========================= */
 .card{
     margin-top:90px;
@@ -120,6 +118,8 @@ body::before{
 
     margin-left:auto;
     margin-right:auto;
+
+    position:relative; /* ⭐为了放发音按钮 */
 }
 
 #word{
@@ -146,7 +146,42 @@ body::before{
 }
 
 /* =========================
-   例句卡片（新增）
+   卡片内发音按钮（新增）
+========================= */
+.audio-btn{
+    position:absolute;
+    top:12px;
+    right:12px;
+
+    width:38px;
+    height:38px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    background:rgba(255,255,255,.35);
+    border:1px solid rgba(255,255,255,.6);
+
+    backdrop-filter:blur(12px);
+
+    box-shadow:
+        0 6px 12px rgba(0,0,0,.10),
+        inset 0 1px 1px rgba(255,255,255,.6);
+}
+
+.audio-btn:active{
+    transform:scale(.92);
+}
+
+/* =========================
+   例句卡
 ========================= */
 .example-card{
     margin-top:18px;
@@ -167,19 +202,10 @@ body::before{
 
     margin-left:auto;
     margin-right:auto;
-
-    font-size:15px;
-    color:rgba(15,23,42,.85);
-}
-
-#exampleTitle{
-    font-size:13px;
-    opacity:.6;
-    margin-bottom:8px;
 }
 
 /* =========================
-   按钮区域
+   按钮区
 ========================= */
 .bottom-bar{
     position:absolute;
@@ -197,7 +223,7 @@ body::before{
 }
 
 /* =========================
-   圆形按钮
+   按钮
 ========================= */
 .btn{
     width:52px;
@@ -207,11 +233,7 @@ body::before{
     border:1px solid rgba(255,255,255,.35);
 
     background:
-    linear-gradient(
-        to bottom,
-        rgba(255,255,255,.18),
-        rgba(255,255,255,.06)
-    );
+    linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
 
     backdrop-filter:blur(18px) saturate(170%);
     -webkit-backdrop-filter:blur(18px) saturate(170%);
@@ -245,13 +267,16 @@ body::before{
 
 <body>
 
-<!-- 返回 -->
 <div class="back" onclick="back()">←</div>
 
 <div class="top">单词学习</div>
 
-<!-- 主卡片 -->
+<!-- 主卡 -->
 <div class="card">
+
+    <!-- ⭐发音按钮放在卡片内部 -->
+    <div class="audio-btn" onclick="playAudio()">🔊</div>
+
     <div id="word">加载中...</div>
     <div id="phonetic"></div>
     <div id="pos"></div>
@@ -287,9 +312,7 @@ fetch("words.json")
 .then(res => res.json())
 .then(data => {
     words = data;
-
     if(index >= words.length) index = 0;
-
     render();
 });
 
@@ -302,7 +325,6 @@ function render(){
     document.getElementById("phonetic").innerText = w.phonetic || "";
     document.getElementById("pos").innerText = w.partOfSpeech || "";
     document.getElementById("meaning").innerText = w.meaning;
-
     document.getElementById("example").innerText = w.example || "";
 
     localStorage.setItem("word_index", index);
@@ -314,6 +336,14 @@ function render(){
     }else{
         prevBtn.classList.remove("disabled");
     }
+}
+
+function playAudio(){
+    let w = words[index];
+    if(!w.audio) return;
+
+    let audio = new Audio(w.audio);
+    audio.play();
 }
 
 function nextWord(){
