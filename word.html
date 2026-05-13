@@ -9,7 +9,7 @@
 <style>
 
 /* =========================
-   BASE（iOS稳定布局核心）
+   BASE（核心修复：居中系统）
 ========================= */
 body{
     margin:0;
@@ -24,24 +24,23 @@ body{
     );
 
     min-height:100vh;
-
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-
     overflow-x:hidden;
     overflow-y:auto;
 
+    display:flex;
+    flex-direction:column;
+    align-items:center;   /* ⭐关键：水平绝对居中 */
+    justify-content:flex-start;
+
     text-align:center;
     color:#0f172a;
-    position:relative;
 }
 
+/* 背景光层 */
 body::before{
     content:"";
     position:fixed;
     inset:0;
-
     background:
     radial-gradient(
         circle at top,
@@ -49,22 +48,11 @@ body::before{
         rgba(255,255,255,.10),
         rgba(0,0,0,.02)
     );
-
     pointer-events:none;
 }
 
 /* =========================
-   页面容器（核心）
-========================= */
-.app{
-    width:100%;
-    max-width:420px;
-    padding:20px;
-    box-sizing:border-box;
-}
-
-/* =========================
-   返回按钮
+   返回按钮（固定，不参与居中计算）
 ========================= */
 .back{
     position:fixed;
@@ -83,42 +71,38 @@ body::before{
     cursor:pointer;
 
     color:#0f172a;
-
     background:rgba(255,255,255,.35);
     border:1px solid rgba(255,255,255,.6);
 
     backdrop-filter:blur(18px);
     -webkit-backdrop-filter:blur(18px);
 
-    box-shadow:
-        0 8px 18px rgba(0,0,0,.12),
-        inset 0 1px 1px rgba(255,255,255,.6);
-
-    z-index:99999;
+    box-shadow:0 8px 18px rgba(0,0,0,.12);
+    z-index:9999;
 }
 
 /* =========================
    标题
 ========================= */
 .top{
-    margin-top:10px;
+    margin-top:18px;
     font-size:18px;
     font-weight:600;
     color:rgba(15,23,42,.75);
 }
 
 /* =========================
-   卡片（统一宽度）
+   主卡片（核心修复：max-width + 不用固定300）
 ========================= */
 .card{
+    width:90%;
+    max-width:320px;
+
     margin-top:70px;
-    width:100%;
-    max-width:360px;
     padding:22px;
     border-radius:24px;
 
     background:rgba(255,255,255,.55);
-
     backdrop-filter:blur(18px) saturate(160%);
     -webkit-backdrop-filter:blur(18px) saturate(160%);
 
@@ -128,12 +112,10 @@ body::before{
         inset 0 1px 1px rgba(255,255,255,.4),
         0 10px 30px rgba(0,0,0,.06);
 
-    margin-left:auto;
-    margin-right:auto;
-
     position:relative;
 }
 
+/* 文本 */
 #word{
     font-size:44px;
     font-weight:700;
@@ -158,7 +140,7 @@ body::before{
 }
 
 /* =========================
-   发音按钮
+   发音按钮（不动）
 ========================= */
 .audio-btn{
     position:absolute;
@@ -167,7 +149,6 @@ body::before{
 
     width:38px;
     height:38px;
-
     border-radius:50%;
 
     display:flex;
@@ -175,63 +156,46 @@ body::before{
     justify-content:center;
 
     cursor:pointer;
-
     font-size:16px;
 
     background:rgba(255,255,255,.35);
     border:1px solid rgba(255,255,255,.6);
 
     backdrop-filter:blur(12px);
-
-    box-shadow:
-        0 6px 12px rgba(0,0,0,.10),
-        inset 0 1px 1px rgba(255,255,255,.6);
-}
-
-.audio-btn:active{
-    transform:scale(.92);
+    box-shadow:0 6px 12px rgba(0,0,0,.10);
 }
 
 /* =========================
-   例句
+   例句卡（同宽逻辑）
 ========================= */
 .example-card{
+    width:90%;
+    max-width:320px;
+
     margin-top:18px;
-    width:100%;
-    max-width:360px;
     padding:20px;
     border-radius:24px;
 
     background:rgba(255,255,255,.45);
-
     backdrop-filter:blur(18px) saturate(160%);
-    -webkit-backdrop-filter:blur(18px) saturate(160%);
 
     border:1px solid rgba(255,255,255,.35);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.3),
-        0 10px 25px rgba(0,0,0,.05);
-
-    margin-left:auto;
-    margin-right:auto;
 }
 
 /* =========================
-   按钮（固定底部）
+   按钮区（真正稳定关键）
 ========================= */
 .bottom-bar{
-    position:fixed;
+    position:fixed;   /* ⭐关键：脱离布局，不会歪 */
+    bottom:120px;
     left:50%;
     transform:translateX(-50%);
-    bottom:70px;
 
     display:flex;
     gap:70px;
-
-    z-index:9999;
 }
 
+/* 按钮 */
 .btn{
     width:52px;
     height:52px;
@@ -241,21 +205,14 @@ body::before{
 
     background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
 
-    backdrop-filter:blur(18px) saturate(170%);
-    -webkit-backdrop-filter:blur(18px) saturate(170%);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.4),
-        0 8px 18px rgba(0,0,0,.08);
-
-    cursor:pointer;
-
-    font-size:22px;
+    backdrop-filter:blur(18px);
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
 
     display:flex;
     align-items:center;
     justify-content:center;
 
+    font-size:22px;
     color:rgba(15,23,42,.75);
 }
 
@@ -264,44 +221,31 @@ body::before{
 }
 
 /* =========================
-   安卓微调（不影响iOS）
+   安卓/IOS 不再区分（关键优化）
+   👉 统一布局 = 不再歪
 ========================= */
-@media (max-width: 500px){
-    #word{
-        font-size:40px;
-    }
-
-    .bottom-bar{
-        gap:55px;
-        bottom:60px;
-    }
-}
 
 </style>
 </head>
 
 <body>
 
-<div class="app">
+<div class="back" onclick="back()">←</div>
 
-    <div class="back" onclick="back()">←</div>
-    <div class="top">单词学习</div>
+<div class="top">单词学习</div>
 
-    <div class="card">
-        <div class="audio-btn" onclick="speak()">🔊</div>
+<div class="card">
+    <div class="audio-btn" onclick="speak()">🔊</div>
 
-        <div id="word">加载中...</div>
-        <div id="phonetic"></div>
-        <div id="pos"></div>
-        <div id="meaning"></div>
-    </div>
+    <div id="word">加载中...</div>
+    <div id="phonetic"></div>
+    <div id="pos"></div>
+    <div id="meaning"></div>
+</div>
 
-    <div class="example-card">
-        <div id="exampleTitle">例句</div>
-        <div id="example"></div>
-        <div id="exampleTranslation"></div>
-    </div>
-
+<div class="example-card">
+    <div id="example"></div>
+    <div id="exampleTranslation"></div>
 </div>
 
 <div class="bottom-bar">
@@ -316,6 +260,7 @@ let words = [];
 let index = Number(localStorage.getItem("word_index") || 0);
 let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
+/* 加载词库 */
 fetch("words.json")
 .then(res => res.json())
 .then(data => {
@@ -333,14 +278,13 @@ function render(){
     document.getElementById("phonetic").innerText = w.phonetic || "";
     document.getElementById("pos").innerText = w.pos || "";
     document.getElementById("meaning").innerText = w.definition || "";
-
     document.getElementById("example").innerText = w.example || "";
     document.getElementById("exampleTranslation").innerText = w.example_translation || "";
 }
 
 function speak(){
     let w = words[index];
-    if(!w || !w.word) return;
+    if(!w) return;
 
     let audio = new Audio(
         `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${w.word.toLowerCase()}--_us_1.mp3`
@@ -369,7 +313,6 @@ function prevWord(){
 
 function saveWord(){
     let w = words[index];
-
     if(!favorites.find(i => i.word === w.word)){
         favorites.push(w);
         localStorage.setItem("favorites_list", JSON.stringify(favorites));
