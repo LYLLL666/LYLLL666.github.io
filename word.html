@@ -50,10 +50,10 @@ body::before{
 }
 
 /* =========================
-   返回按钮（已修复：固定屏幕左上角）
+   返回按钮（固定不进卡片）
 ========================= */
 .back{
-    position:fixed; /* ⭐关键修复 */
+    position:fixed;
 
     left:16px;
     top:20px;
@@ -99,10 +99,10 @@ body::before{
 }
 
 /* =========================
-   单词卡
+   主卡片（单词信息）
 ========================= */
 .card{
-    margin-top:100px;
+    margin-top:90px;
     width:280px;
     padding:22px;
     border-radius:24px;
@@ -127,10 +127,55 @@ body::before{
     font-weight:700;
 }
 
+#phonetic{
+    margin-top:6px;
+    font-size:14px;
+    opacity:.7;
+}
+
+#pos{
+    margin-top:4px;
+    font-size:14px;
+    opacity:.6;
+}
+
 #meaning{
-    margin-top:14px;
+    margin-top:10px;
     font-size:16px;
     color:rgba(51,65,85,.9);
+}
+
+/* =========================
+   例句卡片（新增）
+========================= */
+.example-card{
+    margin-top:18px;
+    width:280px;
+    padding:20px;
+    border-radius:24px;
+
+    background:rgba(255,255,255,.45);
+
+    backdrop-filter:blur(18px) saturate(160%);
+    -webkit-backdrop-filter:blur(18px) saturate(160%);
+
+    border:1px solid rgba(255,255,255,.35);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.3),
+        0 10px 25px rgba(0,0,0,.05);
+
+    margin-left:auto;
+    margin-right:auto;
+
+    font-size:15px;
+    color:rgba(15,23,42,.85);
+}
+
+#exampleTitle{
+    font-size:13px;
+    opacity:.6;
+    margin-bottom:8px;
 }
 
 /* =========================
@@ -142,7 +187,7 @@ body::before{
     left:50%;
     transform:translateX(-50%);
 
-    bottom:220px;
+    bottom:140px;
 
     display:flex;
     gap:80px;
@@ -200,16 +245,26 @@ body::before{
 
 <body>
 
-<!-- 返回按钮（已彻底修复位置） -->
+<!-- 返回 -->
 <div class="back" onclick="back()">←</div>
 
 <div class="top">单词学习</div>
 
+<!-- 主卡片 -->
 <div class="card">
     <div id="word">加载中...</div>
+    <div id="phonetic"></div>
+    <div id="pos"></div>
     <div id="meaning"></div>
 </div>
 
+<!-- 例句卡 -->
+<div class="example-card">
+    <div id="exampleTitle">例句</div>
+    <div id="example"></div>
+</div>
+
+<!-- 按钮 -->
 <div class="bottom-bar">
 
     <div id="prevBtn" class="btn" onclick="prevWord()">←</div>
@@ -244,12 +299,14 @@ function render(){
     let w = words[index];
 
     document.getElementById("word").innerText = w.word;
+    document.getElementById("phonetic").innerText = w.phonetic || "";
+    document.getElementById("pos").innerText = w.partOfSpeech || "";
     document.getElementById("meaning").innerText = w.meaning;
 
-    // 保存进度
+    document.getElementById("example").innerText = w.example || "";
+
     localStorage.setItem("word_index", index);
 
-    // 上一个按钮控制
     let prevBtn = document.getElementById("prevBtn");
 
     if(index === 0){
