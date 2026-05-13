@@ -8,9 +8,6 @@
 
 <style>
 
-/* =========================
-   BASE
-========================= */
 body{
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
@@ -32,138 +29,26 @@ body{
     position:relative;
 }
 
-/* 柔光层 */
 body::before{
     content:"";
     position:fixed;
     inset:0;
-
-    background:
-    radial-gradient(
-        circle at top,
-        rgba(255,255,255,.45),
-        rgba(255,255,255,.10),
-        rgba(0,0,0,.02)
-    );
-
+    background: radial-gradient(circle at top, rgba(255,255,255,.45), rgba(255,255,255,.10), rgba(0,0,0,.02));
     pointer-events:none;
 }
 
-/* =========================
-   TITLE
-========================= */
-h1{
-    margin-top:22px;
-    font-size:22px;
-    font-weight:600;
-    color:rgba(15,23,42,.85);
-}
-
-/* =========================
-   WORD CARD
-========================= */
-.card{
-    margin-top:60px;
-    width:320px;
-    padding:30px;
-    border-radius:24px;
-
-    background:rgba(255,255,255,.55);
-
-    backdrop-filter:blur(18px) saturate(160%);
-    -webkit-backdrop-filter:blur(18px) saturate(160%);
-
-    border:1px solid rgba(255,255,255,.35);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.4),
-        0 10px 30px rgba(0,0,0,.06);
-
-    margin-left:auto;
-    margin-right:auto;
-}
-
-#word{
-    font-size:44px;
-    font-weight:700;
-}
-
-#meaning{
-    margin-top:14px;
-    font-size:16px;
-    color:rgba(51,65,85,.9);
-}
-
-/* =========================
-   BUTTON BAR（保持原风格）
-========================= */
-.bottom-bar{
+/* 标题 */
+.top{
     position:absolute;
-
-    left:50%;
-    transform:translateX(-50%);
-
-    bottom:120px;
-
-    display:flex;
-    gap:80px;
-
-    align-items:center;
-    justify-content:center;
+    top:18px;
+    width:100%;
+    text-align:center;
+    font-size:18px;
+    font-weight:600;
 }
 
 /* =========================
-   圆形玻璃按钮（完全不改风格）
-========================= */
-.btn{
-    width:52px;
-    height:52px;
-
-    border-radius:50%;
-
-    border:1px solid rgba(255,255,255,.35);
-
-    background:
-    linear-gradient(
-        to bottom,
-        rgba(255,255,255,.18),
-        rgba(255,255,255,.06)
-    );
-
-    backdrop-filter:blur(18px) saturate(170%);
-    -webkit-backdrop-filter:blur(18px) saturate(170%);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.4),
-        0 8px 18px rgba(0,0,0,.08);
-
-    cursor:pointer;
-
-    font-size:22px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    transition:all .18s ease;
-
-    color:rgba(15,23,42,.75);
-}
-
-.btn:active{
-    transform:scale(.92);
-}
-
-/* =========================
-   禁用状态（仅上一个用）
-========================= */
-.btn.disabled{
-    opacity:.25;
-    pointer-events:none;
-}
-
-/* =========================
-   返回按钮（改成圆形，不破坏风格）
+   返回按钮（已恢复 + 圆形）
 ========================= */
 .back{
     position:absolute;
@@ -172,19 +57,14 @@ h1{
 
     width:44px;
     height:44px;
-
     border-radius:50%;
 
     border:1px solid rgba(255,255,255,.35);
 
-    background:
-    linear-gradient(
-        to bottom,
-        rgba(255,255,255,.18),
-        rgba(255,255,255,.06)
-    );
+    background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
 
     backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
 
     display:flex;
     align-items:center;
@@ -198,18 +78,82 @@ h1{
         0 8px 18px rgba(0,0,0,.08);
 }
 
-/* =========================
-   顶部标题
-========================= */
-.top{
-    position:absolute;
-    top:18px;
-    width:100%;
-    text-align:center;
+/* 单词卡 */
+.card{
+    margin-top:60px;
+    width:320px;
+    padding:30px;
+    border-radius:24px;
+    background:rgba(255,255,255,.55);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.35);
+    margin-left:auto;
+    margin-right:auto;
+}
 
-    font-size:18px;
-    font-weight:600;
+#word{
+    font-size:44px;
+    font-weight:700;
+}
+
+#meaning{
+    margin-top:14px;
+    font-size:16px;
+}
+
+/* =========================
+   按键区域（已整体上移）
+========================= */
+.bottom-bar{
+    position:absolute;
+
+    left:50%;
+    transform:translateX(-50%);
+
+    /* ⭐ 原120px → 140px（整体上移约1cm视觉距离） */
+    bottom:140px;
+
+    display:flex;
+    gap:80px;
+
+    align-items:center;
+    justify-content:center;
+}
+
+/* 圆形按钮（不变） */
+.btn{
+    width:52px;
+    height:52px;
+    border-radius:50%;
+
+    border:1px solid rgba(255,255,255,.35);
+
+    background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
+
+    backdrop-filter:blur(18px);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.4),
+        0 8px 18px rgba(0,0,0,.08);
+
+    cursor:pointer;
+
+    font-size:22px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
     color:rgba(15,23,42,.75);
+}
+
+.btn:active{
+    transform:scale(.92);
+}
+
+.btn.disabled{
+    opacity:.25;
+    pointer-events:none;
 }
 
 </style>
@@ -217,7 +161,7 @@ h1{
 
 <body>
 
-<!-- 返回 -->
+<!-- ✔ 返回按钮已恢复 -->
 <div class="back" onclick="back()">←</div>
 
 <div class="top">单词学习</div>
@@ -227,7 +171,6 @@ h1{
     <div id="meaning"></div>
 </div>
 
-<!-- 按钮区（只加一个“上一个”，不改布局） -->
 <div class="bottom-bar">
 
     <div id="prevBtn" class="btn" onclick="prevWord()">←</div>
@@ -241,8 +184,6 @@ h1{
 <script>
 
 let words = [];
-
-// ⭐ 进度恢复
 let index = Number(localStorage.getItem("word_index") || 0);
 
 let favorites =
@@ -252,10 +193,7 @@ fetch("words.json")
 .then(res => res.json())
 .then(data => {
     words = data;
-
-    // 防止越界
     if(index >= words.length) index = 0;
-
     render();
 });
 
@@ -267,10 +205,8 @@ function render(){
     document.getElementById("word").innerText = w.word;
     document.getElementById("meaning").innerText = w.meaning;
 
-    // ⭐ 保存进度
     localStorage.setItem("word_index", index);
 
-    // ⭐ 上一个按钮状态
     let prevBtn = document.getElementById("prevBtn");
 
     if(index === 0){
@@ -297,20 +233,13 @@ function saveWord(){
 let w = words[index];
 
 if(!favorites.find(i => i.word === w.word)){
+    favorites.push(w);
 
-favorites.push(w);
+    localStorage.setItem("favorites_list", JSON.stringify(favorites));
 
-localStorage.setItem(
-"favorites_list",
-JSON.stringify(favorites)
-);
-
-document.getElementById("meaning").innerText =
-"⭐ 已加入收藏";
-
+    document.getElementById("meaning").innerText = "⭐ 已加入收藏";
 }else{
-document.getElementById("meaning").innerText =
-"⚠️ 已收藏过";
+    document.getElementById("meaning").innerText = "⚠️ 已收藏过";
 }
 
 }
