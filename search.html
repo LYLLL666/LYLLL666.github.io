@@ -36,9 +36,7 @@ body{
 
     font-size:20px;
 
-    color:rgba(15,23,42,.75);
-
-    background:rgba(255,255,255,.25);
+    background:rgba(255,255,255,.4);
 
     border:1px solid rgba(255,255,255,.6);
 
@@ -85,7 +83,7 @@ body{
     0 4px 12px rgba(0,0,0,.04);
 }
 
-/* 查询按钮（仅改效果） */
+/* 查询按钮 */
 .search-box button{
     width:44px;
     height:44px;
@@ -244,36 +242,51 @@ let current = null;
 async function searchWord(){
 
     let word = document.getElementById("inputWord").value.trim();
+
     if(!word) return;
 
     let data = await fetchWord(word);
+
     current = data;
 
-    document.getElementById("word").innerText = data.word;
-    document.getElementById("phonetic").innerText = data.phonetic || "";
-    document.getElementById("meaning").innerText = data.meaning || "";
-    document.getElementById("example").innerText = data.example || "";
+    document.getElementById("word").innerText =
+    data.word;
+
+    document.getElementById("phonetic").innerText =
+    data.phonetic || "";
+
+    document.getElementById("meaning").innerText =
+    data.meaning || "";
+
+    document.getElementById("example").innerText =
+    data.example || "";
 }
 
 // API
 async function fetchWord(word){
 
     try{
+
         let res = await fetch(
             "https://api.dictionaryapi.dev/api/v2/entries/en/" + word
         );
 
         let data = await res.json();
+
         let d = data[0];
 
         return {
             word: d.word,
             phonetic: d.phonetic || "",
-            meaning: d.meanings?.[0]?.definitions?.[0]?.definition || "",
-            example: d.meanings?.[0]?.definitions?.[0]?.example || ""
+            meaning:
+            d.meanings?.[0]?.definitions?.[0]?.definition || "",
+
+            example:
+            d.meanings?.[0]?.definitions?.[0]?.example || ""
         };
 
     }catch(e){
+
         return {
             word,
             phonetic:"",
@@ -288,7 +301,8 @@ function playAudio(){
 
     if(!current) return;
 
-    let utter = new SpeechSynthesisUtterance(current.word);
+    let utter =
+    new SpeechSynthesisUtterance(current.word);
 
     utter.lang = "en-US";
 
@@ -300,7 +314,8 @@ function saveWord(){
 
     if(!current) return;
 
-    let list = JSON.parse(localStorage.getItem("favorites") || "[]");
+    let list =
+    JSON.parse(localStorage.getItem("favorites") || "[]");
 
     if(!list.find(i => i.word === current.word)){
 
