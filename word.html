@@ -276,30 +276,44 @@ let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
 /* ====== 加载词库（已修复） ====== */
 fetch("words.json")
-.then(res => res.json())
+.then(res => {
+    if(!res.ok) throw new Error("words.json加载失败");
+    return res.json();
+})
 .then(data => {
 
-    // 🔥 看有没有缓存顺序
     let saved = localStorage.getItem("words_order");
 
+    // 🔥 默认用原始数据
+    let finalWords = data;
+
     if(saved){
+        try {
+            let parsed = JSON.parse(saved);
 
-        // 已经有顺序 → 直接用
-        words = JSON.parse(saved);
+            // 确保数据有效
+            if(Array.isArray(parsed) && parsed.length > 0){
+                finalWords = parsed;
+            }
 
-    }else{
-
-        // 第一次进入 → 随机
-        words = data.sort(() => Math.random() - 0.5);
-
-        // 保存顺序
-        localStorage.setItem("words_order", JSON.stringify(words));
+        } catch(e){
+            console.log("缓存损坏，已重置");
+            localStorage.removeItem("words_order");
+        }
     }
+
+    // 如果没有缓存 → 随机一次
+    if(!saved){
+        finalWords = data.sort(() => Math.random() - 0.5);
+        localStorage.setItem("words_order", JSON.stringify(finalWords));
+    }
+
+    words = finalWords;
 
     if(index >= words.length) index = 0;
 
     render();
-});
+})
 .catch(err => {
     console.log(err);
     document.getElementById("word").innerText = "加载失败";
