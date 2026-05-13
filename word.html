@@ -50,12 +50,13 @@ body::before{
 }
 
 /* =========================
-   返回按钮（独立层）
+   返回按钮（已修复：固定屏幕左上角）
 ========================= */
 .back{
-    position:absolute;
+    position:fixed; /* ⭐关键修复 */
+
     left:16px;
-    top:28px;
+    top:20px;
 
     width:44px;
     height:44px;
@@ -80,32 +81,28 @@ body::before{
         0 8px 18px rgba(0,0,0,.12),
         inset 0 1px 1px rgba(255,255,255,.6);
 
-    z-index:9999;
+    z-index:99999;
 }
 
 /* =========================
-   标题（已独立于卡片）
+   标题
 ========================= */
 .top{
     position:absolute;
     top:18px;
-    left:0;
     width:100%;
-
     text-align:center;
 
     font-size:18px;
     font-weight:600;
     color:rgba(15,23,42,.75);
-
-    z-index:9998;
 }
 
 /* =========================
    单词卡
 ========================= */
 .card{
-    margin-top:80px;
+    margin-top:60px;
     width:320px;
     padding:30px;
     border-radius:24px;
@@ -137,22 +134,25 @@ body::before{
 }
 
 /* =========================
-   按钮区域（UI不变）
+   按钮区域
 ========================= */
 .bottom-bar{
     position:absolute;
+
     left:50%;
     transform:translateX(-50%);
+
     bottom:140px;
 
     display:flex;
     gap:80px;
+
     align-items:center;
     justify-content:center;
 }
 
 /* =========================
-   圆形按钮（UI不变）
+   圆形按钮
 ========================= */
 .btn{
     width:52px;
@@ -200,19 +200,16 @@ body::before{
 
 <body>
 
-<!-- 返回 -->
+<!-- 返回按钮（已彻底修复位置） -->
 <div class="back" onclick="back()">←</div>
 
-<!-- 标题（已移出卡片） -->
 <div class="top">单词学习</div>
 
-<!-- 单词卡 -->
 <div class="card">
     <div id="word">加载中...</div>
     <div id="meaning"></div>
 </div>
 
-<!-- 底部按钮 -->
 <div class="bottom-bar">
 
     <div id="prevBtn" class="btn" onclick="prevWord()">←</div>
