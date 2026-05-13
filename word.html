@@ -240,25 +240,12 @@ body::before{
 }
 
 /* =========================
-   安卓优化（唯一保留）
+   🔥 安卓整体缩放75%（核心）
 ========================= */
-body.android .card{
-    width: 92%;
-    margin-top: 70px;
-    padding: 18px;
-}
-
-body.android .example-card{
-    width: 92%;
-}
-
-body.android #word{
-    font-size: 38px;
-}
-
-body.android .bottom-bar{
-    bottom: 120px;
-    gap: 60px;
+html.android-scale{
+    transform: scale(0.75);
+    transform-origin: top center;
+    width: 133.33%;
 }
 
 </style>
@@ -296,12 +283,16 @@ let words = [];
 let index = Number(localStorage.getItem("word_index") || 0);
 let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
-/* 安卓识别 */
+/* =========================
+   安卓识别（关键）
+========================= */
 if (/Android/i.test(navigator.userAgent)) {
-    document.body.classList.add("android");
+    document.documentElement.classList.add("android-scale");
 }
 
-/* 加载词库 */
+/* =========================
+   加载词库
+========================= */
 fetch("words.json")
 .then(res => res.json())
 .then(data => {
@@ -321,7 +312,6 @@ function render(){
     document.getElementById("meaning").innerText = w.definition || "";
 
     document.getElementById("example").innerText = w.example || "";
-    document.getElementById("exampleTranslation").innerText = w.example_translation || "";
 }
 
 function speak(){
@@ -339,17 +329,21 @@ function speak(){
 
     audio.play().catch(() => {
         window.speechSynthesis.cancel();
+
         let u = new SpeechSynthesisUtterance(w.word);
         u.lang = "en-US";
         u.rate = 0.95;
+
         speechSynthesis.speak(u);
     });
 
     audio.onerror = function(){
         window.speechSynthesis.cancel();
+
         let u = new SpeechSynthesisUtterance(w.word);
         u.lang = "en-US";
         u.rate = 0.95;
+
         speechSynthesis.speak(u);
     };
 }
