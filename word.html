@@ -119,7 +119,7 @@ body::before{
     margin-left:auto;
     margin-right:auto;
 
-    position:relative; /* ⭐为了放发音按钮 */
+    position:relative;
 }
 
 #word{
@@ -146,7 +146,7 @@ body::before{
 }
 
 /* =========================
-   卡片内发音按钮（新增）
+   发音按钮
 ========================= */
 .audio-btn{
     position:absolute;
@@ -191,14 +191,10 @@ body::before{
 
     background:rgba(255,255,255,.45);
 
-    backdrop-filter:blur(18px) saturate(160%);
-    -webkit-backdrop-filter:blur(18px) saturate(160%);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
 
     border:1px solid rgba(255,255,255,.35);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.3),
-        0 10px 25px rgba(0,0,0,.05);
 
     margin-left:auto;
     margin-right:auto;
@@ -209,17 +205,12 @@ body::before{
 ========================= */
 .bottom-bar{
     position:absolute;
-
     left:50%;
     transform:translateX(-50%);
-
     bottom:140px;
 
     display:flex;
     gap:80px;
-
-    align-items:center;
-    justify-content:center;
 }
 
 /* =========================
@@ -232,33 +223,21 @@ body::before{
 
     border:1px solid rgba(255,255,255,.35);
 
-    background:
-    linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
+    background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
 
-    backdrop-filter:blur(18px) saturate(170%);
-    -webkit-backdrop-filter:blur(18px) saturate(170%);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.4),
-        0 8px 18px rgba(0,0,0,.08);
-
-    cursor:pointer;
-
-    font-size:22px;
+    backdrop-filter:blur(18px);
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    color:rgba(15,23,42,.75);
-}
+    cursor:pointer;
 
-.btn:active{
-    transform:scale(.92);
+    font-size:22px;
 }
 
 .btn.disabled{
-    opacity:.25;
+    opacity:.3;
     pointer-events:none;
 }
 
@@ -271,25 +250,21 @@ body::before{
 
 <div class="top">单词学习</div>
 
-<!-- 主卡 -->
 <div class="card">
 
-    <!-- ⭐发音按钮放在卡片内部 -->
     <div class="audio-btn" onclick="playAudio()">🔊</div>
 
     <div id="word">加载中...</div>
     <div id="phonetic"></div>
     <div id="pos"></div>
     <div id="meaning"></div>
+
 </div>
 
-<!-- 例句卡 -->
 <div class="example-card">
-    <div id="exampleTitle">例句</div>
     <div id="example"></div>
 </div>
 
-<!-- 按钮 -->
 <div class="bottom-bar">
 
     <div id="prevBtn" class="btn" onclick="prevWord()">←</div>
@@ -304,9 +279,7 @@ body::before{
 
 let words = [];
 let index = Number(localStorage.getItem("word_index") || 0);
-
-let favorites =
-JSON.parse(localStorage.getItem("favorites_list") || "[]");
+let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
 fetch("words.json")
 .then(res => res.json())
@@ -317,14 +290,15 @@ fetch("words.json")
 });
 
 function render(){
-    if(words.length === 0) return;
+
+    if(!words.length) return;
 
     let w = words[index];
 
-    document.getElementById("word").innerText = w.word;
+    document.getElementById("word").innerText = w.word || "";
     document.getElementById("phonetic").innerText = w.phonetic || "";
     document.getElementById("pos").innerText = w.partOfSpeech || "";
-    document.getElementById("meaning").innerText = w.meaning;
+    document.getElementById("meaning").innerText = w.meaning || "";
     document.getElementById("example").innerText = w.example || "";
 
     localStorage.setItem("word_index", index);
@@ -336,14 +310,6 @@ function render(){
     }else{
         prevBtn.classList.remove("disabled");
     }
-}
-
-function playAudio(){
-    let w = words[index];
-    if(!w.audio) return;
-
-    let audio = new Audio(w.audio);
-    audio.play();
 }
 
 function nextWord(){
@@ -360,22 +326,32 @@ function prevWord(){
 
 function saveWord(){
 
-let w = words[index];
+    let w = words[index];
 
-if(!favorites.find(i => i.word === w.word)){
-
-favorites.push(w);
-
-localStorage.setItem("favorites_list", JSON.stringify(favorites));
-
-document.getElementById("meaning").innerText =
-"⭐ 已加入收藏";
-
-}else{
-document.getElementById("meaning").innerText =
-"⚠️ 已收藏过";
+    if(!favorites.find(i => i.word === w.word)){
+        favorites.push(w);
+        localStorage.setItem("favorites_list", JSON.stringify(favorites));
+        document.getElementById("meaning").innerText = "⭐ 已加入收藏";
+    }else{
+        document.getElementById("meaning").innerText = "⚠️ 已收藏过";
+    }
 }
 
+function playAudio(){
+
+    let w = words[index];
+    if(!w) return;
+
+    // 优先 API 音频
+    if(w.audio){
+        new Audio(w.audio).play();
+        return;
+    }
+
+    // fallback：浏览器TTS
+    let tts = new SpeechSynthesisUtterance(w.word);
+    tts.lang = "en-US";
+    speechSynthesis.speak(tts);
 }
 
 function back(){
