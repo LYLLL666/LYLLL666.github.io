@@ -238,39 +238,25 @@ async function searchWord(){
     let data = await fetchWord(word);
     current = data;
 
-    // =====================
-    // 1. 英文原文显示
-    // =====================
+    // 原始内容
     document.getElementById("word").innerText = data.word;
     document.getElementById("phonetic").innerText = data.phonetic || "";
     document.getElementById("meaning").innerText = data.meaning || "";
     document.getElementById("example").innerText = data.example || "";
 
     // =====================
-    // 2. 分别翻译（三个独立DOM）
+    // word翻译（防止无效）
     // =====================
+    translate(data.word).then(zh=>{
+        if(!zh || zh === data.word) return;
 
-    // word翻译
-    translate(data.word || "").then(zh => {
         document.getElementById("word").innerText =
-            data.word + "  \n  " + zh;
-    });
-
-    // meaning翻译
-    translate(data.meaning || "").then(zh => {
-        document.getElementById("meaning").innerText =
-            data.meaning + " \n " + zh;
-    });
-
-    // example翻译
-    translate(data.example || "").then(zh => {
-        document.getElementById("example").innerText =
-            data.example + " \n " + zh;
+            data.word + " / " + zh;
     });
 }
 
 // =====================
-// 英文词典API
+// API
 // =====================
 async function fetchWord(word){
 
@@ -300,22 +286,28 @@ async function fetchWord(word){
 }
 
 // =====================
-// 🔥 翻译API（新增）
+// 翻译 API（稳定版 LibreTranslate）
 // =====================
 async function translate(text){
 
     if(!text) return "";
 
     try{
-        let res = await fetch(
-            "https://api.mymemory.translated.net/get?q=" +
-            encodeURIComponent(text) +
-            "&langpair=en|zh-CN"
-        );
+        let res = await fetch("https://libretranslate.de/translate", {
+            method:"POST",
+            body: JSON.stringify({
+                q: text,
+                source: "en",
+                target: "zh",
+                format: "text"
+            }),
+            headers: {
+                "Content-Type":"application/json"
+            }
+        });
 
         let data = await res.json();
-
-        return data?.responseData?.translatedText || "";
+        return data.translatedText || "";
 
     }catch(e){
         return "";
@@ -323,7 +315,7 @@ async function translate(text){
 }
 
 // =====================
-// 发音（防重叠）
+// 发音
 // =====================
 function playAudio(){
 
@@ -333,7 +325,6 @@ function playAudio(){
 
     let utter = new SpeechSynthesisUtterance(current.word);
     utter.lang = "en-US";
-    utter.rate = 0.95;
 
     speechSynthesis.speak(utter);
 }
@@ -345,13 +336,11 @@ function saveWord(){
 
     if(!current) return;
 
-    let list = JSON.parse(localStorage.getItem("favorites_list") || "[]");
+    let list = JSON.parse(localStorage.getItem("favorites") || "[]");
 
-    let exists = list.some(i => i.word === current.word);
-
-    if(!exists){
+    if(!list.find(i => i.word === current.word)){
         list.push(current);
-        localStorage.setItem("favorites_list", JSON.stringify(list));
+        localStorage.setItem("favorites", JSON.stringify(list));
     }
 
     alert("已收藏");
