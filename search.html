@@ -22,16 +22,12 @@ body{
     position:fixed;
     left:16px;
     top:20px;
-
-    width:44px;
-    height:44px;
+    width:44px;height:44px;
     border-radius:50%;
     background:rgba(255,255,255,.4);
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     cursor:pointer;
 }
 
@@ -48,8 +44,8 @@ body{
     padding:10px;
     border-radius:12px;
     border:none;
-    background:rgba(255,255,255,.5);
     outline:none;
+    background:rgba(255,255,255,.5);
 }
 
 .search-box button{
@@ -72,8 +68,8 @@ body{
 #word{font-size:40px;font-weight:700;}
 #phonetic{opacity:.7;}
 #meaning{margin-top:10px;}
-#example{margin-top:10px;color:#333;}
 #cn{font-size:13px;color:#666;margin-top:6px;}
+#example{margin-top:10px;color:#333;}
 
 /* 收藏 */
 .fav{
@@ -139,7 +135,7 @@ async function searchWord(){
     document.getElementById("meaning").innerText = data.meaning || "";
     document.getElementById("example").innerText = data.example || "";
 
-    // ⭐ 强制中文翻译（关键修复）
+    // 中文翻译（重点）
     document.getElementById("cn").innerText =
         "中文：" + await translate(data.meaning || data.word);
 
@@ -148,7 +144,7 @@ async function searchWord(){
 }
 
 // =========================
-// API
+// 英文词典API
 // =========================
 async function fetchWord(word){
 
@@ -178,9 +174,11 @@ async function fetchWord(word){
 }
 
 // =========================
-// 翻译（稳定版）
+// 中文翻译API
 // =========================
 async function translate(text){
+
+    if(!text) return "";
 
     try{
         let res = await fetch(
@@ -198,7 +196,7 @@ async function translate(text){
 }
 
 // =========================
-// 收藏 → 跳页面
+// 收藏（关键修复）
 // =========================
 function saveWord(){
 
@@ -211,8 +209,7 @@ function saveWord(){
         localStorage.setItem("favorites", JSON.stringify(list));
     }
 
-    // ⭐ 直接跳 favorites.html
-    location.href = "favorites.html";
+    alert("已收藏");
 }
 
 // =========================
