@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>单词学习</title>
 
 <style>
@@ -22,8 +22,9 @@ body{
         #e3efff 100%
     );
 
-    height:100vh;
-    overflow:hidden;
+    min-height:100vh;
+    overflow-y:auto;
+    overflow-x:hidden;
 
     text-align:center;
     color:#0f172a;
