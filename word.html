@@ -350,21 +350,35 @@ function playAudio(){
     let w = words[index];
     if(!w || !w.word) return;
 
-    // 停掉上一句（避免叠音）
-    window.speechSynthesis.cancel();
+    let word = w.word.toLowerCase().trim();
 
-    let utter = new SpeechSynthesisUtterance(w.word);
+    // 🥇 第一方案：Google Oxford 音频（稳定优先）
+    let audio = new Audio(
+        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${word}--_us_1.mp3`
+    );
 
-    // 美式英语发音
-    utter.lang = "en-US";
+    audio.play().catch(() => {
 
-    // 语速（可调）
-    utter.rate = 0.95;
+        // 🥈 兜底：浏览器 TTS
+        window.speechSynthesis.cancel();
 
-    // 音调（可调）
-    utter.pitch = 1;
+        let utter = new SpeechSynthesisUtterance(w.word);
+        utter.lang = "en-US";
+        utter.rate = 0.95;
 
-    speechSynthesis.speak(utter);
+        speechSynthesis.speak(utter);
+    });
+
+    // ❗如果音频 404，也走兜底
+    audio.onerror = function(){
+        window.speechSynthesis.cancel();
+
+        let utter = new SpeechSynthesisUtterance(w.word);
+        utter.lang = "en-US";
+        utter.rate = 0.95;
+
+        speechSynthesis.speak(utter);
+    };
 }
 
 /* ====== 切换 ====== */
@@ -415,9 +429,6 @@ function autoPlay(){
     speechSynthesis.speak(utter);
 }
 
-document.body.addEventListener("click", () => {
-    speechSynthesis.getVoices();
-});
 
 </script>
 
