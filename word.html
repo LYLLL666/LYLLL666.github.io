@@ -347,12 +347,14 @@ function playAudio(){
 function nextWord(){
     index = (index + 1) % words.length;
     render();
+    autoPlay();
 }
 
 function prevWord(){
     if(index > 0){
         index--;
         render();
+        autoPlay();
     }
 }
 
@@ -372,6 +374,21 @@ function saveWord(){
 /* ====== 返回 ====== */
 function back(){
     location.href = "index.html";
+}
+//自动阅读
+function autoPlay(){
+
+    let w = words[index];
+    if(!w || !w.word) return;
+
+    // 防止叠音
+    window.speechSynthesis.cancel();
+
+    let utter = new SpeechSynthesisUtterance(w.word);
+    utter.lang = "en-US";
+    utter.rate = 0.95;
+
+    speechSynthesis.speak(utter);
 }
 
 </script>
