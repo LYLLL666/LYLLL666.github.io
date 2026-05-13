@@ -293,21 +293,15 @@ async function translate(text){
     if(!text) return "";
 
     try{
-        let res = await fetch("https://libretranslate.de/translate", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                q: text,
-                source: "en",
-                target: "zh",
-                format: "text"
-            })
-        });
+        let res = await fetch(
+            "https://api.mymemory.translated.net/get?q=" +
+            encodeURIComponent(text) +
+            "&langpair=en|zh-CN"
+        );
 
         let data = await res.json();
-        return data.translatedText || "";
+
+        return data?.responseData?.translatedText || "";
 
     }catch(e){
         return "";
