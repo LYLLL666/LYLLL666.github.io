@@ -4,53 +4,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>单词学习</title>
+<title>查词系统</title>
 
 <style>
 
-/* =========================
-   BASE
-========================= */
 body{
     margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
-
-    background: radial-gradient(
-        circle at top,
-        #dff3ff 0%,
-        #f4fbff 40%,
-        #eaf4ff 70%,
-        #e3efff 100%
-    );
-
+    font-family:-apple-system;
+    background: radial-gradient(circle at top,#dff3ff,#f4fbff,#e3efff);
     height:100vh;
     overflow:hidden;
-
     text-align:center;
-    color:#0f172a;
-
-    position:relative;
 }
 
-body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-
-    background:
-    radial-gradient(
-        circle at top,
-        rgba(255,255,255,.45),
-        rgba(255,255,255,.10),
-        rgba(0,0,0,.02)
-    );
-
-    pointer-events:none;
-}
-
-/* =========================
-   返回按钮（统一学习页风格）
-========================= */
+/* 返回 */
 .back{
     position:fixed;
     left:16px;
@@ -58,178 +25,154 @@ body::before{
 
     width:44px;
     height:44px;
+
     border-radius:50%;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    font-size:20px;
     cursor:pointer;
+
+    font-size:20px;
 
     color:rgba(15,23,42,.75);
 
     background:rgba(255,255,255,.25);
+
     border:1px solid rgba(255,255,255,.6);
 
     backdrop-filter:blur(18px) saturate(180%);
     -webkit-backdrop-filter:blur(18px) saturate(180%);
 
     box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.6),
-        0 8px 18px rgba(0,0,0,.10);
-
-    z-index:99999;
+    inset 0 1px 1px rgba(255,255,255,.6),
+    0 8px 18px rgba(0,0,0,.10);
 }
 
 .back:active{
     transform:scale(.92);
 }
 
-/* =========================
-   标题
-========================= */
-.top{
-    position:absolute;
-    top:18px;
-    width:100%;
-    text-align:center;
-
-    font-size:18px;
-    font-weight:600;
-    color:rgba(15,23,42,.75);
+/* 搜索区域 */
+.search-box{
+    margin-top:80px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    align-items:center;
 }
 
-/* =========================
-   主卡片
-========================= */
-.card{
-    margin-top:90px;
-    width:280px;
-    padding:22px;
-    border-radius:24px;
+/* 输入框 */
+.search-box input{
+    width:240px;
+    padding:14px 16px;
+
+    border-radius:999px;
+    border:none;
 
     background:rgba(255,255,255,.55);
 
-    backdrop-filter:blur(18px) saturate(160%);
-    -webkit-backdrop-filter:blur(18px) saturate(160%);
+    outline:none;
 
-    border:1px solid rgba(255,255,255,.35);
+    font-size:14px;
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
 
     box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.4),
-        0 10px 30px rgba(0,0,0,.06);
+    inset 0 1px 1px rgba(255,255,255,.5),
+    0 4px 12px rgba(0,0,0,.04);
+}
+
+/* 查询按钮（仅改效果） */
+.search-box button{
+    width:44px;
+    height:44px;
+
+    border-radius:50%;
+
+    border:1px solid rgba(255,255,255,.6);
+
+    cursor:pointer;
+
+    background:rgba(255,255,255,.25);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:14px;
+
+    color:rgba(15,23,42,.75);
+
+    backdrop-filter:blur(18px) saturate(180%);
+    -webkit-backdrop-filter:blur(18px) saturate(180%);
+
+    box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.6),
+    0 8px 18px rgba(0,0,0,.10);
+}
+
+.search-box button:active{
+    transform:scale(.92);
+}
+
+/* 卡片 */
+.card{
+    margin-top:40px;
+    width:300px;
 
     margin-left:auto;
     margin-right:auto;
 
-    position:relative;
+    padding:20px;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.6);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.5),
+    0 10px 25px rgba(0,0,0,.05);
 }
 
 #word{
-    font-size:44px;
+    font-size:40px;
     font-weight:700;
 }
 
 #phonetic{
-    margin-top:6px;
-    font-size:14px;
     opacity:.7;
-}
-
-#pos{
-    margin-top:4px;
-    font-size:14px;
-    opacity:.6;
 }
 
 #meaning{
     margin-top:10px;
-    font-size:16px;
-    color:rgba(51,65,85,.9);
 }
 
-/* =========================
-   发音按钮
-========================= */
-.audio-btn{
-    position:absolute;
-    top:12px;
-    right:12px;
-
-    width:40px;
-    height:40px;
-    border-radius:50%;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    cursor:pointer;
-
-    font-size:16px;
-
-    color:rgba(15,23,42,.75);
-
-    background:rgba(255,255,255,.25);
-    border:1px solid rgba(255,255,255,.6);
-
-    backdrop-filter:blur(18px) saturate(180%);
-    -webkit-backdrop-filter:blur(18px) saturate(180%);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.6),
-        0 8px 18px rgba(0,0,0,.10);
+#example{
+    margin-top:10px;
+    color:#333;
 }
 
-.audio-btn:active{
-    transform:scale(.92);
-}
-
-/* =========================
-   例句卡
-========================= */
-.example-card{
-    margin-top:18px;
-    width:280px;
-    padding:20px;
-    border-radius:24px;
-
-    background:rgba(255,255,255,.45);
-
-    backdrop-filter:blur(18px) saturate(160%);
-    -webkit-backdrop-filter:blur(18px) saturate(160%);
-
-    border:1px solid rgba(255,255,255,.35);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.3),
-        0 10px 25px rgba(0,0,0,.05);
-
-    margin-left:auto;
-    margin-right:auto;
-}
-
-/* =========================
-   发音 + 收藏操作栏
-========================= */
+/* 发音+收藏同一排 */
 .action-row{
     margin-top:15px;
+
     display:flex;
     justify-content:center;
-    gap:30px;
+    gap:20px;
 }
 
-/* =========================
-   圆按钮
-========================= */
+/* 按钮统一效果 */
 .circle-btn{
-    width:46px;
-    height:46px;
-    border-radius:50%;
+    width:45px;
+    height:45px;
 
-    background:rgba(255,255,255,.25);
-    border:1px solid rgba(255,255,255,.6);
+    border-radius:50%;
 
     display:flex;
     align-items:center;
@@ -237,74 +180,24 @@ body::before{
 
     cursor:pointer;
 
+    font-size:18px;
+
     color:rgba(15,23,42,.75);
+
+    background:rgba(255,255,255,.25);
+
+    border:1px solid rgba(255,255,255,.6);
 
     backdrop-filter:blur(18px) saturate(180%);
     -webkit-backdrop-filter:blur(18px) saturate(180%);
 
     box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.6),
-        0 8px 18px rgba(0,0,0,.10);
+    inset 0 1px 1px rgba(255,255,255,.6),
+    0 8px 18px rgba(0,0,0,.10);
 }
 
 .circle-btn:active{
     transform:scale(.92);
-}
-
-/* =========================
-   底部按钮
-========================= */
-.bottom-bar{
-    position:absolute;
-
-    left:50%;
-    transform:translateX(-50%);
-
-    bottom:140px;
-
-    display:flex;
-    gap:80px;
-
-    align-items:center;
-    justify-content:center;
-}
-
-/* =========================
-   底部按钮风格
-========================= */
-.btn{
-    width:52px;
-    height:52px;
-    border-radius:50%;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    cursor:pointer;
-
-    font-size:22px;
-
-    color:rgba(15,23,42,.75);
-
-    background:rgba(255,255,255,.22);
-    border:1px solid rgba(255,255,255,.55);
-
-    backdrop-filter:blur(18px) saturate(180%);
-    -webkit-backdrop-filter:blur(18px) saturate(180%);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.6),
-        0 10px 22px rgba(0,0,0,.12);
-}
-
-.btn:active{
-    transform:scale(.92);
-}
-
-.btn.disabled{
-    opacity:.25;
-    pointer-events:none;
 }
 
 </style>
@@ -312,25 +205,23 @@ body::before{
 
 <body>
 
-<div class="back" onclick="back()">←</div>
+<!-- 返回 -->
+<div class="back" onclick="goBack()">←</div>
 
-<div class="top">单词学习</div>
-
-<!-- 主卡 -->
-<div class="card">
-
-    <div class="audio-btn" onclick="playAudio()">🔊</div>
-
-    <div id="word">加载中...</div>
-    <div id="phonetic"></div>
-    <div id="pos"></div>
-    <div id="meaning"></div>
+<!-- 搜索 -->
+<div class="search-box">
+    <input id="inputWord" placeholder="输入单词..." />
+    <button onclick="searchWord()">查</button>
 </div>
 
-<!-- 例句卡 -->
-<div class="example-card">
+<!-- 显示 -->
+<div class="card">
 
-    <div id="exampleTitle">例句</div>
+    <div id="word">请输入单词</div>
+
+    <div id="phonetic"></div>
+
+    <div id="meaning"></div>
 
     <div id="example"></div>
 
@@ -345,135 +236,87 @@ body::before{
 
 </div>
 
-<!-- 底部按钮 -->
-<div class="bottom-bar">
-
-    <div id="prevBtn" class="btn" onclick="prevWord()">←</div>
-
-    <div class="btn" onclick="saveWord()">⭐</div>
-
-    <div class="btn" onclick="nextWord()">→</div>
-
-</div>
-
 <script>
 
-let words = [];
+let current = null;
 
-let index =
-Number(localStorage.getItem("word_index") || 0);
+// 查词
+async function searchWord(){
 
-let favorites =
-JSON.parse(localStorage.getItem("favorites_list") || "[]");
+    let word = document.getElementById("inputWord").value.trim();
+    if(!word) return;
 
-/* 读取词库 */
-fetch("words.json")
-.then(res => res.json())
-.then(data => {
+    let data = await fetchWord(word);
+    current = data;
 
-    words = data;
-
-    if(index >= words.length){
-        index = 0;
-    }
-
-    render();
-});
-
-/* 渲染 */
-function render(){
-
-    if(words.length === 0) return;
-
-    let w = words[index];
-
-    document.getElementById("word").innerText =
-    w.word;
-
-    document.getElementById("phonetic").innerText =
-    w.phonetic || "";
-
-    document.getElementById("pos").innerText =
-    w.partOfSpeech || "";
-
-    document.getElementById("meaning").innerText =
-    w.meaning || "";
-
-    document.getElementById("example").innerText =
-    w.example || "";
-
-    localStorage.setItem("word_index", index);
-
-    let prevBtn =
-    document.getElementById("prevBtn");
-
-    if(index === 0){
-
-        prevBtn.classList.add("disabled");
-
-    }else{
-
-        prevBtn.classList.remove("disabled");
-    }
+    document.getElementById("word").innerText = data.word;
+    document.getElementById("phonetic").innerText = data.phonetic || "";
+    document.getElementById("meaning").innerText = data.meaning || "";
+    document.getElementById("example").innerText = data.example || "";
 }
 
-/* 发音 */
-function playAudio(){
+// API
+async function fetchWord(word){
 
-    let w = words[index];
-
-    if(!w) return;
-
-    let audio =
-    new SpeechSynthesisUtterance(w.word);
-
-    audio.lang = "en-US";
-
-    speechSynthesis.speak(audio);
-}
-
-/* 下一页 */
-function nextWord(){
-
-    index = (index + 1) % words.length;
-
-    render();
-}
-
-/* 上一页 */
-function prevWord(){
-
-    if(index > 0){
-
-        index--;
-
-        render();
-    }
-}
-
-/* 收藏 */
-function saveWord(){
-
-    let w = words[index];
-
-    if(!favorites.find(i => i.word === w.word)){
-
-        favorites.push(w);
-
-        localStorage.setItem(
-            "favorites_list",
-            JSON.stringify(favorites)
+    try{
+        let res = await fetch(
+            "https://api.dictionaryapi.dev/api/v2/entries/en/" + word
         );
 
-    }else{
+        let data = await res.json();
+        let d = data[0];
 
-        document.getElementById("meaning").innerText =
-        "⚠️ 已收藏过";
+        return {
+            word: d.word,
+            phonetic: d.phonetic || "",
+            meaning: d.meanings?.[0]?.definitions?.[0]?.definition || "",
+            example: d.meanings?.[0]?.definitions?.[0]?.example || ""
+        };
+
+    }catch(e){
+        return {
+            word,
+            phonetic:"",
+            meaning:"查询失败",
+            example:""
+        };
     }
 }
 
-/* 返回 */
-function back(){
+// 发音
+function playAudio(){
+
+    if(!current) return;
+
+    let utter = new SpeechSynthesisUtterance(current.word);
+
+    utter.lang = "en-US";
+
+    speechSynthesis.speak(utter);
+}
+
+// 收藏
+function saveWord(){
+
+    if(!current) return;
+
+    let list = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+    if(!list.find(i => i.word === current.word)){
+
+        list.push(current);
+
+        localStorage.setItem(
+            "favorites",
+            JSON.stringify(list)
+        );
+    }
+
+    alert("已收藏");
+}
+
+// 返回
+function goBack(){
 
     location.href = "index.html";
 }
