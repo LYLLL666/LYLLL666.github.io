@@ -238,13 +238,18 @@ async function searchWord(){
     let data = await fetchWord(word);
     current = data;
 
-    document.getElementById("word").innerText =data.word + " / " + await translate(data.word);
+    document.getElementById("word").innerText =data.word || "";//+ " / " + await translate(data.word);
     document.getElementById("phonetic").innerText = data.phonetic || "";
     document.getElementById("meaning").innerText = data.meaning || "";
     document.getElementById("example").innerText = data.example || "";
 
     // ⭐ 加中文翻译
-    translate(data.meaning || data.word).then(zh=>{
+     translate(data.word || "").then(zh=>{
+        document.getElementById("meaning").innerText =
+        data.meaning + "\n\n中文：" + zh;
+    });
+    
+    translate(data.meaning || "").then(zh=>{
         document.getElementById("meaning").innerText =
         data.meaning + "\n\n中文：" + zh;
     });
