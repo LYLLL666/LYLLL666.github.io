@@ -4,359 +4,146 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>单词学习</title>
+<title>自动词库学习</title>
 
 <style>
-
-/* =========================
-   BASE
-========================= */
 body{
     margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
-
-    background: radial-gradient(
-        circle at top,
-        #dff3ff 0%,
-        #f4fbff 40%,
-        #eaf4ff 70%,
-        #e3efff 100%
-    );
-
+    font-family:-apple-system;
+    background: radial-gradient(circle at top,#dff3ff,#f4fbff,#e3efff);
     height:100vh;
     overflow:hidden;
-
     text-align:center;
-    color:#0f172a;
-
-    position:relative;
 }
 
-body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-
-    background:
-    radial-gradient(
-        circle at top,
-        rgba(255,255,255,.45),
-        rgba(255,255,255,.10),
-        rgba(0,0,0,.02)
-    );
-
-    pointer-events:none;
-}
-
-/* =========================
-   返回按钮（不动UI）
-========================= */
-.back{
-    position:fixed;
-    left:16px;
-    top:20px;
-
-    width:44px;
-    height:44px;
-    border-radius:50%;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:20px;
-    cursor:pointer;
-
-    color:#0f172a;
-
-    background:rgba(255,255,255,.35);
-    border:1px solid rgba(255,255,255,.6);
-
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-
-    box-shadow:
-        0 8px 18px rgba(0,0,0,.12),
-        inset 0 1px 1px rgba(255,255,255,.6);
-
-    z-index:99999;
-}
-
-/* =========================
-   标题
-========================= */
-.top{
-    position:absolute;
-    top:18px;
-    width:100%;
-    text-align:center;
-
-    font-size:18px;
-    font-weight:600;
-    color:rgba(15,23,42,.75);
-}
-
-/* =========================
-   主卡片
-========================= */
+/* 卡片 */
 .card{
-    margin-top:90px;
+    margin-top:100px;
     width:280px;
-    padding:22px;
-    border-radius:24px;
-
-    background:rgba(255,255,255,.55);
-
-    backdrop-filter:blur(18px) saturate(160%);
-    -webkit-backdrop-filter:blur(18px) saturate(160%);
-
-    border:1px solid rgba(255,255,255,.35);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.4),
-        0 10px 30px rgba(0,0,0,.06);
-
+    padding:25px;
+    border-radius:20px;
     margin-left:auto;
     margin-right:auto;
-
-    position:relative;
-}
-
-#word{
-    font-size:44px;
-    font-weight:700;
-}
-
-#phonetic{
-    margin-top:6px;
-    font-size:14px;
-    opacity:.7;
-}
-
-#pos{
-    margin-top:4px;
-    font-size:14px;
-    opacity:.6;
-}
-
-#meaning{
-    margin-top:10px;
-    font-size:16px;
-    color:rgba(51,65,85,.9);
-}
-
-/* =========================
-   发音按钮
-========================= */
-.audio-btn{
-    position:absolute;
-    top:12px;
-    right:12px;
-
-    width:38px;
-    height:38px;
-
-    border-radius:50%;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    cursor:pointer;
-
-    font-size:16px;
-
-    background:rgba(255,255,255,.35);
-    border:1px solid rgba(255,255,255,.6);
-
+    background:rgba(255,255,255,.6);
     backdrop-filter:blur(12px);
-
-    box-shadow:
-        0 6px 12px rgba(0,0,0,.10),
-        inset 0 1px 1px rgba(255,255,255,.6);
 }
 
-.audio-btn:active{
-    transform:scale(.92);
-}
+#word{font-size:40px;font-weight:700;}
+#meaning{margin-top:10px;}
+#example{margin-top:10px;color:#555;}
 
-/* =========================
-   例句卡
-========================= */
-.example-card{
-    margin-top:18px;
-    width:280px;
-    padding:20px;
-    border-radius:24px;
-
-    background:rgba(255,255,255,.45);
-
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-
-    border:1px solid rgba(255,255,255,.35);
-
-    margin-left:auto;
-    margin-right:auto;
-}
-
-/* =========================
-   按钮区
-========================= */
-.bottom-bar{
+/* 按钮 */
+.btns{
     position:absolute;
+    bottom:120px;
     left:50%;
     transform:translateX(-50%);
-    bottom:140px;
-
     display:flex;
-    gap:80px;
+    gap:60px;
 }
 
-/* =========================
-   按钮
-========================= */
 .btn{
-    width:52px;
-    height:52px;
+    width:50px;height:50px;
     border-radius:50%;
-
-    border:1px solid rgba(255,255,255,.35);
-
-    background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
-
-    backdrop-filter:blur(18px);
-
+    background:white;
     display:flex;
-    align-items:center;
     justify-content:center;
-
+    align-items:center;
     cursor:pointer;
-
-    font-size:22px;
 }
-
-.btn.disabled{
-    opacity:.3;
-    pointer-events:none;
-}
-
 </style>
 </head>
 
 <body>
 
-<div class="back" onclick="back()">←</div>
-
-<div class="top">单词学习</div>
-
 <div class="card">
-
-    <div class="audio-btn" onclick="playAudio()">🔊</div>
-
     <div id="word">加载中...</div>
-    <div id="phonetic"></div>
-    <div id="pos"></div>
     <div id="meaning"></div>
-
-</div>
-
-<div class="example-card">
     <div id="example"></div>
 </div>
 
-<div class="bottom-bar">
-
-    <div id="prevBtn" class="btn" onclick="prevWord()">←</div>
-
-    <div class="btn" onclick="saveWord()">⭐</div>
-
-    <div class="btn" onclick="nextWord()">→</div>
-
+<div class="btns">
+    <div class="btn" onclick="prev()">←</div>
+    <div class="btn" onclick="next()">→</div>
 </div>
 
 <script>
 
-let words = [];
-let index = Number(localStorage.getItem("word_index") || 0);
-let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
+// ==========================
+// ⭐ 不需要 words.json
+// ==========================
 
-fetch("words.json")
-.then(res => res.json())
-.then(data => {
-    words = data;
-    if(index >= words.length) index = 0;
+let wordPool = [
+    "abandon","ability","abstract","achieve","adapt",
+    "benefit","challenge","capacity","decline","define",
+    "environment","experience","generate","increase",
+    "motivate","organize","participate","significant"
+];
+
+let index = 0;
+let current = "";
+
+// ==========================
+// API查词
+// ==========================
+async function fetchWord(w){
+
+    try{
+        let res = await fetch(
+        "https://api.dictionaryapi.dev/api/v2/entries/en/" + w
+        );
+
+        let data = await res.json();
+        let d = data[0];
+
+        return {
+            word: d.word,
+            meaning: d.meanings?.[0]?.definitions?.[0]?.definition || "暂无释义",
+            example: d.meanings?.[0]?.definitions?.[0]?.example || "暂无例句",
+            audio: d.phonetics?.[0]?.audio || ""
+        };
+
+    }catch(e){
+        return {
+            word:w,
+            meaning:"查询失败",
+            example:""
+        };
+    }
+}
+
+// ==========================
+// 渲染
+// ==========================
+async function render(){
+
+    current = wordPool[index];
+
+    let data = await fetchWord(current);
+
+    document.getElementById("word").innerText = data.word;
+    document.getElementById("meaning").innerText = data.meaning;
+    document.getElementById("example").innerText = data.example;
+}
+
+// ==========================
+// 下一个
+// ==========================
+function next(){
+    index = (index + 1) % wordPool.length;
     render();
-});
-
-function render(){
-
-    if(!words.length) return;
-
-    let w = words[index];
-
-    document.getElementById("word").innerText = w.word || "";
-    document.getElementById("phonetic").innerText = w.phonetic || "";
-    document.getElementById("pos").innerText = w.partOfSpeech || "";
-    document.getElementById("meaning").innerText = w.meaning || "";
-    document.getElementById("example").innerText = w.example || "";
-
-    localStorage.setItem("word_index", index);
-
-    let prevBtn = document.getElementById("prevBtn");
-
-    if(index === 0){
-        prevBtn.classList.add("disabled");
-    }else{
-        prevBtn.classList.remove("disabled");
-    }
 }
 
-function nextWord(){
-    index = (index + 1) % words.length;
+// ==========================
+// 上一个
+// ==========================
+function prev(){
+    index = (index - 1 + wordPool.length) % wordPool.length;
     render();
 }
 
-function prevWord(){
-    if(index > 0){
-        index--;
-        render();
-    }
-}
-
-function saveWord(){
-
-    let w = words[index];
-
-    if(!favorites.find(i => i.word === w.word)){
-        favorites.push(w);
-        localStorage.setItem("favorites_list", JSON.stringify(favorites));
-        document.getElementById("meaning").innerText = "⭐ 已加入收藏";
-    }else{
-        document.getElementById("meaning").innerText = "⚠️ 已收藏过";
-    }
-}
-
-function playAudio(){
-
-    let w = words[index];
-    if(!w) return;
-
-    // 优先 API 音频
-    if(w.audio){
-        new Audio(w.audio).play();
-        return;
-    }
-
-    // fallback：浏览器TTS
-    let tts = new SpeechSynthesisUtterance(w.word);
-    tts.lang = "en-US";
-    speechSynthesis.speak(tts);
-}
-
-function back(){
-    location.href = "index.html";
-}
+// 初始化
+render();
 
 </script>
 
