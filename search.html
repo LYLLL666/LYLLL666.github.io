@@ -300,7 +300,7 @@ function saveWord(){
 
     if(!current) return;
 
-    let list = JSON.parse(localStorage.getItem("favorites") || "[]");
+    let list = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
     let exists = list.some(i => i.word === current.word);
 
