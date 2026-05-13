@@ -9,23 +9,24 @@
 <style>
 
 /* =========================
-   🧼 RESET
+   RESET
 ========================= */
 *{
     margin:0;
     padding:0;
+    box-sizing:border-box;
     user-select:none;
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color:transparent;
 }
 
 body{
-    font-family:-apple-system, BlinkMacSystemFont;
-    background:#05070d;
+    font-family:-apple-system,BlinkMacSystemFont;
     overflow:hidden;
+    background:#05070d;
 }
 
 /* =========================
-   🌈 CANVAS BACKGROUND
+   彩虹动态背景
 ========================= */
 canvas{
     position:fixed;
@@ -35,128 +36,154 @@ canvas{
     z-index:-3;
 }
 
-/* =========================
-   🧊 GLOBAL GLASS LAYER
-========================= */
 .glass-bg{
     position:fixed;
     inset:0;
-    background:rgba(255,255,255,0.03);
-    backdrop-filter: blur(60px) saturate(180%);
-    -webkit-backdrop-filter: blur(60px);
+    background:rgba(255,255,255,.02);
+    backdrop-filter:blur(60px) saturate(180%);
+    -webkit-backdrop-filter:blur(60px);
     z-index:-2;
 }
 
 /* =========================
-   📌 TITLE
+   标题
 ========================= */
 .title{
+    margin-top:70px;
     text-align:center;
-    margin-top:60px;
-    font-size:28px;
+    font-size:30px;
     font-weight:600;
-    color:rgba(255,255,255,0.92);
+    color:rgba(255,255,255,.92);
+    letter-spacing:.5px;
 }
 
 /* =========================
-   📦 CONTAINER
+   容器
 ========================= */
 .container{
     width:90%;
-    max-width:360px;
-    margin:40px auto;
+    max-width:380px;
+    margin:45px auto;
 }
 
 /* =========================
-   🍏 LIQUID GLASS BUTTON (FIXED)
+   苹果 Liquid Glass 按钮
 ========================= */
 .btn{
     position:relative;
-    padding:18px;
-    margin:14px 0;
 
-    border-radius:28px;
+    margin:18px 0;
+    padding:24px;
 
-    /* 🧊 主玻璃 */
-    background:rgba(255,255,255,0.06);
+    border-radius:36px;
 
-    backdrop-filter: blur(38px);
-    -webkit-backdrop-filter: blur(38px);
+    background:
+    linear-gradient(
+        to bottom,
+        rgba(255,255,255,.10),
+        rgba(255,255,255,.045)
+    );
 
-    border:1px solid rgba(255,255,255,0.18);
+    backdrop-filter:blur(24px) saturate(180%);
+    -webkit-backdrop-filter:blur(24px) saturate(180%);
 
-    color:rgba(255,255,255,0.92);
-    font-size:16px;
+    border:1px solid rgba(255,255,255,.16);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.20),
+        inset 0 -1px 1px rgba(255,255,255,.05),
+        0 10px 30px rgba(255,255,255,.02);
+
+    color:rgba(255,255,255,.96);
+
+    font-size:18px;
     font-weight:500;
 
     text-align:center;
-
-    cursor:pointer;
+    letter-spacing:.2px;
 
     overflow:hidden;
+    cursor:pointer;
 
-    /* 🌌 多层结构阴影（关键修复） */
-    box-shadow:
-        0 30px 70px rgba(0,0,0,0.65),
-        inset 0 1px 0 rgba(255,255,255,0.20),
-        inset 0 -12px 25px rgba(0,0,0,0.25);
-
-    transition: transform 0.18s cubic-bezier(.2,.9,.2,1),
-                background 0.2s ease;
+    transition:
+    transform .15s ease,
+    background .2s ease,
+    box-shadow .2s ease;
 }
 
-/* ✨ 光源层 */
+/* 顶部湿润高光 */
 .btn::before{
     content:"";
     position:absolute;
-    inset:-50%;
+
+    left:2px;
+    right:2px;
+    top:2px;
+
+    height:42%;
+    border-radius:34px;
 
     background:
-    radial-gradient(circle at 30% 20%,
-        rgba(255,255,255,0.25),
-        transparent 60%);
+    linear-gradient(
+        to bottom,
+        rgba(255,255,255,.22),
+        rgba(255,255,255,0)
+    );
 
-    opacity:1;
+    pointer-events:none;
 }
 
-/* 🌊 hover浮动 */
-.btn:hover{
-    transform:translateY(-3px);
-}
+/* 边缘液态轮廓 */
+.btn::after{
+    content:"";
+    position:absolute;
+    inset:0;
 
-/* 🧠 苹果级“材质按压”（关键修复） */
-.btn:active{
-
-    transform:translateY(2px) scale(0.94);
-
-    background:rgba(255,255,255,0.10);
+    border-radius:36px;
 
     box-shadow:
-        0 12px 30px rgba(0,0,0,0.7),
-        inset 0 18px 30px rgba(0,0,0,0.35),
-        inset 0 0 25px rgba(255,255,255,0.08);
+        inset 0 0 10px rgba(255,255,255,.05);
+
+    pointer-events:none;
+}
+
+/* hover */
+.btn:hover{
+    transform:translateY(-1px);
+}
+
+/* 苹果按压反馈 */
+.btn:active{
+    transform:scale(.985);
+
+    background:
+    linear-gradient(
+        to bottom,
+        rgba(255,255,255,.13),
+        rgba(255,255,255,.06)
+    );
+
+    box-shadow:
+        inset 0 2px 8px rgba(255,255,255,.08),
+        0 4px 10px rgba(0,0,0,.08);
 }
 
 /* =========================
-   🌫 FOOTER
+   Footer
 ========================= */
 .tip{
+    margin-top:28px;
     text-align:center;
-    margin-top:20px;
-    font-size:12px;
-    color:rgba(255,255,255,0.45);
+    font-size:13px;
+    color:rgba(255,255,255,.35);
 }
 
 </style>
-
 </head>
 
 <body>
 
-<!-- 🌈 背景 -->
 <canvas id="bg"></canvas>
-
-<!-- 🧊 玻璃环境 -->
 <div class="glass-bg"></div>
 
 <div class="title">📚 Study System</div>
@@ -176,70 +203,73 @@ canvas{
 <script>
 
 /* =========================
-   🌈 彩虹光场背景（你这个是对的）
+   彩虹动态流光
 ========================= */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 
 let w,h;
+
 function resize(){
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
+    w=canvas.width=window.innerWidth;
+    h=canvas.height=window.innerHeight;
 }
 resize();
-window.addEventListener("resize", resize);
+window.addEventListener("resize",resize);
 
-let points = [];
+let points=[];
 
 for(let i=0;i<120;i++){
     points.push({
         x:Math.random()*w,
         y:Math.random()*h,
-        vx:(Math.random()-0.5)*0.5,
-        vy:(Math.random()-0.5)*0.5,
+        vx:(Math.random()-.5)*.35,
+        vy:(Math.random()-.5)*.35,
         hue:Math.random()*360,
-        r:Math.random()*120+60
+        r:Math.random()*140+70
     });
 }
 
-function animate(){
+function draw(){
 
 ctx.clearRect(0,0,w,h);
-ctx.globalCompositeOperation = "lighter";
+ctx.globalCompositeOperation="lighter";
 
 for(let p of points){
 
-p.x += p.vx;
-p.y += p.vy;
+    p.x+=p.vx;
+    p.y+=p.vy;
 
-if(p.x<0||p.x>w)p.vx*=-1;
-if(p.y<0||p.y>h)p.vy*=-1;
+    if(p.x<0||p.x>w)p.vx*=-1;
+    if(p.y<0||p.y>h)p.vy*=-1;
 
-p.hue += 0.25;
+    p.hue+=.2;
 
-let g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+    const g=ctx.createRadialGradient(
+        p.x,p.y,0,
+        p.x,p.y,p.r
+    );
 
-g.addColorStop(0,`hsla(${p.hue},100%,70%,0.35)`);
-g.addColorStop(0.4,`hsla(${p.hue+40},100%,60%,0.15)`);
-g.addColorStop(1,"rgba(0,0,0,0)");
+    g.addColorStop(0,`hsla(${p.hue},100%,72%,0.32)`);
+    g.addColorStop(.45,`hsla(${p.hue+45},100%,65%,0.14)`);
+    g.addColorStop(1,"rgba(0,0,0,0)");
 
-ctx.fillStyle = g;
+    ctx.fillStyle=g;
 
-ctx.beginPath();
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-ctx.fill();
-
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
 }
 
-ctx.globalCompositeOperation = "source-over";
+ctx.globalCompositeOperation="source-over";
 
-requestAnimationFrame(animate);
+requestAnimationFrame(draw);
 }
 
-animate();
+draw();
 
 /* =========================
-   📱 跳转
+   跳转
 ========================= */
 function go(page){
 
@@ -247,11 +277,10 @@ if(navigator.vibrate){
 navigator.vibrate(12);
 }
 
-location.href = page;
+location.href=page;
 }
 
 </script>
 
 </body>
-
 </html>
