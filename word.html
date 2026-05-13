@@ -301,13 +301,11 @@ body::before{
 </div>
 
 <script>
-
 let words = [];
 let index = Number(localStorage.getItem("word_index") || 0);
+let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
-let favorites =
-JSON.parse(localStorage.getItem("favorites_list") || "[]");
-
+// 加载 words.json
 fetch("words.json")
 .then(res => res.json())
 .then(data => {
@@ -316,28 +314,39 @@ fetch("words.json")
     render();
 });
 
+// 渲染单词卡片
 function render(){
     if(words.length === 0) return;
 
     let w = words[index];
 
-    document.getElementById("word").innerText = w.word;
+    document.getElementById("word").innerText = w.word || "";
     document.getElementById("phonetic").innerText = w.phonetic || "";
-    document.getElementById("pos").innerText = w.partOfSpeech || "";
-    document.getElementById("meaning").innerText = w.meaning;
-    document.getElementById("example").innerText = w.example || "";
+    document.getElementById("pos").innerText = w.pos || "";
+    document.getElementById("meaning").innerText = w.definition || "";
+    
+    // 显示例句 + 翻译
+    if(w.example){
+        let ex = w.example;
+        if(w.example_translation) ex += "\n" + w.example_translation;
+        document.getElementById("example").innerText = ex;
+    } else {
+        document.getElementById("example").innerText = "";
+    }
 
+    // 保存当前索引
     localStorage.setItem("word_index", index);
 
+    // 前一个按钮禁用判断
     let prevBtn = document.getElementById("prevBtn");
-
     if(index === 0){
         prevBtn.classList.add("disabled");
-    }else{
+    } else {
         prevBtn.classList.remove("disabled");
     }
 }
 
+// 播放音频
 function playAudio(){
     let w = words[index];
     if(!w.audio) return;
@@ -346,11 +355,13 @@ function playAudio(){
     audio.play();
 }
 
+// 下一单词
 function nextWord(){
     index = (index + 1) % words.length;
     render();
 }
 
+// 上一单词
 function prevWord(){
     if(index > 0){
         index--;
@@ -358,31 +369,4 @@ function prevWord(){
     }
 }
 
-function saveWord(){
-
-let w = words[index];
-
-if(!favorites.find(i => i.word === w.word)){
-
-favorites.push(w);
-
-localStorage.setItem("favorites_list", JSON.stringify(favorites));
-
-document.getElementById("meaning").innerText =
-"⭐ 已加入收藏";
-
-}else{
-document.getElementById("meaning").innerText =
-"⚠️ 已收藏过";
-}
-
-}
-
-function back(){
-    location.href = "index.html";
-}
-
-</script>
-
-</body>
-</html>
+// 收藏单
