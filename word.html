@@ -300,7 +300,7 @@ fetch("words.json")
             console.log("缓存损坏，已重置");
             localStorage.removeItem("words_order");
         }
-    }
+    };
 
     // 如果没有缓存 → 随机一次
     if(!saved){
