@@ -10,7 +10,7 @@
 <style>
 
 /* =========================
-   BASE
+   BASE（UI完全不动）
 ========================= */
 body{
     margin:0;
@@ -50,9 +50,7 @@ body::before{
     pointer-events:none;
 }
 
-/* =========================
-   返回按钮
-========================= */
+/* 返回按钮 */
 .back{
     position:fixed;
     left:16px;
@@ -84,9 +82,7 @@ body::before{
     z-index:99999;
 }
 
-/* =========================
-   标题
-========================= */
+/* 标题 */
 .top{
     position:absolute;
     top:18px;
@@ -98,9 +94,7 @@ body::before{
     color:rgba(15,23,42,.75);
 }
 
-/* =========================
-   主卡片
-========================= */
+/* 主卡片 */
 .card{
     margin-top:90px;
     width:300px;
@@ -147,9 +141,7 @@ body::before{
     color:rgba(51,65,85,.9);
 }
 
-/* =========================
-   发音按钮
-========================= */
+/* 发音按钮 */
 .audio-btn{
     position:absolute;
     top:12px;
@@ -182,9 +174,7 @@ body::before{
     transform:scale(.92);
 }
 
-/* =========================
-   例句卡
-========================= */
+/* 例句 */
 .example-card{
     margin-top:18px;
     width:300px;
@@ -206,27 +196,18 @@ body::before{
     margin-right:auto;
 }
 
-/* =========================
-   按钮区
-========================= */
+/* 按钮区 */
 .bottom-bar{
     position:absolute;
-
     left:50%;
     transform:translateX(-50%);
-
     bottom:140px;
 
     display:flex;
     gap:80px;
-
-    align-items:center;
-    justify-content:center;
 }
 
-/* =========================
-   按钮
-========================= */
+/* 按钮 */
 .btn{
     width:52px;
     height:52px;
@@ -234,8 +215,7 @@ body::before{
 
     border:1px solid rgba(255,255,255,.35);
 
-    background:
-    linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
+    background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
 
     backdrop-filter:blur(18px) saturate(170%);
     -webkit-backdrop-filter:blur(18px) saturate(170%);
@@ -272,7 +252,6 @@ body::before{
 <div class="back" onclick="back()">←</div>
 <div class="top">单词学习</div>
 
-<!-- 主卡 -->
 <div class="card">
     <div class="audio-btn" onclick="speak()">🔊</div>
 
@@ -282,14 +261,11 @@ body::before{
     <div id="meaning"></div>
 </div>
 
-<!-- 例句 -->
 <div class="example-card">
     <div id="exampleTitle">例句</div>
     <div id="example"></div>
-    <div id="exampleTranslation"></div>
 </div>
 
-<!-- 按钮 -->
 <div class="bottom-bar">
     <div class="btn" onclick="prevWord()">←</div>
     <div class="btn" onclick="saveWord()">⭐</div>
@@ -302,12 +278,18 @@ let words = [];
 let index = Number(localStorage.getItem("word_index") || 0);
 let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
+/* =========================
+   加载词库
+========================= */
 fetch("words.json")
 .then(res => res.json())
 .then(data => {
     words = data;
     if(index >= words.length) index = 0;
     render();
+
+    // 🔥 进入页面自动读第一个单词
+    setTimeout(() => speak(), 300);
 });
 
 function render(){
@@ -321,35 +303,58 @@ function render(){
     document.getElementById("meaning").innerText = w.definition || "";
 
     document.getElementById("example").innerText = w.example || "";
+
+    localStorage.setItem("word_index", index);
 }
 
+/* =========================
+   🔥 发音（最稳定双方案）
+========================= */
 function speak(){
     let w = words[index];
     if(!w || !w.word) return;
 
+    let word = w.word.toLowerCase().trim();
+
+    // 1️⃣ 优先在线音频
+    let audio = new Audio(
+        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${word}--_us_1.mp3`
+    );
+
+    audio.play().catch(() => fallbackTTS(w.word));
+
+    audio.onerror = () => fallbackTTS(w.word);
+}
+
+/* 2️⃣ 兜底TTS */
+function fallbackTTS(text){
     window.speechSynthesis.cancel();
 
-    let utter = new SpeechSynthesisUtterance(w.word);
+    let utter = new SpeechSynthesisUtterance(text);
     utter.lang = "en-US";
     utter.rate = 0.95;
 
     speechSynthesis.speak(utter);
 }
 
+/* =========================
+   切换（🔥 自动发音）
+========================= */
 function nextWord(){
     index = (index + 1) % words.length;
     render();
-    speak();
+    setTimeout(() => speak(), 150);
 }
 
 function prevWord(){
     if(index > 0){
         index--;
         render();
-        speak();
+        setTimeout(() => speak(), 150);
     }
 }
 
+/* 收藏 */
 function saveWord(){
     let w = words[index];
 
@@ -359,6 +364,7 @@ function saveWord(){
     }
 }
 
+/* 返回 */
 function back(){
     location.href = "index.html";
 }
