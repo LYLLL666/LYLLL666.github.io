@@ -8,6 +8,9 @@
 
 <style>
 
+/* =========================
+   BASE
+========================= */
 body{
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
@@ -29,15 +32,26 @@ body{
     position:relative;
 }
 
+/* 柔光层 */
 body::before{
     content:"";
     position:fixed;
     inset:0;
-    background: radial-gradient(circle at top, rgba(255,255,255,.45), rgba(255,255,255,.10), rgba(0,0,0,.02));
+
+    background:
+    radial-gradient(
+        circle at top,
+        rgba(255,255,255,.45),
+        rgba(255,255,255,.10),
+        rgba(0,0,0,.02)
+    );
+
     pointer-events:none;
 }
 
-/* 标题 */
+/* =========================
+   TITLE
+========================= */
 .top{
     position:absolute;
     top:18px;
@@ -45,10 +59,11 @@ body::before{
     text-align:center;
     font-size:18px;
     font-weight:600;
+    color:rgba(15,23,42,.75);
 }
 
 /* =========================
-   返回按钮（已恢复 + 圆形）
+   BACK BUTTON（UI不变，只修复可见性）
 ========================= */
 .back{
     position:absolute;
@@ -59,13 +74,6 @@ body::before{
     height:44px;
     border-radius:50%;
 
-    border:1px solid rgba(255,255,255,.35);
-
-    background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
-
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-
     display:flex;
     align-items:center;
     justify-content:center;
@@ -73,20 +81,41 @@ body::before{
     font-size:20px;
     cursor:pointer;
 
+    color:#0f172a;
+
+    background:rgba(255,255,255,.35);
+    border:1px solid rgba(255,255,255,.6);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
     box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.4),
-        0 8px 18px rgba(0,0,0,.08);
+        0 8px 18px rgba(0,0,0,.12),
+        inset 0 1px 1px rgba(255,255,255,.6);
+
+    z-index:9999;
 }
 
-/* 单词卡 */
+/* =========================
+   CARD（UI不变）
+========================= */
 .card{
     margin-top:60px;
     width:320px;
     padding:30px;
     border-radius:24px;
+
     background:rgba(255,255,255,.55);
-    backdrop-filter:blur(18px);
+
+    backdrop-filter:blur(18px) saturate(160%);
+    -webkit-backdrop-filter:blur(18px) saturate(160%);
+
     border:1px solid rgba(255,255,255,.35);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.4),
+        0 10px 30px rgba(0,0,0,.06);
+
     margin-left:auto;
     margin-right:auto;
 }
@@ -99,28 +128,27 @@ body::before{
 #meaning{
     margin-top:14px;
     font-size:16px;
+    color:rgba(51,65,85,.9);
 }
 
 /* =========================
-   按键区域（已整体上移）
+   BUTTON AREA（UI不变，只保留你结构）
 ========================= */
 .bottom-bar{
     position:absolute;
-
     left:50%;
     transform:translateX(-50%);
-
-    /* ⭐ 原120px → 140px（整体上移约1cm视觉距离） */
-    bottom:140px;
+    bottom:140px; /* 已上移 */
 
     display:flex;
     gap:80px;
-
     align-items:center;
     justify-content:center;
 }
 
-/* 圆形按钮（不变） */
+/* =========================
+   BUTTON STYLE（不改UI）
+========================= */
 .btn{
     width:52px;
     height:52px;
@@ -128,9 +156,15 @@ body::before{
 
     border:1px solid rgba(255,255,255,.35);
 
-    background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
+    background:
+    linear-gradient(
+        to bottom,
+        rgba(255,255,255,.18),
+        rgba(255,255,255,.06)
+    );
 
-    backdrop-filter:blur(18px);
+    backdrop-filter:blur(18px) saturate(170%);
+    -webkit-backdrop-filter:blur(18px) saturate(170%);
 
     box-shadow:
         inset 0 1px 1px rgba(255,255,255,.4),
@@ -161,7 +195,7 @@ body::before{
 
 <body>
 
-<!-- ✔ 返回按钮已恢复 -->
+<!-- 返回按钮 -->
 <div class="back" onclick="back()">←</div>
 
 <div class="top">单词学习</div>
@@ -173,10 +207,13 @@ body::before{
 
 <div class="bottom-bar">
 
+    <!-- 上一个 -->
     <div id="prevBtn" class="btn" onclick="prevWord()">←</div>
 
+    <!-- 收藏 -->
     <div class="btn" onclick="saveWord()">⭐</div>
 
+    <!-- 下一个 -->
     <div class="btn" onclick="nextWord()">→</div>
 
 </div>
@@ -193,7 +230,9 @@ fetch("words.json")
 .then(res => res.json())
 .then(data => {
     words = data;
+
     if(index >= words.length) index = 0;
+
     render();
 });
 
@@ -205,8 +244,10 @@ function render(){
     document.getElementById("word").innerText = w.word;
     document.getElementById("meaning").innerText = w.meaning;
 
+    // ⭐ 保存进度（退出也能恢复）
     localStorage.setItem("word_index", index);
 
+    // ⭐ 上一个按钮控制
     let prevBtn = document.getElementById("prevBtn");
 
     if(index === 0){
@@ -233,13 +274,20 @@ function saveWord(){
 let w = words[index];
 
 if(!favorites.find(i => i.word === w.word)){
-    favorites.push(w);
 
-    localStorage.setItem("favorites_list", JSON.stringify(favorites));
+favorites.push(w);
 
-    document.getElementById("meaning").innerText = "⭐ 已加入收藏";
+localStorage.setItem(
+"favorites_list",
+JSON.stringify(favorites)
+);
+
+document.getElementById("meaning").innerText =
+"⭐ 已加入收藏";
+
 }else{
-    document.getElementById("meaning").innerText = "⚠️ 已收藏过";
+document.getElementById("meaning").innerText =
+"⚠️ 已收藏过";
 }
 
 }
