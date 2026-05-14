@@ -196,24 +196,24 @@ let hasSpoken = false;
 let currentOptions = [];
 
 /* =========================
-   🔥 进入页面时：询问是否重置
+   🔥 每次进入都询问（核心新增）
 ========================= */
-let hasEntered = localStorage.getItem("quiz_entered");
+function askOnEnter(){
 
-function askResetEnter(){
+    let refresh = confirm("是否刷新本次练习？\n确定 = 刷新\n取消 = 保留进度");
 
-    let ok = confirm("是否重新开始本次练习？");
-    if(!ok) return;
+    if(refresh){
 
-    let reload = confirm("确认重置进度并重新开始？");
+        let ok = confirm("确认要重新开始练习吗？");
 
-    if(reload){
+        if(ok){
 
-        index = 0;
-        quizState = {};
+            index = 0;
+            quizState = {};
 
-        localStorage.removeItem("quiz_state");
-        localStorage.setItem("quiz_index","0");
+            localStorage.removeItem("quiz_state");
+            localStorage.setItem("quiz_index","0");
+        }
     }
 }
 
@@ -236,12 +236,10 @@ fetch("words.json")
     bind();
     render();
 
-    /* 🔥 只在第一次进入时询问 */
-    if(!hasEntered){
-        localStorage.setItem("quiz_entered","1");
-        askResetEnter();
-        render();
-    }
+    /* 🔥 每次进入页面立即询问 */
+    askOnEnter();
+
+    render();
 });
 
 /* =========================
@@ -350,29 +348,14 @@ function select(i){
 }
 
 /* =========================
-   自动下一题（🔥 加最后一题询问）
+   自动下一题
 ========================= */
 function autoNext(t){
 
     setTimeout(()=>{
 
         if(index >= words.length - 1){
-
-            let again = confirm("已经是最后一题，是否重新开始练习？");
-
-            if(again){
-
-                index = 0;
-                quizState = {};
-                localStorage.removeItem("quiz_state");
-                localStorage.setItem("quiz_index","0");
-
-                render();
-
-            }else{
-                showTip("练习结束");
-            }
-
+            showTip("已到最后一题");
             return;
         }
 
