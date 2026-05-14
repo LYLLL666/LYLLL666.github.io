@@ -51,16 +51,7 @@ body{
     transform:scale(0.95);
 }
 
-/* 标题 */
-.header{
-    text-align:center;
-    padding:20px 0;
-    font-size:20px;
-    font-weight:600;
-    color:#1a1a1a;
-}
-
-/* 列表 */
+/* 容器 */
 .container{
     padding:70px 15px 120px;
 }
@@ -119,53 +110,19 @@ body{
     color:#ff3b3b;
     cursor:pointer;
 }
-
-/* 底部按钮（保留原风格但不再用刷新） */
-.bottom-bar{
-    position:fixed;
-    bottom:18px;
-    left:0;
-    right:0;
-    display:flex;
-    justify-content:center;
-    gap:25px;
-}
-
-.btn{
-    width:56px;
-    height:56px;
-    border-radius:50%;
-    backdrop-filter: blur(15px);
-    background: rgba(255,255,255,0.35);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 8px 18px rgba(0,0,0,0.1);
-    font-size:20px;
-    cursor:pointer;
-}
-
-.btn:active{
-    transform:scale(0.95);
-}
 </style>
 </head>
 
 <body>
 
-<!-- 顶部按钮 -->
+<!-- 顶部按钮（唯一控制区） -->
 <div class="top-bar">
     <div class="top-btn left" onclick="goBack()">←</div>
     <div class="top-btn right" onclick="clearAll()">🗑</div>
 </div>
 
+<!-- 列表 -->
 <div class="container" id="list"></div>
-
-<!-- 底部（保留但不再需要刷新按钮） -->
-<div class="bottom-bar">
-    <div class="btn" onclick="goBack()">←</div>
-    <div class="btn" onclick="clearAll()">🗑</div>
-</div>
 
 <script>
 // 统一 key
