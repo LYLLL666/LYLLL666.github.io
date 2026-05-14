@@ -87,7 +87,30 @@ body::before{
     z-index:99999;
 }
 
+.title-card{
+    position:fixed;
+    top:18px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:10;
 
+    padding:10px 18px;
+    border-radius:14px;
+
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
+    border:1px solid rgba(255,255,255,0.6);
+
+    box-shadow:
+        0 6px 15px rgba(0,0,0,0.08),
+        inset 0 1px 1px rgba(255,255,255,0.6);
+
+    font-size:15px;
+    font-weight:600;
+    color:#0f172a;
+}
 
 /* 标题 */
 .top{
@@ -258,7 +281,7 @@ body::before{
 
 <div class="back" onclick="back()">←</div>
 <div class="top">单词学习</div>
-
+<div class="title-card">单词学习</div>
 <div class="card">
     <div class="audio-btn" onclick="speak()">🔊</div>
 
