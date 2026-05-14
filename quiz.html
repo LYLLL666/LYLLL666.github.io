@@ -524,9 +524,9 @@ function addWrong(w){
 function next(){
 
     if(index >= words.length - 1){
-        showTip("这是最后一个了");
-        return;
-    }
+    showTip(endTips[Math.floor(Math.random() * endTips.length)]);
+    return;
+}
 
     index++;
     render();
@@ -620,6 +620,18 @@ function showTip(text){
         tip.remove();
     },1200);
 }
+
+const endTips = [
+    "好啦，这一组做完了哦～先别急着继续，起来走一走也好呀 😊 学习之外的世界也很有意思的！",
+
+    "这一组结束啦，辛苦你啦～要不要先休息一下？看看窗外、喝口水也可以呀 🌿 不用一直待在这里的。",
+
+    "做完这一部分啦～可以先放松一下哦 😌 学习很重要，但生活里还有好多可爱的事情等你去发现呢。",
+
+    "这一组已经搞定啦～先别继续刷了嘛，出去动一动或者发会儿呆都很好 ✨ 真的不用一直学的呀。",
+
+    "完成这一组啦～奖励自己休息一下吧 😆 生活又不只有学习，对吧？慢一点也没关系的～"
+];
 
 </script>
 
