@@ -285,9 +285,6 @@ fetch("words.json")
 .then(res => res.json())
 .then(data => {
 
-    // =========================
-    // 🔥 只在进入页面时随机一次
-    // =========================
     let savedOrder = localStorage.getItem("words_order");
 
     if(savedOrder){
@@ -298,7 +295,6 @@ fetch("words.json")
             localStorage.removeItem("words_order");
         }
     }else{
-        // 🎲 随机排序（只执行一次）
         words = [...data].sort(() => Math.random() - 0.5);
         localStorage.setItem("words_order", JSON.stringify(words));
     }
@@ -307,7 +303,6 @@ fetch("words.json")
 
     render();
 
-    // 🔥 进入页面自动读第一个单词
     setTimeout(() => speak(), 300);
 });
 
@@ -327,7 +322,7 @@ function render(){
 }
 
 /* =========================
-   🔥 发音（最稳定双方案）
+   🔥 发音
 ========================= */
 function speak(){
     let w = words[index];
@@ -335,17 +330,14 @@ function speak(){
 
     let word = w.word.toLowerCase().trim();
 
-    // 1️⃣ 优先在线音频
     let audio = new Audio(
         `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${word}--_us_1.mp3`
     );
 
     audio.play().catch(() => fallbackTTS(w.word));
-
     audio.onerror = () => fallbackTTS(w.word);
 }
 
-/* 2️⃣ 兜底TTS */
 function fallbackTTS(text){
     window.speechSynthesis.cancel();
 
@@ -357,10 +349,16 @@ function fallbackTTS(text){
 }
 
 /* =========================
-   切换（🔥 自动发音）
+   切换（🔥 已修复：不再循环）
 ========================= */
 function nextWord(){
-    index = (index + 1) % words.length;
+
+    if(index >= words.length - 1){
+        showMiniTip("已经是最后一个单词了");
+        return;
+    }
+
+    index++;
     render();
     setTimeout(() => speak(), 150);
 }
@@ -392,7 +390,6 @@ function saveWord(){
         localStorage.setItem("favorites_list", JSON.stringify(favorites));
 
         if(btn){
-            // ⭐轻微动画 + 状态变化
             btn.style.transform = "scale(1.15)";
             btn.style.opacity = "0.9";
             btn.innerText = "⭐";
@@ -417,11 +414,12 @@ function saveWord(){
         }
     }
 }
-/* 返回 */
+
 function back(){
     location.href = "index.html";
 }
-//收藏效果
+
+/* 提示 */
 function showMiniTip(text){
 
     let tip = document.createElement("div");
@@ -460,7 +458,6 @@ function showMiniTip(text){
         tip.remove();
     }, 1200);
 }
-
 
 </script>
 
