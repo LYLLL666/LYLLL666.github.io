@@ -673,5 +673,230 @@
     "definition": "识别，确认",
     "example": "Can you identify the problem?",
     "example_translation": "你能找出问题吗？"
+  },
+  {
+    "word": "illustrate",
+    "phonetic": "/ˈɪləstreɪt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/ill/illustrate.mp3",
+    "pos": "verb",
+    "definition": "说明，阐明；给……配图",
+    "example": "The graph illustrates the changes in population.",
+    "example_translation": "这张图表说明了人口变化。"
+  },
+  {
+    "word": "implement",
+    "phonetic": "/ˈɪmplɪment/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/imp/implement.mp3",
+    "pos": "verb",
+    "definition": "实施，执行",
+    "example": "The school will implement new rules next month.",
+    "example_translation": "学校下个月将实施新规定。"
+  },
+  {
+    "word": "incentive",
+    "phonetic": "/ɪnˈsentɪv/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/inc/incentive.mp3",
+    "pos": "noun",
+    "definition": "激励，奖励",
+    "example": "Higher salaries provide an incentive to work harder.",
+    "example_translation": "更高的工资能激励人们更加努力工作。"
+  },
+  {
+    "word": "income",
+    "phonetic": "/ˈɪnkʌm/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/inc/income.mp3",
+    "pos": "noun",
+    "definition": "收入，收益",
+    "example": "His monthly income has increased.",
+    "example_translation": "他的月收入增加了。"
+  },
+  {
+    "word": "individual",
+    "phonetic": "/ˌɪndɪˈvɪdʒuəl/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/ind/individual.mp3",
+    "pos": "noun/adjective",
+    "definition": "个人；个别的",
+    "example": "Each individual has unique talents.",
+    "example_translation": "每个人都有独特的天赋。"
+  },
+  {
+    "word": "industry",
+    "phonetic": "/ˈɪndəstri/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/ind/industry.mp3",
+    "pos": "noun",
+    "definition": "工业，行业",
+    "example": "Technology is changing the music industry.",
+    "example_translation": "科技正在改变音乐行业。"
+  },
+  {
+    "word": "inevitable",
+    "phonetic": "/ɪnˈevɪtəbl/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/ine/inevitable.mp3",
+    "pos": "adjective",
+    "definition": "不可避免的",
+    "example": "Change is inevitable in modern society.",
+    "example_translation": "在现代社会中，变化是不可避免的。"
+  },
+  {
+    "word": "influence",
+    "phonetic": "/ˈɪnfluəns/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/inf/influence.mp3",
+    "pos": "noun/verb",
+    "definition": "影响；影响他人",
+    "example": "Parents have a strong influence on children.",
+    "example_translation": "父母对孩子有很大的影响。"
+  },
+  {
+    "word": "initial",
+    "phonetic": "/ɪˈnɪʃl/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/ini/initial.mp3",
+    "pos": "adjective",
+    "definition": "最初的，开始的",
+    "example": "The initial reaction was positive.",
+    "example_translation": "最初的反应是积极的。"
+  },
+  {
+    "word": "instance",
+    "phonetic": "/ˈɪnstəns/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/ins/instance.mp3",
+    "pos": "noun",
+    "definition": "例子，实例",
+    "example": "This is a good instance of teamwork.",
+    "example_translation": "这是团队合作的一个好例子。"
+  },
+  {
+    "word": "interaction",
+    "phonetic": "/ˌɪntərˈækʃn/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/int/interaction.mp3",
+    "pos": "noun",
+    "definition": "互动，相互作用",
+    "example": "Social interaction is important for mental health.",
+    "example_translation": "社交互动对心理健康很重要。"
+  },
+  {
+    "word": "internal",
+    "phonetic": "/ɪnˈtɜːnl/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/int/internal.mp3",
+    "pos": "adjective",
+    "definition": "内部的，内在的",
+    "example": "The company is facing internal problems.",
+    "example_translation": "公司正面临内部问题。"
+  },
+  {
+    "word": "invest",
+    "phonetic": "/ɪnˈvest/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/inv/invest.mp3",
+    "pos": "verb",
+    "definition": "投资，投入",
+    "example": "Many people invest in stocks.",
+    "example_translation": "许多人投资股票。"
+  },
+  {
+    "word": "issue",
+    "phonetic": "/ˈɪʃuː/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/iss/issue.mp3",
+    "pos": "noun",
+    "definition": "问题，议题",
+    "example": "Climate change is a global issue.",
+    "example_translation": "气候变化是全球性问题。"
+  },
+  {
+    "word": "legal",
+    "phonetic": "/ˈliːɡl/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/l/leg/legal.mp3",
+    "pos": "adjective",
+    "definition": "法律的，合法的",
+    "example": "They are seeking legal advice.",
+    "example_translation": "他们正在寻求法律建议。"
+  },
+  {
+    "word": "major",
+    "phonetic": "/ˈmeɪdʒər/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/m/maj/major.mp3",
+    "pos": "adjective/noun",
+    "definition": "主要的；专业",
+    "example": "Pollution is a major problem in cities.",
+    "example_translation": "污染是城市中的主要问题。"
+  },
+  {
+    "word": "mental",
+    "phonetic": "/ˈmentl/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/m/men/mental.mp3",
+    "pos": "adjective",
+    "definition": "精神的，心理的",
+    "example": "Exercise improves mental health.",
+    "example_translation": "运动能改善心理健康。"
+  },
+  {
+    "word": "negative",
+    "phonetic": "/ˈneɡətɪv/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/n/neg/negative.mp3",
+    "pos": "adjective",
+    "definition": "消极的，负面的",
+    "example": "Negative comments can hurt confidence.",
+    "example_translation": "负面评论会打击自信。"
+  },
+  {
+    "word": "network",
+    "phonetic": "/ˈnetwɜːk/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/n/net/network.mp3",
+    "pos": "noun",
+    "definition": "网络，人际关系网",
+    "example": "The office network is down today.",
+    "example_translation": "办公室网络今天瘫痪了。"
+  },
+  {
+    "word": "occur",
+    "phonetic": "/əˈkɜːr/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/o/occ/occur.mp3",
+    "pos": "verb",
+    "definition": "发生，出现",
+    "example": "The accident occurred yesterday evening.",
+    "example_translation": "事故发生在昨晚。"
+  },
+  {
+    "word": "option",
+    "phonetic": "/ˈɒpʃn/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/o/opt/option.mp3",
+    "pos": "noun",
+    "definition": "选择，选项",
+    "example": "You have several options to choose from.",
+    "example_translation": "你有几个选项可以选择。"
+  },
+  {
+    "word": "physical",
+    "phonetic": "/ˈfɪzɪkl/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/p/phy/physical.mp3",
+    "pos": "adjective",
+    "definition": "身体的，物理的",
+    "example": "Regular exercise improves physical fitness.",
+    "example_translation": "规律运动能增强身体素质。"
+  },
+  {
+    "word": "potential",
+    "phonetic": "/pəˈtenʃl/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/p/pot/potential.mp3",
+    "pos": "noun/adjective",
+    "definition": "潜力；潜在的",
+    "example": "She has great potential as a leader.",
+    "example_translation": "她有成为领导者的巨大潜力。"
+  },
+  {
+    "word": "previous",
+    "phonetic": "/ˈpriːviəs/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/p/pre/previous.mp3",
+    "pos": "adjective",
+    "definition": "以前的，先前的",
+    "example": "I have no previous experience in teaching.",
+    "example_translation": "我之前没有教学经验。"
+  },
+  {
+    "word": "primary",
+    "phonetic": "/ˈpraɪməri/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/p/pri/primary.mp3",
+    "pos": "adjective",
+    "definition": "主要的，首要的",
+    "example": "Our primary concern is safety.",
+    "example_translation": "我们首要关注的是安全。"
   }
 ]
