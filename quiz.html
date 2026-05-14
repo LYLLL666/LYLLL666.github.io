@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>练习模式</title>
+
+<style>
+
+/* =========================
+   BASE（完全沿用你的UI）
+========================= */
+body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
+    background: radial-gradient(circle at top,#dff3ff 0%,#f4fbff 40%,#eaf4ff 70%,#e3efff 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    text-align:center;
+    color:#0f172a;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background: radial-gradient(circle at top,rgba(255,255,255,.45),rgba(255,255,255,.10),rgba(0,0,0,.02));
+    pointer-events:none;
+}
+
+/* 返回 */
+.back{
+    position:fixed;
+    left:16px;
+    top:20px;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    cursor:pointer;
+    color:#0f172a;
+    background:rgba(255,255,255,.35);
+    border:1px solid rgba(255,255,255,.6);
+    backdrop-filter:blur(18px);
+    box-shadow:0 8px 18px rgba(0,0,0,.12), inset 0 1px 1px rgba(255,255,255,.6);
+}
+
+/* 标题 */
+.top{
+    position:absolute;
+    top:18px;
+    width:100%;
+    text-align:center;
+    font-size:18px;
+    font-weight:600;
+    color:rgba(15,23,42,.75);
+}
+
+/* 主卡 */
+.card{
+    margin-top:90px;
+    width:300px;
+    padding:22px;
+    border-radius:24px;
+    background:rgba(255,255,255,.55);
+    backdrop-filter:blur(18px) saturate(160%);
+    border:1px solid rgba(255,255,255,.35);
+    box-shadow:0 10px 30px rgba(0,0,0,.06);
+    margin-left:auto;
+    margin-right:auto;
+    position:relative;
+}
+
+/* 单词 */
+#word{
+    font-size:40px;
+    font-weight:700;
+}
+
+/* 发音 */
+.audio-btn{
+    position:absolute;
+    top:12px;
+    right:12px;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    background:rgba(255,255,255,.35);
+    border:1px solid rgba(255,255,255,.6);
+    backdrop-filter:blur(12px);
+}
+
+/* 选项区 */
+.options{
+    margin-top:20px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.option{
+    padding:12px;
+    border-radius:14px;
+    background:rgba(255,255,255,.45);
+    border:1px solid rgba(255,255,255,.35);
+    cursor:pointer;
+    transition:.2s;
+    font-size:15px;
+}
+
+.option:active{
+    transform:scale(.97);
+}
+
+/* 状态 */
+.correct{
+    background:rgba(34,197,94,.25) !important;
+    border-color:rgba(34,197,94,.6) !important;
+}
+
+.wrong{
+    background:rgba(239,68,68,.25) !important;
+    border-color:rgba(239,68,68,.6) !important;
+}
+
+/* 下一题 */
+.next-btn{
+    margin-top:18px;
+    padding:10px 14px;
+    border-radius:12px;
+    background:rgba(255,255,255,.4);
+    border:1px solid rgba(255,255,255,.4);
+    cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="back" onclick="exit()">←</div>
+<div class="top">练习模式</div>
+
+<div class="card">
+    <div class="audio-btn" onclick="speak()">🔊</div>
+    <div id="word">加载中...</div>
+
+    <div class="options" id="options"></div>
+
+    <div class="next-btn" onclick="next()">下一题</div>
+</div>
+
+<script>
+
+let words = [];
+let index = Number(sessionStorage.getItem("quiz_index") || 0);
+let answered = false;
+
+/* =========================
+   加载词库
+========================= */
+fetch("words.json")
+.then(res => res.json())
+.then(data => {
+    words = data;
+    render();
+});
+
+/* =========================
+   渲染题目
+========================= */
+function render(){
+
+    if(words.length === 0) return;
+
+    let w = words[index];
+
+    document.getElementById("word").innerText = w.word;
+
+    let options = generateOptions(w);
+
+    let box = document.getElementById("options");
+    box.innerHTML = "";
+
+    options.forEach(opt => {
+        let div = document.createElement("div");
+        div.className = "option";
+        div.innerText = opt.text;
+
+        div.onclick = () => checkAnswer(div, opt, w);
+
+        box.appendChild(div);
+    });
+
+    answered = false;
+
+    sessionStorage.setItem("quiz_index", index);
+}
+
+/* =========================
+   生成4个选项
+========================= */
+function generateOptions(correct){
+
+    let pool = words
+        .filter(w => w.word !== correct.word)
+        .sort(() => Math.random() - 0.5)
+        .slice(0,3)
+        .map(w => ({text:w.definition, correct:false}));
+
+    pool.push({text:correct.definition, correct:true});
+
+    return pool.sort(() => Math.random() - 0.5);
+}
+
+/* =========================
+   判题
+========================= */
+function checkAnswer(el, opt, word){
+
+    if(answered) return;
+
+    answered = true;
+
+    let options = document.querySelectorAll(".option");
+
+    options.forEach(o => {
+        o.style.pointerEvents = "none";
+    });
+
+    if(opt.text === word.definition){
+        el.classList.add("correct");
+    }else{
+        el.classList.add("wrong");
+
+        // 加入错题本
+        addWrong(word);
+
+        // 标正确答案
+        options.forEach(o => {
+            if(o.innerText === word.definition){
+                o.classList.add("correct");
+            }
+        });
+    }
+}
+
+/* =========================
+   错题本
+========================= */
+function addWrong(word){
+
+    let list = JSON.parse(localStorage.getItem("wrong_list") || "[]");
+
+    if(!list.some(w => w.word === word.word)){
+        list.push(word);
+        localStorage.setItem("wrong_list", JSON.stringify(list));
+    }
+}
+
+/* =========================
+   下一题
+========================= */
+function next(){
+    index = (index + 1) % words.length;
+    render();
+}
+
+/* =========================
+   发音系统（复用你的）
+========================= */
+function speak(){
+    let w = words[index];
+    if(!w) return;
+
+    let word = w.word.toLowerCase().trim();
+
+    let audio = new Audio(
+        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${word}--_us_1.mp3`
+    );
+
+    audio.play().catch(() => fallbackTTS(w.word));
+
+    audio.onerror = () => fallbackTTS(w.word);
+}
+
+function fallbackTTS(text){
+    window.speechSynthesis.cancel();
+    let utter = new SpeechSynthesisUtterance(text);
+    utter.lang = "en-US";
+    utter.rate = 0.95;
+    speechSynthesis.speak(utter);
+}
+
+/* =========================
+   退出（清 session，不影响错题）
+========================= */
+function exit(){
+    sessionStorage.removeItem("quiz_index");
+    location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>
