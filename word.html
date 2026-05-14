@@ -275,7 +275,7 @@ body::before{
 }
 
 /* =========================
-   ⭐ 分组UI（升级横排版本）
+   ⭐ 分组UI
 ========================= */
 
 .group-wrap{
@@ -289,37 +289,16 @@ body::before{
     z-index:99999;
 }
 
-/* 圆形显示当前分组 */
-.group-indicator{
-    width:44px;
-    height:44px;
-    border-radius:50%;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    background:rgba(255,255,255,.35);
-    border:1px solid rgba(255,255,255,.6);
-
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-
-    box-shadow:
-        0 8px 18px rgba(0,0,0,.12),
-        inset 0 1px 1px rgba(255,255,255,.6);
-
-    font-weight:600;
-    font-size:14px;
-    color:#0f172a;
-}
-
-/* 分组按钮（同尺寸矩形） */
+/* ⭐ 已融合：按钮直接显示分组 */
 .group-btn{
     height:44px;
-    padding:0 14px;
+    padding:0 16px;
 
-    border-radius:14px;
+    border-radius:16px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
     background:rgba(255,255,255,.35);
     border:1px solid rgba(255,255,255,.6);
@@ -330,10 +309,6 @@ body::before{
     box-shadow:
         0 8px 18px rgba(0,0,0,.12),
         inset 0 1px 1px rgba(255,255,255,.6);
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
 
     font-size:13px;
     color:#0f172a;
@@ -341,16 +316,16 @@ body::before{
     cursor:pointer;
 }
 
-
 </style>
 </head>
 
 <body>
 
 <div class="back" onclick="back()">←</div>
+
 <div class="group-wrap">
-    <div class="group-indicator" id="groupIndicator">1</div>
-    <div class="group-btn" onclick="chooseGroup()">分组</div>
+    <!-- ⭐ 已融合：显示+按钮合一 -->
+    <div class="group-btn" id="groupBtn" onclick="chooseGroup()">第1组</div>
 </div>
 
 <div class="top">单词学习</div>
@@ -390,6 +365,11 @@ let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 let groupIndex = Number(localStorage.getItem("word_group") || 1);
 const GROUP_SIZE = 50;
 
+/* ⭐ 已融合：按钮即显示当前组 */
+function updateGroupUI(){
+    document.getElementById("groupBtn").innerText = `第${groupIndex}组`;
+}
+
 /* 选择分组 */
 function chooseGroup(){
 
@@ -419,7 +399,7 @@ function applyGroup(){
 
     words = words.slice(start, end);
 
-    document.getElementById("groupIndicator").innerText = groupIndex;
+    updateGroupUI();
 }
 
 /* =========================
@@ -515,8 +495,8 @@ function back(){
     location.href = "index.html";
 }
 
-/* 初始化显示组 */
-document.getElementById("groupIndicator").innerText = groupIndex;
+/* 初始化 */
+updateGroupUI();
 
 </script>
 
