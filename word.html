@@ -279,6 +279,25 @@ let index = Number(localStorage.getItem("word_index") || 0);
 let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
 /* =========================
+   🔥 进入询问（新增）
+========================= */
+function askOnEnter(){
+
+    let refresh = confirm("是否刷新本次学习？\n确定 = 刷新\n取消 = 保留进度");
+
+    if(refresh){
+
+        index = 0;
+
+        localStorage.removeItem("word_index");
+
+        /* 🔥 重新随机顺序 */
+        words = [...words].sort(() => Math.random() - 0.5);
+        localStorage.setItem("words_order", JSON.stringify(words));
+    }
+}
+
+/* =========================
    加载词库
 ========================= */
 fetch("words.json")
@@ -303,6 +322,11 @@ fetch("words.json")
 
     render();
 
+    /* 🔥 每次进入都询问 */
+    askOnEnter();
+
+    render();
+
     setTimeout(() => speak(), 300);
 });
 
@@ -322,7 +346,7 @@ function render(){
 }
 
 /* =========================
-   🔥 发音
+   发音
 ========================= */
 function speak(){
     let w = words[index];
@@ -349,7 +373,7 @@ function fallbackTTS(text){
 }
 
 /* =========================
-   切换（🔥 已修复：不再循环）
+   翻页
 ========================= */
 function nextWord(){
 
@@ -371,7 +395,9 @@ function prevWord(){
     }
 }
 
-/* 收藏 */
+/* =========================
+   收藏
+========================= */
 function saveWord(){
 
     let w = words[index];
@@ -381,8 +407,7 @@ function saveWord(){
 
     let exists = favorites.some(item => item.word === w.word);
 
-    let btn = document.getElementById("favBtn") 
-              || document.querySelector(".btn:nth-child(2)");
+    let btn = document.querySelector(".btn:nth-child(2)");
 
     if(!exists){
 
@@ -391,27 +416,13 @@ function saveWord(){
 
         if(btn){
             btn.style.transform = "scale(1.15)";
-            btn.style.opacity = "0.9";
-            btn.innerText = "⭐";
-
-            setTimeout(() => {
-                btn.style.transform = "scale(1)";
-                btn.style.opacity = "1";
-            }, 200);
+            setTimeout(()=> btn.style.transform = "scale(1)",200);
         }
 
         showMiniTip("已收藏 ⭐");
 
     }else{
-
         showMiniTip("已经收藏过了");
-
-        if(btn){
-            btn.style.transform = "scale(0.95)";
-            setTimeout(() => {
-                btn.style.transform = "scale(1)";
-            }, 150);
-        }
     }
 }
 
@@ -451,7 +462,6 @@ function showMiniTip(text){
 
     setTimeout(() => {
         tip.style.opacity = "0";
-        tip.style.transform = "translateX(-50%)";
     }, 900);
 
     setTimeout(() => {
