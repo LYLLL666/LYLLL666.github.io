@@ -184,7 +184,7 @@ body::before{
 <script>
 
 /* =========================
-   状态存储
+   状态
 ========================= */
 let quizState = JSON.parse(localStorage.getItem("quiz_state") || "{}");
 
@@ -194,6 +194,28 @@ let answered = false;
 let lockNext = false;
 let hasSpoken = false;
 let currentOptions = [];
+
+/* =========================
+   🔥 进入页面时：询问是否重置
+========================= */
+let hasEntered = localStorage.getItem("quiz_entered");
+
+function askResetEnter(){
+
+    let ok = confirm("是否重新开始本次练习？");
+    if(!ok) return;
+
+    let reload = confirm("确认重置进度并重新开始？");
+
+    if(reload){
+
+        index = 0;
+        quizState = {};
+
+        localStorage.removeItem("quiz_state");
+        localStorage.setItem("quiz_index","0");
+    }
+}
 
 /* =========================
    词库
@@ -213,6 +235,13 @@ fetch("words.json")
 
     bind();
     render();
+
+    /* 🔥 只在第一次进入时询问 */
+    if(!hasEntered){
+        localStorage.setItem("quiz_entered","1");
+        askResetEnter();
+        render();
+    }
 });
 
 /* =========================
@@ -258,9 +287,7 @@ function render(){
             options[selected].classList.add("wrong");
 
             currentOptions.forEach((o,idx)=>{
-                if(o.correct){
-                    options[idx].classList.add("correct");
-                }
+                if(o.correct) options[idx].classList.add("correct");
             });
         }
     }
@@ -283,7 +310,7 @@ function generate(correct){
 }
 
 /* =========================
-   点击选择
+   点击
 ========================= */
 function select(i){
 
@@ -323,14 +350,29 @@ function select(i){
 }
 
 /* =========================
-   自动翻页
+   自动下一题（🔥 加最后一题询问）
 ========================= */
 function autoNext(t){
 
     setTimeout(()=>{
 
         if(index >= words.length - 1){
-            showTip("已到最后一题");
+
+            let again = confirm("已经是最后一题，是否重新开始练习？");
+
+            if(again){
+
+                index = 0;
+                quizState = {};
+                localStorage.removeItem("quiz_state");
+                localStorage.setItem("quiz_index","0");
+
+                render();
+
+            }else{
+                showTip("练习结束");
+            }
+
             return;
         }
 
@@ -376,17 +418,6 @@ function prev(){
    发音
 ========================= */
 function speak(){
-    playAudio();
-}
-
-function speakAuto(){
-    if(hasSpoken) return;
-    hasSpoken = true;
-    playAudio();
-}
-
-function playAudio(){
-
     let w = words[index];
     if(!w) return;
 
@@ -401,6 +432,12 @@ function playAudio(){
     });
 }
 
+function speakAuto(){
+    if(hasSpoken) return;
+    hasSpoken = true;
+    speak();
+}
+
 /* =========================
    绑定
 ========================= */
@@ -412,16 +449,9 @@ function bind(){
 }
 
 /* =========================
-   退出（已加二次确认）
+   退出
 ========================= */
 function exit(){
-
-    let ok = confirm("是否退出练习模式？");
-    if(!ok) return;
-
-    let go = confirm("确定要返回首页吗？");
-    if(!go) return;
-
     location.href = "index.html";
 }
 
