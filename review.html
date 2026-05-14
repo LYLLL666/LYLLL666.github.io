@@ -9,7 +9,7 @@
 <style>
 
 /* =========================
-   UI（保持你原风格）
+   UI（完全不改）
 ========================= */
 body{
     margin:0;
@@ -30,7 +30,6 @@ body::before{
     pointer-events:none;
 }
 
-/* 返回 */
 .back{
     position:fixed;
     left:16px;
@@ -47,7 +46,6 @@ body::before{
     backdrop-filter:blur(18px);
 }
 
-/* 卡片 */
 .card{
     margin-top:110px;
     width:300px;
@@ -66,7 +64,6 @@ body::before{
     margin-bottom:10px;
 }
 
-/* 选项 */
 .option{
     margin:10px auto;
     width:300px;
@@ -106,7 +103,7 @@ body::before{
 <script>
 
 /* =========================
-   数据源：错题本
+   数据源
 ========================= */
 let words = JSON.parse(localStorage.getItem("wrong_list") || "[]");
 words = words.sort(() => Math.random() - 0.5);
@@ -154,7 +151,7 @@ function render(){
 }
 
 /* =========================
-   生成中文选项
+   生成选项
 ========================= */
 function generate(correct){
 
@@ -178,7 +175,7 @@ function generate(correct){
 }
 
 /* =========================
-   选择逻辑（完全练习模式）
+   点击逻辑（练习模式）
 ========================= */
 function select(i){
 
@@ -220,15 +217,17 @@ function next(){
 }
 
 /* =========================
-   结束
+   结束（🔥 修复404）
 ========================= */
 function finish(){
-    location.href = "wrong.html";
+    location.href = "wrong.html"; // ✔ 修复点：回错题集
 }
 
-/* 返回（必须上一页） */
+/* =========================
+   返回（🔥 修复404）
+========================= */
 function back(){
-    history.back();
+    location.href = "wrong.html"; // ✔ 你要的错题集入口
 }
 
 </script>
