@@ -112,16 +112,44 @@ body::before{
     color:#0f172a;
 }
 
-/* 标题 */
-.top{
-    position:absolute;
-    top:18px;
-    width:100%;
-    text-align:center;
+/* =========================
+   🔥 新增：分组按钮（不影响UI）
+========================= */
+.group-btn{
+    position:fixed;
+    right:16px;
+    top:20px;
 
-    font-size:18px;
-    font-weight:600;
-    color:rgba(15,23,42,.75);
+    width:70px;
+    height:44px;
+
+    border-radius:14px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:14px;
+
+    cursor:pointer;
+
+    color:#0f172a;
+
+    background:rgba(255,255,255,.35);
+    border:1px solid rgba(255,255,255,.6);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.12),
+        inset 0 1px 1px rgba(255,255,255,.6);
+
+    z-index:99999;
+}
+
+.group-btn:active{
+    transform:scale(.95);
 }
 
 /* 主卡片 */
@@ -171,7 +199,6 @@ body::before{
     color:rgba(51,65,85,.9);
 }
 
-/* 发音按钮 */
 .audio-btn{
     position:absolute;
     top:12px;
@@ -204,7 +231,6 @@ body::before{
     transform:scale(.92);
 }
 
-/* 例句 */
 .example-card{
     margin-top:18px;
     width:300px;
@@ -226,7 +252,6 @@ body::before{
     margin-right:auto;
 }
 
-/* 按钮区 */
 .bottom-bar{
     position:absolute;
     left:50%;
@@ -237,7 +262,6 @@ body::before{
     gap:80px;
 }
 
-/* 按钮 */
 .btn{
     width:52px;
     height:52px;
@@ -269,19 +293,16 @@ body::before{
     transform:scale(.92);
 }
 
-.btn.disabled{
-    opacity:.25;
-    pointer-events:none;
-}
-
 </style>
 </head>
 
 <body>
 
 <div class="back" onclick="back()">←</div>
-<div class="top">单词学习</div>
 <div class="title-card">单词学习</div>
+
+<!-- 🔥 分组按钮 -->
+<div class="group-btn" onclick="selectGroup()">📚分组</div>
 
 <div class="card">
     <div class="audio-btn" onclick="speak()">🔊</div>
@@ -306,73 +327,53 @@ body::before{
 <script>
 
 /* =========================
-   🔥 防缓存核心版本号
+   🔥 分组系统（50词一组）
 ========================= */
-const WORDS_VERSION = "v3";
+let groupIndex = Number(localStorage.getItem("word_group") || 0);
 
-function clearOldCache(){
-    let v = localStorage.getItem("words_version");
-    if(v !== WORDS_VERSION){
-        localStorage.removeItem("words_order");
-        localStorage.removeItem("word_index");
-        localStorage.setItem("words_version", WORDS_VERSION);
-    }
+function selectGroup(){
+    let g = prompt("选择第几组（从1开始，每组50个单词）");
+    if(!g) return;
+
+    g = Number(g) - 1;
+    if(g < 0) return;
+
+    groupIndex = g;
+    localStorage.setItem("word_group", groupIndex);
+
+    location.reload();
 }
 
+function applyGroup(data){
+    let start = groupIndex * 50;
+    let end = start + 50;
+
+    if(start >= data.length){
+        groupIndex = 0;
+        localStorage.setItem("word_group", 0);
+        return data.slice(0,50);
+    }
+
+    return data.slice(start,end);
+}
+
+/* =========================
+   主逻辑
+========================= */
 let words = [];
 let index = Number(localStorage.getItem("word_index") || 0);
-let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
-
-/* =========================
-   进入询问
-========================= */
-function askOnEnter(){
-
-    let refresh = confirm("是否刷新本次学习？\n确定 = 刷新\n取消 = 保留进度");
-
-    if(refresh){
-        index = 0;
-        localStorage.removeItem("word_index");
-
-        words = [...words].sort(() => Math.random() - 0.5);
-        localStorage.setItem("words_order", JSON.stringify(words));
-    }
-}
-
-/* =========================
-   加载词库（防缓存版）
-========================= */
-clearOldCache();
 
 fetch("words.json?v=" + Date.now())
 .then(res => res.json())
 .then(data => {
 
-    let savedOrder = localStorage.getItem("words_order");
+    data = applyGroup(data);
 
-    if(savedOrder){
-        try{
-            let parsed = JSON.parse(savedOrder);
-            if(Array.isArray(parsed) && parsed.length > 0){
-                words = parsed;
-            }else{
-                throw new Error();
-            }
-        }catch(e){
-            words = data;
-            localStorage.removeItem("words_order");
-        }
-    }else{
-        words = [...data].sort(() => Math.random() - 0.5);
-        localStorage.setItem("words_order", JSON.stringify(words));
-    }
+    words = [...data].sort(() => Math.random() - 0.5);
 
     if(index >= words.length) index = 0;
 
     render();
-    askOnEnter();
-    render();
-
     setTimeout(() => speak(), 300);
 });
 
@@ -386,8 +387,6 @@ function render(){
     document.getElementById("pos").innerText = w.pos || "";
     document.getElementById("meaning").innerText = w.definition || "";
 
-    document.getElementById("example").innerText = w.example || "";
-
     localStorage.setItem("word_index", index);
 }
 
@@ -395,9 +394,8 @@ function render(){
    发音
 ========================= */
 function speak(){
-
     let w = words[index];
-    if(!w || !w.word) return;
+    if(!w) return;
 
     let word = w.word.toLowerCase().trim();
 
@@ -405,40 +403,24 @@ function speak(){
         `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${word}--_us_1.mp3`
     );
 
-    audio.play().catch(() => fallbackTTS(w.word));
-    audio.onerror = () => fallbackTTS(w.word);
-}
-
-function fallbackTTS(text){
-    window.speechSynthesis.cancel();
-
-    let utter = new SpeechSynthesisUtterance(text);
-    utter.lang = "en-US";
-    utter.rate = 0.95;
-
-    speechSynthesis.speak(utter);
+    audio.play().catch(()=>{});
 }
 
 /* =========================
    翻页
 ========================= */
 function nextWord(){
-
-    if(index >= words.length - 1){
-        showMiniTip("已经是最后一个单词了");
-        return;
-    }
-
+    if(index >= words.length - 1) return;
     index++;
     render();
-    setTimeout(() => speak(), 150);
+    speak();
 }
 
 function prevWord(){
     if(index > 0){
         index--;
         render();
-        setTimeout(() => speak(), 150);
+        speak();
     }
 }
 
@@ -447,73 +429,22 @@ function prevWord(){
 ========================= */
 function saveWord(){
 
+    let list = JSON.parse(localStorage.getItem("favorites_list") || "[]");
+
     let w = words[index];
-    if(!w || !w.word) return;
+    if(!w) return;
 
-    let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
-
-    let exists = favorites.some(item => item.word === w.word);
-
-    let btn = document.querySelector(".btn:nth-child(2)");
-
-    if(!exists){
-
-        favorites.push(w);
-        localStorage.setItem("favorites_list", JSON.stringify(favorites));
-
-        if(btn){
-            btn.style.transform = "scale(1.15)";
-            setTimeout(()=> btn.style.transform = "scale(1)",200);
-        }
-
-        showMiniTip("已收藏 ⭐");
-
-    }else{
-        showMiniTip("已经收藏过了");
+    if(!list.some(i => i.word === w.word)){
+        list.push(w);
+        localStorage.setItem("favorites_list", JSON.stringify(list));
     }
 }
 
+/* =========================
+   返回
+========================= */
 function back(){
     location.href = "index.html";
-}
-
-/* 提示 */
-function showMiniTip(text){
-
-    let tip = document.createElement("div");
-
-    tip.innerText = text;
-
-    tip.style.position = "fixed";
-    tip.style.left = "50%";
-    tip.style.bottom = "140px";
-    tip.style.transform = "translateX(-50%)";
-
-    tip.style.padding = "6px 12px";
-    tip.style.borderRadius = "10px";
-
-    tip.style.fontSize = "13px";
-    tip.style.color = "#fff";
-    tip.style.background = "rgba(0,0,0,0.65)";
-    tip.style.zIndex = "99999";
-
-    tip.style.opacity = "0";
-    tip.style.transition = "all 0.2s ease";
-
-    document.body.appendChild(tip);
-
-    setTimeout(() => {
-        tip.style.opacity = "1";
-        tip.style.transform = "translateX(-50%) translateY(-6px)";
-    }, 10);
-
-    setTimeout(() => {
-        tip.style.opacity = "0";
-    }, 900);
-
-    setTimeout(() => {
-        tip.remove();
-    }, 1200);
 }
 
 </script>
