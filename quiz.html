@@ -348,9 +348,9 @@ function applyGroup(){
 }
 
 /* =========================
-   词库
+   ⭐ 词库（已修复缓存问题）
 ========================= */
-fetch("words.json")
+fetch("words.json?v=" + Date.now())
 .then(res => res.json())
 .then(data => {
 
@@ -360,10 +360,14 @@ fetch("words.json")
 
         allWords = JSON.parse(saved);
 
+        if(allWords.length !== data.length){
+            allWords = [...data].sort(() => Math.random() - 0.5);
+            localStorage.setItem("quiz_order", JSON.stringify(allWords));
+        }
+
     }else{
 
         allWords = [...data].sort(() => Math.random() - 0.5);
-
         localStorage.setItem("quiz_order", JSON.stringify(allWords));
     }
 
