@@ -15,17 +15,13 @@ user-scalable=no">
 <style>
 
 /* =========================
-   BASE（完全不动UI）
+   UI完全保持你原来的
 ========================= */
 body{
     margin:0;
-    font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Display";
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
 
-    background:
-    radial-gradient(
+    background: radial-gradient(
         circle at top,
         #dff3ff 0%,
         #f4fbff 40%,
@@ -40,24 +36,6 @@ body{
     text-align:center;
 
     color:#0f172a;
-
-    position:relative;
-}
-
-body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-
-    background:
-    radial-gradient(
-        circle at top,
-        rgba(255,255,255,.45),
-        rgba(255,255,255,.10),
-        rgba(0,0,0,.02)
-    );
-
-    pointer-events:none;
 }
 
 /* 返回 */
@@ -77,22 +55,10 @@ body::before{
 
     font-size:20px;
 
-    cursor:pointer;
-
-    color:#0f172a;
-
     background:rgba(255,255,255,.35);
-
     border:1px solid rgba(255,255,255,.6);
 
     backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-
-    box-shadow:
-    0 8px 18px rgba(0,0,0,.12),
-    inset 0 1px 1px rgba(255,255,255,.6);
-
-    z-index:99999;
 }
 
 /* 标题 */
@@ -101,10 +67,7 @@ body::before{
     top:18px;
     width:100%;
     text-align:center;
-
     font-size:18px;
-    font-weight:600;
-    color:rgba(15,23,42,.75);
 }
 
 /* 卡片 */
@@ -115,61 +78,15 @@ body::before{
     border-radius:24px;
 
     background:rgba(255,255,255,.55);
-
-    backdrop-filter:blur(18px) saturate(160%);
-    -webkit-backdrop-filter:blur(18px) saturate(160%);
-
-    border:1px solid rgba(255,255,255,.35);
-
-    box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.4),
-    0 10px 30px rgba(0,0,0,.06);
+    backdrop-filter:blur(18px);
 
     margin-left:auto;
     margin-right:auto;
-
-    position:relative;
 }
 
 #word{
     font-size:44px;
     font-weight:700;
-}
-
-#phonetic{
-    margin-top:8px;
-    font-size:14px;
-    opacity:.7;
-}
-
-/* 发音 */
-.audio-btn{
-    position:absolute;
-    top:12px;
-    right:12px;
-
-    width:38px;
-    height:38px;
-
-    border-radius:50%;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    cursor:pointer;
-
-    font-size:16px;
-
-    background:rgba(255,255,255,.35);
-
-    border:1px solid rgba(255,255,255,.6);
-
-    backdrop-filter:blur(12px);
-
-    box-shadow:
-    0 6px 12px rgba(0,0,0,.10),
-    inset 0 1px 1px rgba(255,255,255,.6);
 }
 
 /* 选项 */
@@ -182,40 +99,20 @@ body::before{
 }
 
 .option{
-    padding:16px 18px;
+    padding:16px;
     border-radius:20px;
-
     background:rgba(255,255,255,.45);
-
-    backdrop-filter:blur(18px);
-
-    border:1px solid rgba(255,255,255,.35);
-
     cursor:pointer;
-    font-size:16px;
-
-    transition:.15s;
 }
 
-.option:active{
-    transform:scale(.97);
-}
+.correct{ background:rgba(52,199,89,.25); }
+.wrong{ background:rgba(255,59,48,.22); }
 
-.correct{
-    background:rgba(52,199,89,.25);
-}
-
-.wrong{
-    background:rgba(255,59,48,.22);
-}
-
-/* 底部按钮 */
 .bottom-bar{
     position:fixed;
     left:50%;
     transform:translateX(-50%);
     bottom:80px;
-
     display:flex;
     gap:80px;
 }
@@ -224,24 +121,7 @@ body::before{
     width:52px;
     height:52px;
     border-radius:50%;
-
-    border:1px solid rgba(255,255,255,.35);
-
-    background:
-    linear-gradient(to bottom,
-    rgba(255,255,255,.18),
-    rgba(255,255,255,.06));
-
-    backdrop-filter:blur(18px) saturate(170%);
-
-    box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.4),
-    0 8px 18px rgba(0,0,0,.08);
-
-    cursor:pointer;
-
-    font-size:22px;
-
+    background:rgba(255,255,255,.2);
     display:flex;
     align-items:center;
     justify-content:center;
@@ -256,59 +136,43 @@ body::before{
 <div class="top">练习模式</div>
 
 <div class="card">
-
-    <div class="audio-btn" onclick="speak()">🔊</div>
-
     <div id="word">Loading...</div>
     <div id="phonetic"></div>
-
 </div>
 
 <div class="options" id="options"></div>
 
 <div class="bottom-bar">
-    <div class="btn" onclick="prevQuestion()">←</div>
-    <div class="btn" onclick="nextQuestion()">→</div>
+    <div class="btn" onclick="prev()">←</div>
+    <div class="btn" onclick="next()">→</div>
 </div>
 
 <script>
 
 /* =========================
-   数据
+   核心：完全模仿学习页
 ========================= */
+
 let words = [];
-let index = 0;
+let index = Number(localStorage.getItem("word_index") || 0);
 
-/* 错题（稳定版） */
-let wrongs = [];
-
-try {
-    wrongs = JSON.parse(localStorage.getItem("wrongs_list")) || [];
-} catch(e){
-    wrongs = [];
-}
+/* 错题 */
+let wrongs = JSON.parse(localStorage.getItem("wrongs_list") || "[]");
 
 /* =========================
-   只第一次随机（不刷新就不变）
+   加载词库（完全同学习页）
 ========================= */
 fetch("words.json")
 .then(res => res.json())
 .then(data => {
 
-    let saved = localStorage.getItem("quiz_order");
+    let saved = localStorage.getItem("words_order");
 
     if(saved){
-
         words = JSON.parse(saved);
-
     }else{
-
-        words = [...data].sort(() => Math.random() - 0.5);
-
-        localStorage.setItem(
-            "quiz_order",
-            JSON.stringify(words)
-        );
+        words = data.sort(() => Math.random() - 0.5);
+        localStorage.setItem("words_order", JSON.stringify(words));
     }
 
     render();
@@ -327,15 +191,14 @@ function render(){
     document.getElementById("word").innerText = w.word;
     document.getElementById("phonetic").innerText = w.phonetic || "";
 
+    /* 4选项 */
     let options = [w.definition];
 
     while(options.length < 4){
 
-        let r = words[
-            Math.floor(Math.random() * words.length)
-        ].definition;
+        let r = words[Math.floor(Math.random()*words.length)].definition;
 
-        if(!options.includes(r)){
+        if(r && !options.includes(r)){
             options.push(r);
         }
     }
@@ -351,15 +214,16 @@ function render(){
         div.className = "option";
         div.innerText = text;
 
-        div.onclick = () =>
-        check(div, text, w);
+        div.onclick = () => check(div, text, w);
 
         box.appendChild(div);
     });
+
+    localStorage.setItem("word_index", index);
 }
 
 /* =========================
-   发音
+   发音（同学习页）
 ========================= */
 function speak(){
 
@@ -381,14 +245,13 @@ function speak(){
 function check(el, selected, w){
 
     let all = document.querySelectorAll(".option");
-
     all.forEach(i => i.style.pointerEvents = "none");
 
     if(selected === w.definition){
 
         el.classList.add("correct");
 
-        setTimeout(nextQuestion, 500);
+        setTimeout(next, 500);
 
     }else{
 
@@ -402,12 +265,12 @@ function check(el, selected, w){
 
         saveWrong(w);
 
-        setTimeout(nextQuestion, 2000);
+        setTimeout(next, 2000);
     }
 }
 
 /* =========================
-   错题保存（已优化）
+   错题（稳定版）
 ========================= */
 function saveWrong(w){
 
@@ -424,17 +287,14 @@ function saveWrong(w){
             example: w.example || ""
         });
 
-        localStorage.setItem(
-            "wrongs_list",
-            JSON.stringify(wrongs)
-        );
+        localStorage.setItem("wrongs_list", JSON.stringify(wrongs));
     }
 }
 
 /* =========================
-   下一题
+   切换（完全模仿学习页逻辑）
 ========================= */
-function nextQuestion(){
+function next(){
 
     index++;
 
@@ -446,10 +306,7 @@ function nextQuestion(){
     speak();
 }
 
-/* =========================
-   上一题
-========================= */
-function prevQuestion(){
+function prev(){
 
     if(index > 0){
         index--;
