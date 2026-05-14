@@ -146,6 +146,8 @@ body::before{
 
     margin-left:auto;
     margin-right:auto;
+
+    position:relative;
 }
 
 #word{
@@ -159,6 +161,46 @@ body::before{
     font-size:14px;
 
     opacity:.7;
+}
+
+/* =========================
+   发音按钮
+========================= */
+.audio-btn{
+
+    position:absolute;
+
+    top:12px;
+    right:12px;
+
+    width:38px;
+    height:38px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    background:rgba(255,255,255,.35);
+
+    border:1px solid rgba(255,255,255,.6);
+
+    backdrop-filter:blur(12px);
+
+    box-shadow:
+    0 6px 12px rgba(0,0,0,.10),
+    inset 0 1px 1px rgba(255,255,255,.6);
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.audio-btn:active{
+    transform:scale(.92);
 }
 
 /* =========================
@@ -291,6 +333,9 @@ onclick="back()">←</div>
 <!-- 单词卡 -->
 <div class="card">
 
+    <div class="audio-btn"
+    onclick="speak()">🔊</div>
+
     <div id="word">Loading...</div>
 
     <div id="phonetic"></div>
@@ -326,7 +371,7 @@ localStorage.getItem("wrongs_list")
 );
 
 /* =========================
-   随机顺序（只生成一次）
+   随机顺序
 ========================= */
 
 fetch("words.json")
@@ -353,6 +398,7 @@ fetch("words.json")
     }
 
     render();
+    speak();
 });
 
 /* =========================
@@ -418,6 +464,28 @@ function render(){
 
         container.appendChild(div);
     });
+}
+
+/* =========================
+   发音
+========================= */
+
+function speak(){
+
+    let w = words[index];
+
+    if(!w || !w.word) return;
+
+    window.speechSynthesis.cancel();
+
+    let utter =
+    new SpeechSynthesisUtterance(w.word);
+
+    utter.lang = "en-US";
+
+    utter.rate = 0.95;
+
+    speechSynthesis.speak(utter);
 }
 
 /* =========================
@@ -510,6 +578,7 @@ function nextQuestion(){
     }
 
     render();
+    speak();
 }
 
 /* =========================
@@ -523,6 +592,7 @@ function prevQuestion(){
         index--;
 
         render();
+        speak();
     }
 }
 
