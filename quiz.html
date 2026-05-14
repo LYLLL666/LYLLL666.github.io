@@ -170,6 +170,11 @@ body::before{
 
 <script>
 
+/* =========================
+   状态存储（新增）
+========================= */
+let quizState = JSON.parse(localStorage.getItem("quiz_state") || "{}");
+
 let words = [];
 let index = Number(localStorage.getItem("quiz_index") || 0);
 let answered = false;
@@ -225,6 +230,36 @@ function render(){
             speakAuto();
         },200);
     });
+
+    /* =========================
+       🔥恢复历史选择（新增）
+    ========================= */
+    let state = quizState[index];
+
+    if(state){
+
+        answered = true;
+        lockNext = true;
+
+        let options = document.querySelectorAll(".option");
+
+        let selected = state.selected;
+
+        if(state.correct){
+
+            options[selected].classList.add("correct");
+
+        }else{
+
+            options[selected].classList.add("wrong");
+
+            currentOptions.forEach((o,idx)=>{
+                if(o.correct){
+                    options[idx].classList.add("correct");
+                }
+            });
+        }
+    }
 }
 
 /* =========================
@@ -244,7 +279,7 @@ function generate(correct){
 }
 
 /* =========================
-   点击选择
+   点击选择（已加状态记录）
 ========================= */
 function select(i){
 
@@ -256,7 +291,17 @@ function select(i){
     let options = document.querySelectorAll(".option");
     let w = words[index];
 
-    if(currentOptions[i].correct){
+    let isCorrect = currentOptions[i].correct;
+
+    /* 🔥记录状态（新增） */
+    quizState[index] = {
+        selected: i,
+        correct: isCorrect
+    };
+
+    localStorage.setItem("quiz_state", JSON.stringify(quizState));
+
+    if(isCorrect){
 
         options[i].classList.add("correct");
         autoNext(500);
@@ -350,9 +395,11 @@ function bind(){
     }
 }
 
-/* 退出 */
+/* =========================
+   退出
+========================= */
 function exit(){
-    location.href="index.html";
+    location.href = "index.html";
 }
 
 </script>
