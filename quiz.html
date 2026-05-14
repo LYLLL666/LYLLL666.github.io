@@ -603,7 +603,9 @@ function showTip(text){
 
     tip.style.fontSize = "13px";
     tip.style.color = "#fff";
-    tip.style.background = "linear-gradient(135deg, #ff5f6d, #ffc371, #47e0ff, #7afcff, #c471ed)";
+    tip.style.background = "linear-gradient(135deg, rgba(255, 180, 190, 0.35), rgba(255, 220, 180, 0.35), rgba(180, 235, 255, 0.35), rgba(200, 255, 240, 0.35), rgba(220, 200, 255, 0.35))";
+    tip.style.backdropFilter = "blur(14px)";
+    tip.style.webkitBackdropFilter = "blur(14px)";
     tip.style.zIndex = "99999";
 
     tip.style.opacity = "0";
