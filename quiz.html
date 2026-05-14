@@ -1,103 +1,537 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
 <title>练习模式</title>
 
 <style>
+
+/* =========================
+   BASE
+========================= */
 body{
     margin:0;
-    font-family:Arial;
-    background:#ecfdf5;
+
+    font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display";
+
+    background:
+    radial-gradient(
+        circle at top,
+        #dff3ff 0%,
+        #f4fbff 40%,
+        #eaf4ff 70%,
+        #e3efff 100%
+    );
+
+    min-height:100vh;
+
+    overflow:hidden;
+
     text-align:center;
+
+    color:#0f172a;
+
+    position:relative;
 }
-.card{
-    width:320px;
-    margin:20px auto;
-    background:white;
-    padding:25px;
-    border-radius:20px;
+
+body::before{
+    content:"";
+
+    position:fixed;
+    inset:0;
+
+    background:
+    radial-gradient(
+        circle at top,
+        rgba(255,255,255,.45),
+        rgba(255,255,255,.10),
+        rgba(0,0,0,.02)
+    );
+
+    pointer-events:none;
 }
-#word{font-size:40px;font-weight:bold;}
-.option{
-    width:85%;
-    margin:10px auto;
-    padding:14px;
-    border-radius:12px;
-    border:2px solid #ddd;
+
+/* =========================
+   返回按钮
+========================= */
+.back{
+    position:fixed;
+
+    left:16px;
+    top:20px;
+
+    width:44px;
+    height:44px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:20px;
+
     cursor:pointer;
+
+    color:#0f172a;
+
+    background:rgba(255,255,255,.35);
+
+    border:1px solid rgba(255,255,255,.6);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    box-shadow:
+    0 8px 18px rgba(0,0,0,.12),
+    inset 0 1px 1px rgba(255,255,255,.6);
+
+    z-index:99999;
+
+    -webkit-tap-highlight-color: transparent;
 }
-.correct{background:#bbf7d0;}
-.wrong{background:#fecaca;}
+
+/* =========================
+   标题
+========================= */
+.top{
+    position:absolute;
+
+    top:18px;
+
+    width:100%;
+
+    text-align:center;
+
+    font-size:18px;
+    font-weight:600;
+
+    color:rgba(15,23,42,.75);
+}
+
+/* =========================
+   单词卡片
+========================= */
+.card{
+
+    margin-top:90px;
+
+    width:300px;
+
+    padding:24px;
+
+    border-radius:24px;
+
+    background:rgba(255,255,255,.55);
+
+    backdrop-filter:blur(18px) saturate(160%);
+    -webkit-backdrop-filter:blur(18px) saturate(160%);
+
+    border:1px solid rgba(255,255,255,.35);
+
+    box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.4),
+    0 10px 30px rgba(0,0,0,.06);
+
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#word{
+    font-size:44px;
+    font-weight:700;
+}
+
+#phonetic{
+    margin-top:8px;
+
+    font-size:14px;
+
+    opacity:.7;
+}
+
+/* =========================
+   选项
+========================= */
+.options{
+
+    width:320px;
+
+    margin:24px auto 0;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:14px;
+}
+
+.option{
+
+    padding:16px 18px;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.45);
+
+    backdrop-filter:blur(18px);
+
+    border:1px solid rgba(255,255,255,.35);
+
+    box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.3),
+    0 6px 18px rgba(0,0,0,.05);
+
+    font-size:16px;
+
+    color:#0f172a;
+
+    cursor:pointer;
+
+    transition:.18s;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.option:active{
+    transform:scale(.97);
+}
+
+.correct{
+    background:rgba(52,199,89,.25);
+}
+
+.wrong{
+    background:rgba(255,59,48,.22);
+}
+
+/* =========================
+   按钮区
+========================= */
+.bottom-bar{
+
+    position:fixed;
+
+    left:50%;
+    transform:translateX(-50%);
+
+    bottom:80px;
+
+    display:flex;
+
+    gap:80px;
+
+    align-items:center;
+    justify-content:center;
+}
+
+/* =========================
+   按钮
+========================= */
+.btn{
+
+    width:52px;
+    height:52px;
+
+    border-radius:50%;
+
+    border:1px solid rgba(255,255,255,.35);
+
+    background:
+    linear-gradient(
+        to bottom,
+        rgba(255,255,255,.18),
+        rgba(255,255,255,.06)
+    );
+
+    backdrop-filter:blur(18px) saturate(170%);
+    -webkit-backdrop-filter:blur(18px) saturate(170%);
+
+    box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.4),
+    0 8px 18px rgba(0,0,0,.08);
+
+    cursor:pointer;
+
+    font-size:22px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:rgba(15,23,42,.75);
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active{
+    transform:scale(.92);
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>🧠 练习模式</h1>
+<div class="back"
+onclick="back()">←</div>
 
+<div class="top">练习模式</div>
+
+<!-- 单词卡 -->
 <div class="card">
-<div id="word">加载中...</div>
-<div id="options"></div>
-<div id="msg"></div>
+
+    <div id="word">Loading...</div>
+
+    <div id="phonetic"></div>
+
+</div>
+
+<!-- 选项 -->
+<div class="options"
+id="options"></div>
+
+<!-- 底部按钮 -->
+<div class="bottom-bar">
+
+    <div class="btn"
+    onclick="prevQuestion()">←</div>
+
+    <div class="btn"
+    onclick="nextQuestion()">→</div>
+
 </div>
 
 <script>
 
 let words = [];
+
 let index = 0;
 
-let wrongList =
-JSON.parse(localStorage.getItem("wrong_list") || "[]");
+/* 错题本 */
+let wrongs =
+JSON.parse(
+localStorage.getItem("wrongs_list")
+|| "[]"
+);
+
+/* =========================
+   随机顺序（只生成一次）
+========================= */
 
 fetch("words.json")
-.then(res=>res.json())
-.then(data=>{
-    words = data;
+.then(res => res.json())
+.then(data => {
+
+    let saved =
+    localStorage.getItem("quiz_order");
+
+    if(saved){
+
+        words = JSON.parse(saved);
+
+    }else{
+
+        words =
+        data.sort(() =>
+        Math.random() - 0.5);
+
+        localStorage.setItem(
+        "quiz_order",
+        JSON.stringify(words)
+        );
+    }
+
     render();
 });
 
+/* =========================
+   渲染
+========================= */
+
 function render(){
 
-let w = words[index];
+    if(words.length === 0) return;
 
-document.getElementById("word").innerText = w.word;
+    let w = words[index];
 
-let options = [w.meaning];
+    document.getElementById("word")
+    .innerText = w.word;
 
-while(options.length<4){
-let r = words[Math.floor(Math.random()*words.length)].meaning;
-if(!options.includes(r)) options.push(r);
+    document.getElementById("phonetic")
+    .innerText = w.phonetic || "";
+
+    /* 正确答案 */
+    let options = [w.definition];
+
+    /* 随机错误选项 */
+    while(options.length < 4){
+
+        let random =
+        words[
+            Math.floor(
+            Math.random() *
+            words.length
+            )
+        ].definition;
+
+        if(!options.includes(random)){
+            options.push(random);
+        }
+    }
+
+    /* 打乱 */
+    options.sort(() =>
+    Math.random() - 0.5);
+
+    let container =
+    document.getElementById("options");
+
+    container.innerHTML = "";
+
+    options.forEach(text => {
+
+        let div =
+        document.createElement("div");
+
+        div.className = "option";
+
+        div.innerText = text;
+
+        div.onclick = () =>
+        checkAnswer(
+            div,
+            text,
+            w.definition,
+            w
+        );
+
+        container.appendChild(div);
+    });
 }
 
-options = options.sort(()=>Math.random()-0.5);
+/* =========================
+   判断
+========================= */
 
-document.getElementById("options").innerHTML =
-options.map(o =>
-`<div class="option" onclick="check('${o}','${w.word}','${w.meaning}')">${o}</div>`
-).join("");
+function checkAnswer(
+    el,
+    selected,
+    correct,
+    wordObj
+){
 
+    let all =
+    document.querySelectorAll(".option");
+
+    all.forEach(i => {
+        i.style.pointerEvents = "none";
+    });
+
+    /* 正确 */
+    if(selected === correct){
+
+        el.classList.add("correct");
+
+        setTimeout(() => {
+            nextQuestion();
+        }, 500);
+
+    }else{
+
+        /* 错误 */
+        el.classList.add("wrong");
+
+        all.forEach(i => {
+
+            if(i.innerText === correct){
+                i.classList.add("correct");
+            }
+        });
+
+        saveWrong(wordObj);
+
+        setTimeout(() => {
+            nextQuestion();
+        }, 2000);
+    }
 }
 
-function check(opt, word, correct){
+/* =========================
+   错题保存
+========================= */
 
-if(opt !== correct){
+function saveWrong(w){
 
-if(!wrongList.find(i=>i.word===word)){
-wrongList.push({word, meaning:correct});
-localStorage.setItem("wrong_list",JSON.stringify(wrongList));
+    let exists =
+    wrongs.find(i =>
+    i.word === w.word);
+
+    if(!exists){
+
+        wrongs.push(w);
+
+        localStorage.setItem(
+        "wrongs_list",
+        JSON.stringify(wrongs)
+        );
+    }
 }
 
-document.getElementById("msg").innerText="❌ 错题已记录";
+/* =========================
+   下一题
+========================= */
 
-}else{
-document.getElementById("msg").innerText="✅ 正确";
+function nextQuestion(){
+
+    index++;
+
+    if(index >= words.length){
+
+        index = 0;
+
+        words.sort(() =>
+        Math.random() - 0.5);
+
+        localStorage.setItem(
+        "quiz_order",
+        JSON.stringify(words)
+        );
+    }
+
+    render();
 }
 
-index++;
-render();
+/* =========================
+   上一题
+========================= */
 
+function prevQuestion(){
+
+    if(index > 0){
+
+        index--;
+
+        render();
+    }
+}
+
+/* =========================
+   返回
+========================= */
+
+function back(){
+    location.href = "index.html";
 }
 
 </script>
