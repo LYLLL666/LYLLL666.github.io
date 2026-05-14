@@ -10,14 +10,13 @@
 <style>
 
 /* =========================
-   BASE（完全沿用你的UI）
+   BASE（学习模式统一UI）
 ========================= */
 body{
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
     background: radial-gradient(circle at top,#dff3ff 0%,#f4fbff 40%,#eaf4ff 70%,#e3efff 100%);
     min-height:100vh;
-    overflow-x:hidden;
     text-align:center;
     color:#0f172a;
 }
@@ -43,11 +42,10 @@ body::before{
     justify-content:center;
     font-size:20px;
     cursor:pointer;
-    color:#0f172a;
     background:rgba(255,255,255,.35);
     border:1px solid rgba(255,255,255,.6);
     backdrop-filter:blur(18px);
-    box-shadow:0 8px 18px rgba(0,0,0,.12), inset 0 1px 1px rgba(255,255,255,.6);
+    box-shadow:0 8px 18px rgba(0,0,0,.12);
 }
 
 /* 标题 */
@@ -58,67 +56,45 @@ body::before{
     text-align:center;
     font-size:18px;
     font-weight:600;
-    color:rgba(15,23,42,.75);
 }
 
-/* 主卡 */
-.card{
+/* =========================
+   五卡片结构
+========================= */
+.cards{
     margin-top:90px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+}
+
+/* 卡片统一风格 */
+.card{
     width:300px;
-    padding:22px;
+    padding:20px;
     border-radius:24px;
     background:rgba(255,255,255,.55);
     backdrop-filter:blur(18px) saturate(160%);
     border:1px solid rgba(255,255,255,.35);
     box-shadow:0 10px 30px rgba(0,0,0,.06);
-    margin-left:auto;
-    margin-right:auto;
-    position:relative;
+    cursor:pointer;
+    transition:.2s;
 }
 
-/* 单词 */
-#word{
-    font-size:40px;
+.card:active{
+    transform:scale(.97);
+}
+
+/* 单词卡 */
+.word{
+    font-size:38px;
     font-weight:700;
 }
 
-/* 发音 */
-.audio-btn{
-    position:absolute;
-    top:12px;
-    right:12px;
-    width:38px;
-    height:38px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    background:rgba(255,255,255,.35);
-    border:1px solid rgba(255,255,255,.6);
-    backdrop-filter:blur(12px);
-}
-
-/* 选项区 */
-.options{
-    margin-top:20px;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
-
+/* 选项卡 */
 .option{
-    padding:12px;
-    border-radius:14px;
-    background:rgba(255,255,255,.45);
-    border:1px solid rgba(255,255,255,.35);
-    cursor:pointer;
-    transition:.2s;
-    font-size:15px;
-}
-
-.option:active{
-    transform:scale(.97);
+    font-size:16px;
 }
 
 /* 状态 */
@@ -132,14 +108,34 @@ body::before{
     border-color:rgba(239,68,68,.6) !important;
 }
 
-/* 下一题 */
-.next-btn{
-    margin-top:18px;
-    padding:10px 14px;
-    border-radius:12px;
-    background:rgba(255,255,255,.4);
+/* =========================
+   底部按钮（学习模式一致）
+========================= */
+.bottom-bar{
+    position:fixed;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:40px;
+    display:flex;
+    gap:80px;
+}
+
+.btn{
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:rgba(255,255,255,.35);
     border:1px solid rgba(255,255,255,.4);
+    backdrop-filter:blur(18px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
     cursor:pointer;
+}
+
+.btn:active{
+    transform:scale(.92);
 }
 
 </style>
@@ -150,105 +146,111 @@ body::before{
 <div class="back" onclick="exit()">←</div>
 <div class="top">练习模式</div>
 
-<div class="card">
-    <div class="audio-btn" onclick="speak()">🔊</div>
-    <div id="word">加载中...</div>
+<div class="cards">
 
-    <div class="options" id="options"></div>
+    <div class="card word" onclick="speak()" id="wordCard"></div>
 
-    <div class="next-btn" onclick="next()">下一题</div>
+    <div class="card option" onclick="select(0)" id="o0"></div>
+    <div class="card option" onclick="select(1)" id="o1"></div>
+    <div class="card option" onclick="select(2)" id="o2"></div>
+    <div class="card option" onclick="select(3)" id="o3"></div>
+
+</div>
+
+<div class="bottom-bar">
+    <div class="btn" onclick="prev()">←</div>
+    <div class="btn" onclick="next()">→</div>
 </div>
 
 <script>
 
 let words = [];
-let index = Number(sessionStorage.getItem("quiz_index") || 0);
+let index = Number(localStorage.getItem("quiz_index") || 0);
 let answered = false;
+let currentOptions = [];
 
 /* =========================
-   加载词库
+   词库（锁定顺序）
 ========================= */
 fetch("words.json")
 .then(res => res.json())
 .then(data => {
-    words = data;
+
+    let saved = localStorage.getItem("quiz_order");
+
+    if(saved){
+        words = JSON.parse(saved);
+    }else{
+        words = [...data].sort(() => Math.random() - 0.5);
+        localStorage.setItem("quiz_order", JSON.stringify(words));
+    }
+
     render();
 });
 
 /* =========================
-   渲染题目
+   渲染
 ========================= */
 function render(){
 
-    if(words.length === 0) return;
-
     let w = words[index];
 
-    document.getElementById("word").innerText = w.word;
+    document.getElementById("wordCard").innerText = w.word;
 
-    let options = generateOptions(w);
+    currentOptions = generate(w);
 
-    let box = document.getElementById("options");
-    box.innerHTML = "";
-
-    options.forEach(opt => {
-        let div = document.createElement("div");
-        div.className = "option";
-        div.innerText = opt.text;
-
-        div.onclick = () => checkAnswer(div, opt, w);
-
-        box.appendChild(div);
+    currentOptions.forEach((opt,i)=>{
+        let el = document.getElementById("o"+i);
+        el.innerText = opt.text;
+        el.className = "card option";
     });
 
     answered = false;
 
-    sessionStorage.setItem("quiz_index", index);
+    localStorage.setItem("quiz_index", index);
 }
 
 /* =========================
-   生成4个选项
+   生成选项
 ========================= */
-function generateOptions(correct){
+function generate(correct){
 
     let pool = words
         .filter(w => w.word !== correct.word)
-        .sort(() => Math.random() - 0.5)
+        .sort(()=>Math.random()-0.5)
         .slice(0,3)
         .map(w => ({text:w.definition, correct:false}));
 
     pool.push({text:correct.definition, correct:true});
 
-    return pool.sort(() => Math.random() - 0.5);
+    return pool.sort(()=>Math.random()-0.5);
 }
 
 /* =========================
-   判题
+   选择答案
 ========================= */
-function checkAnswer(el, opt, word){
+function select(i){
 
     if(answered) return;
-
     answered = true;
+
+    let w = words[index];
 
     let options = document.querySelectorAll(".option");
 
-    options.forEach(o => {
-        o.style.pointerEvents = "none";
-    });
+    if(currentOptions[i].correct){
 
-    if(opt.text === word.definition){
-        el.classList.add("correct");
+        options[i].classList.add("correct");
+
     }else{
-        el.classList.add("wrong");
 
-        // 加入错题本
-        addWrong(word);
+        options[i].classList.add("wrong");
 
-        // 标正确答案
-        options.forEach(o => {
-            if(o.innerText === word.definition){
-                o.classList.add("correct");
+        addWrong(w);
+
+        currentOptions.forEach((o,idx)=>{
+            if(o.correct){
+                options[idx].classList.add("correct");
             }
         });
     }
@@ -257,55 +259,51 @@ function checkAnswer(el, opt, word){
 /* =========================
    错题本
 ========================= */
-function addWrong(word){
+function addWrong(w){
 
     let list = JSON.parse(localStorage.getItem("wrong_list") || "[]");
 
-    if(!list.some(w => w.word === word.word)){
-        list.push(word);
-        localStorage.setItem("wrong_list", JSON.stringify(list));
+    if(!list.some(i=>i.word===w.word)){
+        list.push(w);
+        localStorage.setItem("wrong_list",JSON.stringify(list));
     }
 }
 
 /* =========================
-   下一题
+   上一题 / 下一题
 ========================= */
 function next(){
     index = (index + 1) % words.length;
     render();
 }
 
+function prev(){
+    if(index > 0){
+        index--;
+        render();
+    }
+}
+
 /* =========================
-   发音系统（复用你的）
+   发音（学习模式一致）
 ========================= */
 function speak(){
-    let w = words[index];
-    if(!w) return;
 
-    let word = w.word.toLowerCase().trim();
+    let w = words[index];
 
     let audio = new Audio(
-        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${word}--_us_1.mp3`
+        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${w.word.toLowerCase()}--_us_1.mp3`
     );
 
-    audio.play().catch(() => fallbackTTS(w.word));
-
-    audio.onerror = () => fallbackTTS(w.word);
+    audio.play().catch(()=>{
+        let u = new SpeechSynthesisUtterance(w.word);
+        u.lang = "en-US";
+        speechSynthesis.speak(u);
+    });
 }
 
-function fallbackTTS(text){
-    window.speechSynthesis.cancel();
-    let utter = new SpeechSynthesisUtterance(text);
-    utter.lang = "en-US";
-    utter.rate = 0.95;
-    speechSynthesis.speak(utter);
-}
-
-/* =========================
-   退出（清 session，不影响错题）
-========================= */
+/* 退出 */
 function exit(){
-    sessionStorage.removeItem("quiz_index");
     location.href = "index.html";
 }
 
