@@ -527,7 +527,7 @@ if(index >= words.length - 1){
 
     setTimeout(()=>{
         showTip(endTips[Math.floor(Math.random() * endTips.length)]);
-    }, 300);
+    }, 1000);
 
     return;
 }
@@ -602,7 +602,8 @@ function showTip(text){
     tip.style.borderRadius = "10px";
 
     tip.style.fontSize = "13px";
-    tip.style.color = "#fff";
+    tip.style.color = "#1f2937";
+    tip.style.textShadow = "0 1px 2px rgba(255,255,255,0.6)";
     tip.style.background = "linear-gradient(135deg, rgba(255, 180, 190, 0.35), rgba(255, 220, 180, 0.35), rgba(180, 235, 255, 0.35), rgba(200, 255, 240, 0.35), rgba(220, 200, 255, 0.35))";
     tip.style.backdropFilter = "blur(14px)";
     tip.style.webkitBackdropFilter = "blur(14px)";
