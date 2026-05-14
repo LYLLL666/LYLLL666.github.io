@@ -39,8 +39,6 @@ body::before{
     pointer-events:none;
 }
 
-
-
 /* 返回 */
 .back{
     position:fixed;
@@ -186,7 +184,7 @@ body::before{
 <script>
 
 /* =========================
-   状态存储（新增）
+   状态存储
 ========================= */
 let quizState = JSON.parse(localStorage.getItem("quiz_state") || "{}");
 
@@ -241,14 +239,9 @@ function render(){
     localStorage.setItem("quiz_index", index);
 
     requestAnimationFrame(()=>{
-        setTimeout(()=>{
-            speakAuto();
-        },200);
+        setTimeout(()=> speakAuto(),200);
     });
 
-    /* =========================
-       🔥恢复历史选择（新增）
-    ========================= */
     let state = quizState[index];
 
     if(state){
@@ -257,15 +250,11 @@ function render(){
         lockNext = true;
 
         let options = document.querySelectorAll(".option");
-
         let selected = state.selected;
 
         if(state.correct){
-
             options[selected].classList.add("correct");
-
         }else{
-
             options[selected].classList.add("wrong");
 
             currentOptions.forEach((o,idx)=>{
@@ -294,7 +283,7 @@ function generate(correct){
 }
 
 /* =========================
-   点击选择（已加状态记录）
+   点击选择
 ========================= */
 function select(i){
 
@@ -308,7 +297,6 @@ function select(i){
 
     let isCorrect = currentOptions[i].correct;
 
-    /* 🔥记录状态（新增） */
     quizState[index] = {
         selected: i,
         correct: isCorrect
@@ -326,9 +314,7 @@ function select(i){
         options[i].classList.add("wrong");
 
         currentOptions.forEach((o,idx)=>{
-            if(o.correct){
-                options[idx].classList.add("correct");
-            }
+            if(o.correct) options[idx].classList.add("correct");
         });
 
         addWrong(w);
@@ -355,7 +341,7 @@ function autoNext(t){
 }
 
 /* =========================
-   错题本
+   错题
 ========================= */
 function addWrong(w){
     let list = JSON.parse(localStorage.getItem("wrong_list") || "[]");
@@ -387,7 +373,7 @@ function prev(){
 }
 
 /* =========================
-   发音系统
+   发音
 ========================= */
 function speak(){
     playAudio();
@@ -416,7 +402,7 @@ function playAudio(){
 }
 
 /* =========================
-   绑定点击
+   绑定
 ========================= */
 function bind(){
     document.getElementById("wordCard").onclick = speak;
@@ -426,13 +412,22 @@ function bind(){
 }
 
 /* =========================
-   退出
+   退出（已加二次确认）
 ========================= */
 function exit(){
+
+    let ok = confirm("是否退出练习模式？");
+    if(!ok) return;
+
+    let go = confirm("确定要返回首页吗？");
+    if(!go) return;
+
     location.href = "index.html";
 }
 
-
+/* =========================
+   提示
+========================= */
 function showTip(text){
 
     let tip = document.createElement("div");
