@@ -10,7 +10,7 @@
 <style>
 
 /* =========================
-   BASE（不动）
+   BASE（UI完全不动）
 ========================= */
 body{
     margin:0;
@@ -34,6 +34,7 @@ body{
     position:relative;
 }
 
+/* 👇 只在这里新增（关键） */
 *{
     -webkit-tap-highlight-color: transparent;
 }
@@ -86,83 +87,6 @@ body::before{
     z-index:99999;
 }
 
-/* =========================
-   🔥 当前分组圆形卡片
-========================= */
-.group-indicator{
-    position:fixed;
-    right:110px;
-    top:18px;
-
-    width:44px;
-    height:44px;
-
-    border-radius:50%;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:14px;
-    font-weight:600;
-
-    color:#0f172a;
-
-    background:rgba(255,255,255,.35);
-    border:1px solid rgba(255,255,255,.6);
-
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-
-    box-shadow:
-        0 8px 18px rgba(0,0,0,.12),
-        inset 0 1px 1px rgba(255,255,255,.6);
-
-    z-index:99999;
-}
-
-/* =========================
-   分组按钮（右上）
-========================= */
-.group-btn{
-    position:fixed;
-    right:16px;
-    top:20px;
-
-    width:70px;
-    height:44px;
-
-    border-radius:14px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:14px;
-
-    cursor:pointer;
-
-    color:#0f172a;
-
-    background:rgba(255,255,255,.35);
-    border:1px solid rgba(255,255,255,.6);
-
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-
-    box-shadow:
-        0 8px 18px rgba(0,0,0,.12),
-        inset 0 1px 1px rgba(255,255,255,.6);
-
-    z-index:99999;
-}
-
-.group-btn:active{
-    transform:scale(.95);
-}
-
-/* ====== 以下UI全部不动 ====== */
-
 .title-card{
     position:fixed;
     top:18px;
@@ -188,6 +112,19 @@ body::before{
     color:#0f172a;
 }
 
+/* 标题 */
+.top{
+    position:absolute;
+    top:18px;
+    width:100%;
+    text-align:center;
+
+    font-size:18px;
+    font-weight:600;
+    color:rgba(15,23,42,.75);
+}
+
+/* 主卡片 */
 .card{
     margin-top:90px;
     width:300px;
@@ -234,6 +171,7 @@ body::before{
     color:rgba(51,65,85,.9);
 }
 
+/* 发音按钮 */
 .audio-btn{
     position:absolute;
     top:12px;
@@ -266,6 +204,7 @@ body::before{
     transform:scale(.92);
 }
 
+/* 例句 */
 .example-card{
     margin-top:18px;
     width:300px;
@@ -287,6 +226,7 @@ body::before{
     margin-right:auto;
 }
 
+/* 按钮区 */
 .bottom-bar{
     position:absolute;
     left:50%;
@@ -297,6 +237,7 @@ body::before{
     gap:80px;
 }
 
+/* 按钮 */
 .btn{
     width:52px;
     height:52px;
@@ -328,17 +269,75 @@ body::before{
     transform:scale(.92);
 }
 
+.btn.disabled{
+    opacity:.25;
+    pointer-events:none;
+}
+
+/* =========================
+   ⭐ 新增：分组UI
+========================= */
+
+.group-btn{
+    position:fixed;
+    right:70px;
+    top:20px;
+
+    padding:8px 14px;
+    border-radius:12px;
+
+    background:rgba(255,255,255,.35);
+    border:1px solid rgba(255,255,255,.6);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.12),
+        inset 0 1px 1px rgba(255,255,255,.6);
+
+    font-size:13px;
+    cursor:pointer;
+    z-index:99999;
+}
+
+.group-indicator{
+    position:fixed;
+    right:140px;
+    top:20px;
+
+    width:44px;
+    height:44px;
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:rgba(255,255,255,.35);
+    border:1px solid rgba(255,255,255,.6);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.12),
+        inset 0 1px 1px rgba(255,255,255,.6);
+
+    font-weight:600;
+    z-index:99999;
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="back" onclick="back()">←</div>
+<div class="group-indicator" id="groupIndicator">1</div>
+<div class="group-btn" onclick="chooseGroup()">分组</div>
 
-<div class="group-indicator" id="groupShow">1</div>
-
-<div class="group-btn" onclick="selectGroup()">📚</div>
-
+<div class="top">单词学习</div>
 <div class="title-card">单词学习</div>
 
 <div class="card">
@@ -351,6 +350,7 @@ body::before{
 </div>
 
 <div class="example-card">
+    <div id="exampleTitle">例句</div>
     <div id="example"></div>
 </div>
 
@@ -362,61 +362,70 @@ body::before{
 
 <script>
 
-/* =========================
-   分组系统（5组固定）
-========================= */
-let groupIndex = Number(localStorage.getItem("word_group") || 0);
+const WORDS_VERSION = "v3";
 
-function updateGroupUI(){
-    document.getElementById("groupShow").innerText = groupIndex + 1;
-}
-
-function selectGroup(){
-
-    let g = prompt("选择第几组（1 - 5）");
-
-    if(!g) return;
-
-    g = Number(g) - 1;
-
-    if(g < 0 || g > 4) return;
-
-    groupIndex = g;
-    localStorage.setItem("word_group", groupIndex);
-
-    location.reload();
-}
-
-function applyGroup(data){
-
-    let start = groupIndex * 50;
-    let end = start + 50;
-
-    return data.slice(start, end);
-}
-
-/* =========================
-   主逻辑
-========================= */
 let words = [];
 let index = Number(localStorage.getItem("word_index") || 0);
+let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
+/* =========================
+   ⭐ 分组系统
+========================= */
+let groupIndex = Number(localStorage.getItem("word_group") || 1);
+const GROUP_SIZE = 50;
+
+/* 选择分组 */
+function chooseGroup(){
+
+    let input = prompt("请选择第几组（1-5）");
+
+    let n = Number(input);
+
+    if(!Number.isInteger(n) || n < 1 || n > 5){
+        alert("请输入1-5之间的整数");
+        return;
+    }
+
+    groupIndex = n;
+    localStorage.setItem("word_group", groupIndex);
+
+    index = 0;
+    localStorage.removeItem("word_index");
+
+    applyGroup();
+}
+
+/* 应用分组 */
+function applyGroup(){
+
+    let start = (groupIndex - 1) * GROUP_SIZE;
+    let end = start + GROUP_SIZE;
+
+    words = words.slice(start, end);
+
+    document.getElementById("groupIndicator").innerText = groupIndex;
+}
+
+/* =========================
+   加载词库
+========================= */
 fetch("words.json?v=" + Date.now())
 .then(res => res.json())
 .then(data => {
 
-    data = applyGroup(data);
+    words = data;
 
-    words = [...data].sort(() => Math.random() - 0.5);
+    applyGroup();
 
     if(index >= words.length) index = 0;
 
-    updateGroupUI();
     render();
+
     setTimeout(() => speak(), 300);
 });
 
 function render(){
+
     if(words.length === 0) return;
 
     let w = words[index];
@@ -425,45 +434,60 @@ function render(){
     document.getElementById("phonetic").innerText = w.phonetic || "";
     document.getElementById("pos").innerText = w.pos || "";
     document.getElementById("meaning").innerText = w.definition || "";
+    document.getElementById("example").innerText = w.example || "";
 
     localStorage.setItem("word_index", index);
 }
 
 /* =========================
-   功能
+   发音
 ========================= */
-function nextWord(){
-    if(index >= words.length - 1) return;
-    index++;
-    render();
-    speak();
-}
-
-function prevWord(){
-    if(index > 0){
-        index--;
-        render();
-        speak();
-    }
-}
-
 function speak(){
+
     let w = words[index];
-    if(!w) return;
+    if(!w || !w.word) return;
+
+    let word = w.word.toLowerCase().trim();
 
     let audio = new Audio(
-        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${w.word}--_us_1.mp3`
+        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${word}--_us_1.mp3`
     );
 
     audio.play().catch(()=>{});
 }
 
-function saveWord(){
+/* =========================
+   翻页
+========================= */
+function nextWord(){
 
-    let list = JSON.parse(localStorage.getItem("favorites_list") || "[]");
+    if(index >= words.length - 1){
+        return;
+    }
+
+    index++;
+    render();
+    setTimeout(()=>speak(),150);
+}
+
+function prevWord(){
+
+    if(index > 0){
+        index--;
+        render();
+        setTimeout(()=>speak(),150);
+    }
+}
+
+/* =========================
+   收藏
+========================= */
+function saveWord(){
 
     let w = words[index];
     if(!w) return;
+
+    let list = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
     if(!list.some(i => i.word === w.word)){
         list.push(w);
@@ -474,6 +498,9 @@ function saveWord(){
 function back(){
     location.href = "index.html";
 }
+
+/* 初始化显示组 */
+document.getElementById("groupIndicator").innerText = groupIndex;
 
 </script>
 
