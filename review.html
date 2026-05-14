@@ -117,9 +117,6 @@ body::before{
     border-color:rgba(239,68,68,.6) !important;
 }
 
-/* ❌ 删除底部按钮样式（保留结构但不使用） */
-/* bottom-bar removed */
-
 </style>
 </head>
 
@@ -139,8 +136,6 @@ body::before{
 
 </div>
 
-<!-- 只保留发音点击，不再有底部按钮 -->
-
 <script>
 
 /* =========================
@@ -156,7 +151,7 @@ let hasSpoken = false;
 let currentOptions = [];
 
 /* =========================
-   加载 words.json（用于干扰选项）
+   加载词库（干扰选项）
 ========================= */
 fetch("words.json")
 .then(res => res.json())
@@ -196,13 +191,16 @@ function render(){
 
     answered = false;
     lockNext = false;
+
+    /* 🔥 每次切题重置发声 */
     hasSpoken = false;
 
+    /* 🔥 自动发声 */
     setTimeout(()=>speakAuto(),200);
 }
 
 /* =========================
-   生成选项（✔ 改：全部来自 words.json）
+   选项生成（来自 words.json）
 ========================= */
 function generate(correct){
 
@@ -224,7 +222,7 @@ function generate(correct){
 }
 
 /* =========================
-   选择
+   选择答案
 ========================= */
 function select(i){
 
@@ -261,7 +259,7 @@ function select(i){
 }
 
 /* =========================
-   下一题（自动）
+   下一题
 ========================= */
 function autoNext(t){
 
@@ -280,7 +278,7 @@ function autoNext(t){
 }
 
 /* =========================
-   发音
+   🔊 发声（已修复）
 ========================= */
 function speak(){
 
@@ -293,11 +291,14 @@ function speak(){
 
     audio.play().catch(()=>{
         let u = new SpeechSynthesisUtterance(w.word);
-        u.lang="en-US";
+        u.lang = "en-US";
         speechSynthesis.speak(u);
     });
 }
 
+/* =========================
+   🔁 自动发声（已修复）
+========================= */
 function speakAuto(){
     if(hasSpoken) return;
     hasSpoken = true;
