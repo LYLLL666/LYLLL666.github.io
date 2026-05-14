@@ -87,6 +87,31 @@ body::before{
     z-index:99999;
 }
 
+   .title-card{
+    position:fixed;
+    top:18px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:10;
+
+    padding:10px 18px;
+    border-radius:14px;
+
+    background: rgba(255,255,255,0.40);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border:1px solid rgba(255,255,255,0.6);
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,0.08),
+        inset 0 1px 1px rgba(255,255,255,0.6);
+
+    font-size:15px;
+    font-weight:600;
+    color:#0f172a;
+}
+
 /* 标题 */
 .top{
     position:absolute;
@@ -275,6 +300,7 @@ body::before{
     <div class="btn" onclick="prevWord()">←</div>
     <div class="btn" onclick="saveWord()">⭐</div>
     <div class="btn" onclick="nextWord()">→</div>
+    <div class="title-card">单词学习</div>
 </div>
 
 <script>
