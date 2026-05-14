@@ -1,35 +1,45 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>错题复习</title>
+<title>复习模式</title>
 
 <style>
 
-/* =========================
-   UI（完全不改）
-========================= */
 body{
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
 
-    background: radial-gradient(circle at top,#dff3ff,#f4fbff,#e3efff);
+    background: radial-gradient(
+        circle at top,
+        #dff3ff 0%,
+        #f4fbff 40%,
+        #eaf4ff 70%,
+        #e3efff 100%
+    );
+
     min-height:100vh;
+    overflow-y:auto;
+    overflow-x:hidden;
+
     text-align:center;
     color:#0f172a;
-    overflow:hidden;
+
+    position:relative;
 }
 
 body::before{
     content:"";
     position:fixed;
     inset:0;
-    background: radial-gradient(circle at top,rgba(255,255,255,.45),rgba(255,255,255,.1),rgba(0,0,0,.02));
+    background: radial-gradient(circle at top,rgba(255,255,255,.45),rgba(255,255,255,.10),rgba(0,0,0,.02));
     pointer-events:none;
 }
 
+/* 返回 */
 .back{
     position:fixed;
     left:16px;
@@ -40,51 +50,109 @@ body::before{
     display:flex;
     align-items:center;
     justify-content:center;
+    font-size:20px;
     cursor:pointer;
     background:rgba(255,255,255,.35);
     border:1px solid rgba(255,255,255,.6);
     backdrop-filter:blur(18px);
+    box-shadow:0 8px 18px rgba(0,0,0,.12);
+    z-index:99999;
 }
 
+/* 标题 */
+.top{
+    position:absolute;
+    top:18px;
+    width:100%;
+    text-align:center;
+    font-size:18px;
+    font-weight:600;
+}
+
+/* 卡片结构 */
+.cards{
+    margin-top:90px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+}
+
+/* 卡片 */
 .card{
-    margin-top:110px;
     width:300px;
-    padding:22px;
+    padding:20px;
     border-radius:24px;
     background:rgba(255,255,255,.55);
-    backdrop-filter:blur(18px);
-    margin-left:auto;
-    margin-right:auto;
+    backdrop-filter:blur(18px) saturate(160%);
+    border:1px solid rgba(255,255,255,.35);
     box-shadow:0 10px 30px rgba(0,0,0,.06);
-}
-
-.word{
-    font-size:36px;
-    font-weight:700;
-    margin-bottom:10px;
-}
-
-.option{
-    margin:10px auto;
-    width:300px;
-    padding:14px;
-    border-radius:16px;
-    background:rgba(255,255,255,.45);
-    backdrop-filter:blur(18px);
     cursor:pointer;
     transition:.2s;
 }
 
-.option:active{
+.card:active{
     transform:scale(.97);
 }
 
+/* 单词 */
+.word{
+    font-size:38px;
+    font-weight:700;
+}
+
+/* 选项 */
+.option{
+    font-size:16px;
+}
+
+/* 状态 */
 .correct{
-    background:rgba(34,197,94,.25)!important;
+    background:rgba(34,197,94,.25) !important;
+    border-color:rgba(34,197,94,.6) !important;
 }
 
 .wrong{
-    background:rgba(239,68,68,.25)!important;
+    background:rgba(239,68,68,.25) !important;
+    border-color:rgba(239,68,68,.6) !important;
+}
+
+/* 底部按钮 */
+.bottom-bar{
+    position:fixed;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:40px;
+    display:flex;
+    gap:80px;
+}
+
+.btn{
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    font-size:22px;
+    color:#0f172a;
+
+    background:rgba(255,255,255,.35);
+    border:1px solid rgba(255,255,255,.6);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.12),
+        inset 0 1px 1px rgba(255,255,255,.6);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+}
+
+.btn:active{
+    transform:scale(.92);
 }
 
 </style>
@@ -92,61 +160,82 @@ body::before{
 
 <body>
 
-<div class="back" onclick="back()">←</div>
+<div class="back" onclick="exit()">←</div>
+<div class="top">错题复习</div>
 
-<div class="card">
-    <div class="word" id="word">加载中...</div>
+<div class="cards">
+
+    <div class="card word" id="wordCard">加载中...</div>
+
+    <div class="card option" id="o0"></div>
+    <div class="card option" id="o1"></div>
+    <div class="card option" id="o2"></div>
+    <div class="card option" id="o3"></div>
+
 </div>
 
-<div id="options"></div>
+<div class="bottom-bar">
+    <div class="btn" onclick="prev()">←</div>
+    <div class="btn" onclick="speak()">🔊</div>
+    <div class="btn" onclick="next()">→</div>
+</div>
 
 <script>
 
 /* =========================
-   数据源
+   数据：错题来源
 ========================= */
 let words = JSON.parse(localStorage.getItem("wrong_list") || "[]");
-words = words.sort(() => Math.random() - 0.5);
 
 let index = 0;
+let answered = false;
+let lockNext = false;
+let hasSpoken = false;
 let currentOptions = [];
 
 /* =========================
    初始化
 ========================= */
-if(words.length === 0){
-    document.getElementById("word").innerText = "暂无错题";
-}else{
-    render();
-}
+bind();
+render();
 
 /* =========================
    渲染
 ========================= */
 function render(){
 
+    if(words.length === 0){
+        document.getElementById("wordCard").innerText = "暂无错题";
+        document.getElementById("o0").innerText = "";
+        document.getElementById("o1").innerText = "";
+        document.getElementById("o2").innerText = "";
+        document.getElementById("o3").innerText = "";
+        return;
+    }
+
     if(index >= words.length){
-        finish();
+        location.href = "wronglist.html";
         return;
     }
 
     let w = words[index];
 
-    document.getElementById("word").innerText = w.word;
+    document.getElementById("wordCard").innerText = w.word;
 
     currentOptions = generate(w);
 
-    let box = document.getElementById("options");
-    box.innerHTML = "";
-
     currentOptions.forEach((opt,i)=>{
-        let div = document.createElement("div");
-        div.className = "option";
-        div.innerText = opt.text;
+        let el = document.getElementById("o"+i);
+        el.innerText = opt.text;
+        el.className = "card option";
+    });
 
-        div.onclick = () => select(i);
+    answered = false;
+    lockNext = false;
+    hasSpoken = false;
 
-        box.appendChild(div);
+    requestAnimationFrame(()=>{
+        setTimeout(()=> speakAuto(),200);
     });
 }
 
@@ -155,79 +244,130 @@ function render(){
 ========================= */
 function generate(correct){
 
-    let pool = JSON.parse(localStorage.getItem("words_order") || "[]");
-
-    let wrong = pool
+    let pool = words
         .filter(w => w.word !== correct.word)
         .sort(() => Math.random() - 0.5)
         .slice(0,3)
-        .map(w => ({
-            text: w.definition,
-            correct:false
-        }));
+        .map(w => ({text:w.definition, correct:false}));
 
-    wrong.push({
-        text: correct.definition,
-        correct:true
-    });
+    pool.push({text:correct.definition, correct:true});
 
-    return wrong.sort(() => Math.random() - 0.5);
+    return pool.sort(() => Math.random() - 0.5);
 }
 
 /* =========================
-   点击逻辑（练习模式）
+   选择答案
 ========================= */
 function select(i){
 
+    if(answered || lockNext) return;
+
+    answered = true;
+    lockNext = true;
+
     let options = document.querySelectorAll(".option");
-    let isCorrect = currentOptions[i].correct;
     let w = words[index];
+
+    let isCorrect = currentOptions[i].correct;
 
     if(isCorrect){
 
         options[i].classList.add("correct");
 
-        /* ✔ 删除错题 */
+        // ✔ 从错题删除
         let list = JSON.parse(localStorage.getItem("wrong_list") || "[]");
         list = list.filter(item => item.word !== w.word);
         localStorage.setItem("wrong_list", JSON.stringify(list));
 
-        setTimeout(next, 400);
+        autoNext(500);
 
     }else{
 
         options[i].classList.add("wrong");
 
         currentOptions.forEach((o,idx)=>{
-            if(o.correct){
-                options[idx].classList.add("correct");
-            }
+            if(o.correct) options[idx].classList.add("correct");
         });
 
-        setTimeout(next, 800);
+        autoNext(1500);
     }
 }
 
 /* =========================
    下一题
 ========================= */
+function autoNext(t){
+
+    setTimeout(()=>{
+
+        index++;
+
+        if(index >= words.length){
+            location.href = "wronglist.html";
+            return;
+        }
+
+        render();
+
+    }, t);
+}
+
+/* =========================
+   翻页
+========================= */
 function next(){
-    index++;
-    render();
+    if(index < words.length - 1){
+        index++;
+        render();
+    }
+}
+
+function prev(){
+    if(index > 0){
+        index--;
+        render();
+    }
 }
 
 /* =========================
-   结束（🔥 修复404）
+   发音
 ========================= */
-function finish(){
-    location.href = "wrong.html"; // ✔ 修复点：回错题集
+function speak(){
+    let w = words[index];
+    if(!w) return;
+
+    let audio = new Audio(
+        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${w.word.toLowerCase()}--_us_1.mp3`
+    );
+
+    audio.play().catch(()=>{
+        let u = new SpeechSynthesisUtterance(w.word);
+        u.lang="en-US";
+        speechSynthesis.speak(u);
+    });
+}
+
+function speakAuto(){
+    if(hasSpoken) return;
+    hasSpoken = true;
+    speak();
 }
 
 /* =========================
-   返回（🔥 修复404）
+   绑定
 ========================= */
-function back(){
-    location.href = "wrong.html"; // ✔ 你要的错题集入口
+function bind(){
+    document.getElementById("wordCard").onclick = speak;
+    for(let i=0;i<4;i++){
+        document.getElementById("o"+i).onclick = ()=>select(i);
+    }
+}
+
+/* =========================
+   返回错题集
+========================= */
+function exit(){
+    location.href = "wronglist.html";
 }
 
 </script>
