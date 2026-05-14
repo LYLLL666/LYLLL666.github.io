@@ -124,14 +124,26 @@ body::before{
     width:52px;
     height:52px;
     border-radius:50%;
+    font-size:22px;
+    color:#0f172a;
+
+    /* 和左上角完全同款 */
     background:rgba(255,255,255,.35);
-    border:1px solid rgba(255,255,255,.4);
+    border:1px solid rgba(255,255,255,.6);
+
     backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.12),
+        inset 0 1px 1px rgba(255,255,255,.6);
+
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:22px;
+
     cursor:pointer;
+    transition:.2s;
 }
 
 .btn:active{
