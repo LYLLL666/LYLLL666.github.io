@@ -448,5 +448,230 @@
     "definition": "方法，方式",
     "example": "This is an effective method of learning vocabulary.",
     "example_translation": "这是一种有效的词汇学习方法。"
+  },
+  {
+    "word": "acquire",
+    "phonetic": "/əˈkwaɪər/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/acq/acquire.mp3",
+    "pos": "verb",
+    "definition": "获得，取得",
+    "example": "She acquired a new skill during the internship.",
+    "example_translation": "她在实习期间学会了一项新技能。"
+  },
+  {
+    "word": "affect",
+    "phonetic": "/əˈfekt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/aff/affect.mp3",
+    "pos": "verb",
+    "definition": "影响",
+    "example": "The weather can affect your mood.",
+    "example_translation": "天气会影响你的心情。"
+  },
+  {
+    "word": "allocate",
+    "phonetic": "/ˈæləkeɪt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/all/allocate.mp3",
+    "pos": "verb",
+    "definition": "分配，拨给",
+    "example": "The government will allocate funds for education.",
+    "example_translation": "政府将为教育拨款。"
+  },
+  {
+    "word": "ambiguous",
+    "phonetic": "/æmˈbɪɡjuəs/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/amb/ambiguous.mp3",
+    "pos": "adjective",
+    "definition": "模糊的，有歧义的",
+    "example": "His answer was ambiguous and unclear.",
+    "example_translation": "他的回答含糊不清。"
+  },
+  {
+    "word": "annual",
+    "phonetic": "/ˈænjuəl/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/ann/annual.mp3",
+    "pos": "adjective",
+    "definition": "每年的，年度的",
+    "example": "The company holds an annual meeting.",
+    "example_translation": "公司举行年度会议。"
+  },
+  {
+    "word": "aspect",
+    "phonetic": "/ˈæspekt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/asp/aspect.mp3",
+    "pos": "noun",
+    "definition": "方面，角度",
+    "example": "We must consider every aspect of the problem.",
+    "example_translation": "我们必须考虑问题的各个方面。"
+  },
+  {
+    "word": "authority",
+    "phonetic": "/ɔːˈθɒrəti/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/aut/authority.mp3",
+    "pos": "noun",
+    "definition": "权威，当局",
+    "example": "The local authority approved the project.",
+    "example_translation": "当地政府批准了该项目。"
+  },
+  {
+    "word": "available",
+    "phonetic": "/əˈveɪləbəl/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/ava/available.mp3",
+    "pos": "adjective",
+    "definition": "可获得的，可用的",
+    "example": "Tickets are available online.",
+    "example_translation": "门票可在网上购买。"
+  },
+  {
+    "word": "civil",
+    "phonetic": "/ˈsɪvl/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/civ/civil.mp3",
+    "pos": "adjective",
+    "definition": "公民的，民事的",
+    "example": "Civil rights are important in a democracy.",
+    "example_translation": "公民权利在民主社会中很重要。"
+  },
+  {
+    "word": "colleague",
+    "phonetic": "/ˈkɒliːɡ/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/col/colleague.mp3",
+    "pos": "noun",
+    "definition": "同事",
+    "example": "I discussed the project with my colleagues.",
+    "example_translation": "我和同事讨论了这个项目。"
+  },
+  {
+    "word": "complex",
+    "phonetic": "/ˈkɒmpleks/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/com/complex.mp3",
+    "pos": "adjective",
+    "definition": "复杂的",
+    "example": "The system is very complex.",
+    "example_translation": "这个系统非常复杂。"
+  },
+  {
+    "word": "concentrate",
+    "phonetic": "/ˈkɒnsntreɪt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/con/concentrate.mp3",
+    "pos": "verb",
+    "definition": "集中，专注",
+    "example": "I cannot concentrate in a noisy environment.",
+    "example_translation": "在嘈杂的环境中我无法集中注意力。"
+  },
+  {
+    "word": "consistent",
+    "phonetic": "/kənˈsɪstənt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/con/consistent.mp3",
+    "pos": "adjective",
+    "definition": "一致的，持续的",
+    "example": "His performance has been consistent.",
+    "example_translation": "他的表现一直很稳定。"
+  },
+  {
+    "word": "constant",
+    "phonetic": "/ˈkɒnstənt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/con/constant.mp3",
+    "pos": "adjective",
+    "definition": "持续的，不变的",
+    "example": "There is a constant need for improvement.",
+    "example_translation": "总是需要不断改进。"
+  },
+  {
+    "word": "convert",
+    "phonetic": "/kənˈvɜːt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/con/convert.mp3",
+    "pos": "verb",
+    "definition": "转换，改变",
+    "example": "We converted the room into a study.",
+    "example_translation": "我们把房间改成了书房。"
+  },
+  {
+    "word": "crucial",
+    "phonetic": "/ˈkruːʃl/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/cru/crucial.mp3",
+    "pos": "adjective",
+    "definition": "关键的，至关重要的",
+    "example": "This step is crucial for success.",
+    "example_translation": "这一步对成功至关重要。"
+  },
+  {
+    "word": "device",
+    "phonetic": "/dɪˈvaɪs/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/d/dev/device.mp3",
+    "pos": "noun",
+    "definition": "设备，装置",
+    "example": "This device helps you track your fitness.",
+    "example_translation": "这个设备可以帮助你记录健身情况。"
+  },
+  {
+    "word": "distribute",
+    "phonetic": "/dɪˈstrɪbjuːt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/d/dis/distribute.mp3",
+    "pos": "verb",
+    "definition": "分发，分配",
+    "example": "The company distributes products worldwide.",
+    "example_translation": "该公司向全球分销产品。"
+  },
+  {
+    "word": "economy",
+    "phonetic": "/ɪˈkɒnəmi/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/e/eco/economy.mp3",
+    "pos": "noun",
+    "definition": "经济",
+    "example": "The global economy is changing rapidly.",
+    "example_translation": "全球经济正在迅速变化。"
+  },
+  {
+    "word": "environment",
+    "phonetic": "/ɪnˈvaɪrənmənt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/e/env/environment.mp3",
+    "pos": "noun",
+    "definition": "环境",
+    "example": "We should protect the environment.",
+    "example_translation": "我们应该保护环境。"
+  },
+  {
+    "word": "evidence",
+    "phonetic": "/ˈevɪdəns/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/e/evi/evidence.mp3",
+    "pos": "noun",
+    "definition": "证据，证明",
+    "example": "There is no evidence to support the claim.",
+    "example_translation": "没有证据支持这一说法。"
+  },
+  {
+    "word": "expand",
+    "phonetic": "/ɪkˈspænd/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/e/exp/expand.mp3",
+    "pos": "verb",
+    "definition": "扩展，扩大",
+    "example": "The company plans to expand its business.",
+    "example_translation": "公司计划扩大业务。"
+  },
+  {
+    "word": "finance",
+    "phonetic": "/ˈfaɪnæns/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/f/fin/finance.mp3",
+    "pos": "noun/verb",
+    "definition": "金融，财政；提供资金",
+    "example": "He works in finance.",
+    "example_translation": "他在金融行业工作。"
+  },
+  {
+    "word": "goal",
+    "phonetic": "/ɡəʊl/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/g/goa/goal.mp3",
+    "pos": "noun",
+    "definition": "目标，目的",
+    "example": "Her goal is to become a doctor.",
+    "example_translation": "她的目标是成为一名医生。"
+  },
+  {
+    "word": "identify",
+    "phonetic": "/aɪˈdentɪfaɪ/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/ide/identify.mp3",
+    "pos": "verb",
+    "definition": "识别，确认",
+    "example": "Can you identify the problem?",
+    "example_translation": "你能找出问题吗？"
   }
 ]
