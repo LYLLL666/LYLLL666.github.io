@@ -322,15 +322,7 @@ function chooseGroup(){
 
     groupIndex = n;
     
-    quizStateKey = "quiz_state_" + groupIndex;
-quizState = JSON.parse(localStorage.getItem(quizStateKey) || "{}");
 
-let refresh = confirm("是否刷新该分组练习？\n确定=刷新当前组 / 取消=保留进度");
-
-if(refresh){
-    quizState = {};
-    localStorage.setItem(quizStateKey, "{}");
-}
 
     localStorage.setItem("quiz_group", groupIndex);
 
