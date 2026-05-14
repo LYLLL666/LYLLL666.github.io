@@ -3,37 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
 <title>错题复习</title>
 
 <style>
 
-/* =========================
-   背景（统一你的系统风格）
-========================= */
 body{
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
-
-    background: radial-gradient(
-        circle at top,
-        #dff3ff 0%,
-        #f4fbff 40%,
-        #eaf4ff 70%,
-        #e3efff 100%
-    );
-
+    background: radial-gradient(circle at top,#dff3ff,#f4fbff,#e3efff);
     min-height:100vh;
     text-align:center;
-    color:#0f172a;
     overflow:hidden;
+    color:#0f172a;
 }
 
 body::before{
     content:"";
     position:fixed;
     inset:0;
-    background: radial-gradient(circle at top,rgba(255,255,255,.45),rgba(255,255,255,.10),rgba(0,0,0,.02));
+    background: radial-gradient(circle at top,rgba(255,255,255,.45),rgba(255,255,255,.1),rgba(0,0,0,.02));
     pointer-events:none;
 }
 
@@ -45,96 +33,55 @@ body::before{
     width:44px;
     height:44px;
     border-radius:50%;
+    background:rgba(255,255,255,.35);
+    backdrop-filter:blur(18px);
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:20px;
     cursor:pointer;
-    background:rgba(255,255,255,.35);
-    border:1px solid rgba(255,255,255,.6);
-    backdrop-filter:blur(18px);
-    box-shadow:0 8px 18px rgba(0,0,0,.12);
-}
-
-/* 标题 */
-.top{
-    position:absolute;
-    top:18px;
-    width:100%;
-    text-align:center;
-    font-size:18px;
-    font-weight:600;
 }
 
 /* 卡片 */
 .card{
-    margin-top:120px;
+    margin-top:110px;
     width:300px;
     padding:22px;
     border-radius:24px;
-
     background:rgba(255,255,255,.55);
     backdrop-filter:blur(18px);
-    border:1px solid rgba(255,255,255,.35);
-    box-shadow:0 10px 30px rgba(0,0,0,.06);
-
     margin-left:auto;
     margin-right:auto;
+    box-shadow:0 10px 30px rgba(0,0,0,.06);
 }
 
-/* 单词 */
 .word{
-    font-size:40px;
+    font-size:36px;
     font-weight:700;
+    margin-bottom:10px;
 }
 
-/* 释义 */
-.meaning{
-    margin-top:12px;
-    font-size:16px;
-    color:#334155;
-}
-
-/* 按钮 */
-.bottom{
-    position:fixed;
-    bottom:60px;
-    left:50%;
-    transform:translateX(-50%);
-    display:flex;
-    gap:60px;
-}
-
-.btn{
-    width:52px;
-    height:52px;
-    border-radius:50%;
-    background:rgba(255,255,255,.35);
-    border:1px solid rgba(255,255,255,.6);
+/* 选项 */
+.option{
+    margin:10px auto;
+    width:300px;
+    padding:14px;
+    border-radius:16px;
+    background:rgba(255,255,255,.45);
     backdrop-filter:blur(18px);
-    display:flex;
-    align-items:center;
-    justify-content:center;
     cursor:pointer;
-    font-size:20px;
-}
-
-.btn:active{
-    transform:scale(.92);
-}
-
-.tip{
-    position:fixed;
-    left:50%;
-    bottom:120px;
-    transform:translateX(-50%);
-    background:rgba(0,0,0,.7);
-    color:#fff;
-    padding:6px 12px;
-    border-radius:10px;
-    font-size:13px;
-    opacity:0;
     transition:.2s;
+}
+
+.option:active{
+    transform:scale(.97);
+}
+
+.correct{
+    background:rgba(34,197,94,.25)!important;
+}
+
+.wrong{
+    background:rgba(239,68,68,.25)!important;
 }
 
 </style>
@@ -143,108 +90,142 @@ body::before{
 <body>
 
 <div class="back" onclick="back()">←</div>
-<div class="top">错题复习</div>
 
 <div class="card">
     <div class="word" id="word">加载中...</div>
-    <div class="meaning" id="meaning"></div>
 </div>
 
-<div class="bottom">
-    <div class="btn" onclick="wrong()">❌</div>
-    <div class="btn" onclick="speak()">🔊</div>
-    <div class="btn" onclick="right()">✔</div>
-</div>
-
-<div class="tip" id="tip"></div>
+<div id="options"></div>
 
 <script>
 
 let list = JSON.parse(localStorage.getItem("wrong_list") || "[]");
-let index = 0;
 
+/* 🔥 每次进入自动刷新 */
+list = list.sort(() => Math.random() - 0.5);
+
+let index = 0;
+let current = null;
+
+/* =========================
+   开始
+========================= */
 if(list.length === 0){
     document.getElementById("word").innerText = "暂无错题";
-    document.getElementById("meaning").innerText = "";
 }else{
     render();
 }
 
-/* 渲染 */
+/* =========================
+   渲染题目
+========================= */
 function render(){
-    let w = list[index];
 
-    if(!w){
-        document.getElementById("word").innerText = "复习完成";
-        document.getElementById("meaning").innerText = "";
+    if(index >= list.length){
+        finish();
         return;
     }
 
-    document.getElementById("word").innerText = w.word;
-    document.getElementById("meaning").innerText = w.definition || "";
-}
+    current = list[index];
 
-/* 正确 → 从错题移除 */
-function right(){
+    document.getElementById("word").innerText = current.word;
 
-    if(!list[index]) return;
+    let options = generateOptions(current);
 
-    list.splice(index,1);
-    localStorage.setItem("wrong_list", JSON.stringify(list));
+    let box = document.getElementById("options");
+    box.innerHTML = "";
 
-    showTip("已掌握 ✔");
+    options.forEach((opt,i)=>{
+        let div = document.createElement("div");
+        div.className = "option";
+        div.innerText = opt.text;
 
-    if(index >= list.length) index = list.length - 1;
+        div.onclick = () => check(opt.correct);
 
-    render();
-}
-
-/* 错误 → 下一题 */
-function wrong(){
-    showTip("继续复习");
-
-    if(index < list.length - 1){
-        index++;
-    }else{
-        showTip("已经是最后一题");
-    }
-
-    render();
-}
-
-/* 发音 */
-function speak(){
-
-    let w = list[index];
-    if(!w) return;
-
-    let audio = new Audio(
-        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${w.word.toLowerCase()}--_us_1.mp3`
-    );
-
-    audio.play().catch(()=>{
-        let u = new SpeechSynthesisUtterance(w.word);
-        u.lang = "en-US";
-        speechSynthesis.speak(u);
+        box.appendChild(div);
     });
+}
+
+/* =========================
+   生成中文选项
+========================= */
+function generateOptions(correct){
+
+    let pool = JSON.parse(localStorage.getItem("words_order") || "[]");
+
+    let wrong = pool
+        .filter(w => w.word !== correct.word)
+        .sort(() => Math.random() - 0.5)
+        .slice(0,3)
+        .map(w => ({
+            text: w.definition,
+            correct:false
+        }));
+
+    wrong.push({
+        text: correct.definition,
+        correct:true
+    });
+
+    return wrong.sort(() => Math.random() - 0.5);
+}
+
+/* =========================
+   判断答案
+========================= */
+function check(isCorrect){
+
+    let items = document.querySelectorAll(".option");
+
+    if(isCorrect){
+
+        items.forEach(i=>{
+            if(i.innerText === current.definition){
+                i.classList.add("correct");
+            }
+        });
+
+        /* ✔ 从错题删除 */
+        list = list.filter(w => w.word !== current.word);
+        localStorage.setItem("wrong_list", JSON.stringify(list));
+
+        setTimeout(next, 600);
+
+    }else{
+
+        items.forEach(i=>{
+            if(i.innerText === current.definition){
+                i.classList.add("correct");
+            }
+        });
+
+        event.target.classList.add("wrong");
+
+        setTimeout(next, 1000);
+    }
+}
+
+/* =========================
+   下一题
+========================= */
+function next(){
+    index++;
+    render();
+}
+
+/* =========================
+   结束
+========================= */
+function finish(){
+    alert("复习完成");
+
+    /* 🔥 自动回错题本 */
+    location.href = "wrong.html";
 }
 
 /* 返回 */
 function back(){
-    location.href = "index.html";
-}
-
-/* 提示 */
-function showTip(text){
-
-    let tip = document.getElementById("tip");
-
-    tip.innerText = text;
-    tip.style.opacity = "1";
-
-    setTimeout(()=>{
-        tip.style.opacity = "0";
-    },800);
+    location.href = "wrong.html";
 }
 
 </script>
