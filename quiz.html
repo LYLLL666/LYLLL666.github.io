@@ -44,7 +44,7 @@ body::before{
     pointer-events:none;
 }
 
-    .title-card{
+.title-card{
     position:fixed;
     top:18px;
     left:50%;
@@ -186,14 +186,61 @@ body::before{
     transform:scale(.92);
 }
 
+/* =========================
+   ⭐ 分组UI
+========================= */
+
+.group-wrap{
+    position:fixed;
+    right:16px;
+    top:20px;
+
+    display:flex;
+    gap:10px;
+
+    z-index:99999;
+}
+
+.group-btn{
+    height:44px;
+    padding:0 16px;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,.35);
+    border:1px solid rgba(255,255,255,.6);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.12),
+        inset 0 1px 1px rgba(255,255,255,.6);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:13px;
+    color:#0f172a;
+
+    cursor:pointer;
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="back" onclick="exit()">←</div>
+
+<div class="group-wrap">
+    <div class="group-btn" id="groupBtn" onclick="chooseGroup()">第1组</div>
+</div>
+
 <div class="top">练习模式</div>
 <div class="title-card">练习模式</div>
+
 <div class="cards">
 
     <div class="card word" id="wordCard"></div>
@@ -209,7 +256,6 @@ body::before{
     <div class="btn" onclick="prev()">←</div>
     <div class="btn" onclick="speak()">🔊</div>
     <div class="btn" onclick="next()">→</div>
-    
 </div>
 
 <script>
@@ -220,6 +266,8 @@ body::before{
 let quizState = JSON.parse(localStorage.getItem("quiz_state") || "{}");
 
 let words = [];
+let allWords = [];
+
 let index = Number(localStorage.getItem("quiz_index") || 0);
 let answered = false;
 let lockNext = false;
@@ -227,7 +275,13 @@ let hasSpoken = false;
 let currentOptions = [];
 
 /* =========================
-   🔥 每次进入都询问（核心新增）
+   ⭐ 分组
+========================= */
+let groupIndex = Number(localStorage.getItem("quiz_group") || 1);
+const GROUP_SIZE = 50;
+
+/* =========================
+   🔥 每次进入都询问
 ========================= */
 function askOnEnter(){
 
@@ -238,14 +292,59 @@ function askOnEnter(){
         index = 0;
         quizState = {};
 
-/* 🔥 重新随机题目顺序 */
-        words = [...words].sort(() => Math.random() - 0.5);
-        localStorage.setItem("quiz_order", JSON.stringify(words));
+        allWords = [...allWords].sort(() => Math.random() - 0.5);
+
+        let start = (groupIndex - 1) * GROUP_SIZE;
+        let end = start + GROUP_SIZE;
+
+        words = allWords.slice(start,end);
+
+        localStorage.setItem("quiz_order", JSON.stringify(allWords));
 
         localStorage.removeItem("quiz_state");
         localStorage.setItem("quiz_index","0");
     }
+}
 
+/* =========================
+   ⭐ 分组系统
+========================= */
+function chooseGroup(){
+
+    let input = prompt("请选择第几组（1-5）");
+
+    let n = Number(input);
+
+    if(!Number.isInteger(n) || n < 1 || n > 5){
+        alert("请输入1-5之间的整数");
+        return;
+    }
+
+    groupIndex = n;
+
+    localStorage.setItem("quiz_group", groupIndex);
+
+    index = 0;
+
+    localStorage.setItem("quiz_index","0");
+
+    if(!sessionStorage.getItem("quiz_group_reload")){
+        sessionStorage.setItem("quiz_group_reload","1");
+        location.reload();
+    }else{
+        applyGroup();
+        render();
+    }
+}
+
+function applyGroup(){
+
+    let start = (groupIndex - 1) * GROUP_SIZE;
+    let end = start + GROUP_SIZE;
+
+    words = allWords.slice(start,end);
+
+    document.getElementById("groupBtn").innerText = `第${groupIndex}组`;
 }
 
 /* =========================
@@ -258,16 +357,21 @@ fetch("words.json")
     let saved = localStorage.getItem("quiz_order");
 
     if(saved){
-        words = JSON.parse(saved);
+
+        allWords = JSON.parse(saved);
+
     }else{
-        words = [...data].sort(() => Math.random() - 0.5);
-        localStorage.setItem("quiz_order", JSON.stringify(words));
+
+        allWords = [...data].sort(() => Math.random() - 0.5);
+
+        localStorage.setItem("quiz_order", JSON.stringify(allWords));
     }
+
+    applyGroup();
 
     bind();
     render();
 
-    /* 🔥 每次进入页面立即询问 */
     askOnEnter();
 
     render();
