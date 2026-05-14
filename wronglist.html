@@ -53,7 +53,7 @@ body{
 }
 
 /* =========================
-   🔥 新增：标题小卡片（错题集）
+   标题小卡片（错题集）
 ========================= */
 .title-card{
     position:fixed;
@@ -63,11 +63,9 @@ body{
     z-index:10;
 
     padding:10px 18px;
-
     border-radius:14px;
 
     background: rgba(255,255,255,0.40);
-
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
 
@@ -98,21 +96,18 @@ body{
     position:relative;
 }
 
-/* 单词 */
 .word{
     font-size:20px;
     font-weight:700;
     color:#111;
 }
 
-/* 音标 */
 .phonetic{
     font-size:13px;
     color:#444;
     margin-top:2px;
 }
 
-/* 释义 */
 .meaning{
     margin-top:8px;
     font-size:14px;
@@ -184,23 +179,19 @@ body{
     <div class="top-btn right" onclick="clearAll()">🗑</div>
 </div>
 
-<!-- 🔥 新增标题卡片 -->
 <div class="title-card">错题集</div>
 
-<!-- 列表 -->
 <div class="container" id="list"></div>
 
-<!-- 复习按钮 -->
+<!-- 🔥 修改这里：直接跳转 review.html -->
 <div class="review-btn" onclick="startReview()">
     开始复习
 </div>
 
 <script>
 
-/* 🔥 统一接口：wrong_list */
 let mistakes = JSON.parse(localStorage.getItem("wrong_list") || "[]");
 
-/* 渲染 */
 function render(){
     const list = document.getElementById("list");
     list.innerHTML = "";
@@ -225,14 +216,12 @@ function render(){
     });
 }
 
-/* 删除 */
 function removeItem(i){
     mistakes.splice(i,1);
     localStorage.setItem("wrong_list", JSON.stringify(mistakes));
     render();
 }
 
-/* 清空 */
 function clearAll(){
     if(confirm("确定清空错题？")){
         mistakes = [];
@@ -241,20 +230,18 @@ function clearAll(){
     }
 }
 
-/* 返回 */
 function goBack(){
     history.back();
 }
 
-/* 复习入口 */
+/* ✅ 修改后的复习入口 */
 function startReview(){
     if(mistakes.length === 0){
         alert("暂无错题可以复习");
         return;
     }
 
-    localStorage.setItem("review_mode", "1");
-    location.href = "index.html";
+    location.href = "review.html";
 }
 
 render();
