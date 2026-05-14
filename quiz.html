@@ -3,19 +3,14 @@
 
 <head>
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width,
-initial-scale=1.0,
-maximum-scale=1.0,
-user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>练习模式</title>
 
 <style>
 
 /* =========================
-   UI完全保持你原来的
+   UI：完全沿用学习模式（不改）
 ========================= */
 body{
     margin:0;
@@ -30,12 +25,19 @@ body{
     );
 
     min-height:100vh;
-
     overflow:hidden;
 
     text-align:center;
-
     color:#0f172a;
+    position:relative;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background: radial-gradient(circle at top,rgba(255,255,255,.45),rgba(255,255,255,.10),rgba(0,0,0,.02));
+    pointer-events:none;
 }
 
 /* 返回 */
@@ -43,22 +45,20 @@ body{
     position:fixed;
     left:16px;
     top:20px;
-
     width:44px;
     height:44px;
-
     border-radius:50%;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     font-size:20px;
-
+    cursor:pointer;
+    color:#0f172a;
     background:rgba(255,255,255,.35);
     border:1px solid rgba(255,255,255,.6);
-
     backdrop-filter:blur(18px);
+    box-shadow:0 8px 18px rgba(0,0,0,.12), inset 0 1px 1px rgba(255,255,255,.6);
+    z-index:99999;
 }
 
 /* 标题 */
@@ -68,25 +68,53 @@ body{
     width:100%;
     text-align:center;
     font-size:18px;
+    font-weight:600;
+    color:rgba(15,23,42,.75);
 }
 
-/* 卡片 */
+/* 卡片（学习模式同款） */
 .card{
     margin-top:90px;
     width:300px;
-    padding:24px;
+    padding:22px;
     border-radius:24px;
-
     background:rgba(255,255,255,.55);
-    backdrop-filter:blur(18px);
-
+    backdrop-filter:blur(18px) saturate(160%);
+    border:1px solid rgba(255,255,255,.35);
+    box-shadow:inset 0 1px 1px rgba(255,255,255,.4),0 10px 30px rgba(0,0,0,.06);
     margin-left:auto;
     margin-right:auto;
+    position:relative;
 }
 
 #word{
     font-size:44px;
     font-weight:700;
+}
+
+#phonetic{
+    margin-top:6px;
+    font-size:14px;
+    opacity:.7;
+}
+
+/* 发音按钮（不动） */
+.audio-btn{
+    position:absolute;
+    top:12px;
+    right:12px;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-size:16px;
+    background:rgba(255,255,255,.35);
+    border:1px solid rgba(255,255,255,.6);
+    backdrop-filter:blur(12px);
+    box-shadow:0 6px 12px rgba(0,0,0,.10), inset 0 1px 1px rgba(255,255,255,.6);
 }
 
 /* 选项 */
@@ -99,15 +127,19 @@ body{
 }
 
 .option{
-    padding:16px;
+    padding:16px 18px;
     border-radius:20px;
     background:rgba(255,255,255,.45);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.35);
+    font-size:16px;
     cursor:pointer;
 }
 
 .correct{ background:rgba(52,199,89,.25); }
 .wrong{ background:rgba(255,59,48,.22); }
 
+/* 底部按钮（学习模式同款） */
 .bottom-bar{
     position:fixed;
     left:50%;
@@ -121,10 +153,15 @@ body{
     width:52px;
     height:52px;
     border-radius:50%;
-    background:rgba(255,255,255,.2);
+    border:1px solid rgba(255,255,255,.35);
+    background:linear-gradient(to bottom,rgba(255,255,255,.18),rgba(255,255,255,.06));
+    backdrop-filter:blur(18px);
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
+    cursor:pointer;
     display:flex;
     align-items:center;
     justify-content:center;
+    font-size:22px;
 }
 
 </style>
@@ -136,6 +173,7 @@ body{
 <div class="top">练习模式</div>
 
 <div class="card">
+    <div class="audio-btn" onclick="speak()">🔊</div>
     <div id="word">Loading...</div>
     <div id="phonetic"></div>
 </div>
@@ -149,18 +187,17 @@ body{
 
 <script>
 
-/* =========================
-   核心：完全模仿学习页
-========================= */
-
 let words = [];
-let index = Number(localStorage.getItem("word_index") || 0);
+let index = 0;
 
-/* 错题 */
-let wrongs = JSON.parse(localStorage.getItem("wrongs_list") || "[]");
+/* 错题本（不动） */
+let wrongs = JSON.parse(localStorage.getItem("wronglist") || "[]");
+
+/* 状态保存（关键修复点） */
+let state = JSON.parse(localStorage.getItem("quiz_state") || "{}");
 
 /* =========================
-   加载词库（完全同学习页）
+   词库：完全复用学习模式逻辑（不刷新）
 ========================= */
 fetch("words.json")
 .then(res => res.json())
@@ -171,7 +208,7 @@ fetch("words.json")
     if(saved){
         words = JSON.parse(saved);
     }else{
-        words = data.sort(() => Math.random() - 0.5);
+        words = [...data].sort(() => Math.random() - 0.5);
         localStorage.setItem("words_order", JSON.stringify(words));
     }
 
@@ -180,7 +217,7 @@ fetch("words.json")
 });
 
 /* =========================
-   渲染
+   渲染（4选1 + 状态恢复）
 ========================= */
 function render(){
 
@@ -191,16 +228,13 @@ function render(){
     document.getElementById("word").innerText = w.word;
     document.getElementById("phonetic").innerText = w.phonetic || "";
 
-    /* 4选项 */
-    let options = [w.definition];
+    let correct = w.definition;
+
+    let options = [correct];
 
     while(options.length < 4){
-
         let r = words[Math.floor(Math.random()*words.length)].definition;
-
-        if(r && !options.includes(r)){
-            options.push(r);
-        }
+        if(r && !options.includes(r)) options.push(r);
     }
 
     options.sort(() => Math.random() - 0.5);
@@ -208,22 +242,28 @@ function render(){
     let box = document.getElementById("options");
     box.innerHTML = "";
 
+    let saved = state[index];
+
     options.forEach(text => {
 
         let div = document.createElement("div");
         div.className = "option";
         div.innerText = text;
 
+        if(saved){
+            div.style.pointerEvents = "none";
+            if(text === saved.correct) div.classList.add("correct");
+            if(text === saved.selected && text !== saved.correct) div.classList.add("wrong");
+        }
+
         div.onclick = () => check(div, text, w);
 
         box.appendChild(div);
     });
-
-    localStorage.setItem("word_index", index);
 }
 
 /* =========================
-   发音（同学习页）
+   发音（稳定版）
 ========================= */
 function speak(){
 
@@ -240,74 +280,52 @@ function speak(){
 }
 
 /* =========================
-   判断
+   答题 + 错题
 ========================= */
 function check(el, selected, w){
+
+    let correct = w.definition;
 
     let all = document.querySelectorAll(".option");
     all.forEach(i => i.style.pointerEvents = "none");
 
-    if(selected === w.definition){
+    state[index] = { selected, correct };
+    localStorage.setItem("quiz_state", JSON.stringify(state));
+
+    if(selected === correct){
 
         el.classList.add("correct");
-
         setTimeout(next, 500);
 
     }else{
 
         el.classList.add("wrong");
 
-        all.forEach(i => {
-            if(i.innerText === w.definition){
+        all.forEach(i=>{
+            if(i.innerText === correct){
                 i.classList.add("correct");
             }
         });
 
-        saveWrong(w);
+        if(!wrongs.some(i => i.word === w.word)){
+            wrongs.push(w);
+            localStorage.setItem("wronglist", JSON.stringify(wrongs));
+        }
 
         setTimeout(next, 2000);
     }
 }
 
 /* =========================
-   错题（稳定版）
-========================= */
-function saveWrong(w){
-
-    if(!w || !w.word) return;
-
-    let exists = wrongs.some(i => i.word === w.word);
-
-    if(!exists){
-
-        wrongs.push({
-            word: w.word,
-            phonetic: w.phonetic || "",
-            definition: w.definition || "",
-            example: w.example || ""
-        });
-
-        localStorage.setItem("wrongs_list", JSON.stringify(wrongs));
-    }
-}
-
-/* =========================
-   切换（完全模仿学习页逻辑）
+   切换（不刷新）
 ========================= */
 function next(){
-
-    index++;
-
-    if(index >= words.length){
-        index = 0;
-    }
-
+    index = (index + 1) % words.length;
     render();
     speak();
 }
 
 function prev(){
-
     if(index > 0){
         index--;
         render();
