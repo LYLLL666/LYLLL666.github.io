@@ -89,4 +89,366 @@
     "example": "She advocates for environmental protection.",
     "example_translation": "她倡导环保。"
   }
+  {
+    "word": "benefit",
+    "phonetic": "/ˈbenɪfɪt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/b/ben/benefit.mp3",
+    "pos": "noun/verb",
+    "definition": "好处，利益；受益",
+    "example": "Regular exercise will benefit your health.",
+    "example_translation": "规律锻炼会有益于你的健康。"
+  },
+  {
+    "word": "capacity",
+    "phonetic": "/kəˈpæsəti/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/cap/capacity.mp3",
+    "pos": "noun",
+    "definition": "容量，能力，职位",
+    "example": "The stadium has a seating capacity of 50,000.",
+    "example_translation": "这座体育场可容纳5万人。"
+  },
+  {
+    "word": "decline",
+    "phonetic": "/dɪˈklaɪn/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/d/dec/decline.mp3",
+    "pos": "verb/noun",
+    "definition": "下降，衰退；拒绝",
+    "example": "Sales began to decline after the holiday season.",
+    "example_translation": "节后销售开始下降。"
+  },
+  {
+    "word": "derive",
+    "phonetic": "/dɪˈraɪv/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/d/der/derive.mp3",
+    "pos": "verb",
+    "definition": "来源于，获得，推导",
+    "example": "Many English words are derived from Latin.",
+    "example_translation": "许多英语单词源自拉丁语。"
+  },
+  {
+    "word": "efficient",
+    "phonetic": "/ɪˈfɪʃnt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/e/eff/efficient.mp3",
+    "pos": "adjective",
+    "definition": "高效的，效率高的",
+    "example": "This machine is highly efficient.",
+    "example_translation": "这台机器效率很高。"
+  },
+  {
+    "word": "feature",
+    "phonetic": "/ˈfiːtʃər/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/f/fea/feature.mp3",
+    "pos": "noun/verb",
+    "definition": "特征，特点；以……为特色",
+    "example": "The smartphone features a high-resolution camera.",
+    "example_translation": "这款智能手机配备高分辨率摄像头。"
+  },
+  {
+    "word": "generate",
+    "phonetic": "/ˈdʒenəreɪt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/g/gen/generate.mp3",
+    "pos": "verb",
+    "definition": "生成，产生，引起",
+    "example": "The system can generate reports automatically.",
+    "example_translation": "该系统可以自动生成报告。"
+  },
+  {
+    "word": "impact",
+    "phonetic": "/ˈɪmpækt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/imp/impact.mp3",
+    "pos": "noun/verb",
+    "definition": "影响，冲击；影响（动词）",
+    "example": "The decision will impact thousands of people.",
+    "example_translation": "这个决定将影响数千人。"
+  },
+  {
+    "word": "involve",
+    "phonetic": "/ɪnˈvɒlv/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/inv/involve.mp3",
+    "pos": "verb",
+    "definition": "涉及，包含，使参与",
+    "example": "The job involves a lot of travel.",
+    "example_translation": "这份工作需要大量出差。"
+  },
+  {
+    "word": "maintain",
+    "phonetic": "/meɪnˈteɪn/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/m/mai/maintain.mp3",
+    "pos": "verb",
+    "definition": "维持，保持，维护",
+    "example": "It is important to maintain a healthy lifestyle.",
+    "example_translation": "保持健康的生活方式很重要。"
+  },
+  {
+    "word": "obtain",
+    "phonetic": "/əbˈteɪn/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/o/obt/obtain.mp3",
+    "pos": "verb",
+    "definition": "获得，取得",
+    "example": "You need a license to obtain this service.",
+    "example_translation": "你需要执照才能获得这项服务。"
+  },
+  {
+    "word": "participate",
+    "phonetic": "/pɑːˈtɪsɪpeɪt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/p/par/participate.mp3",
+    "pos": "verb",
+    "definition": "参与，参加",
+    "example": "Students are encouraged to participate in class discussions.",
+    "example_translation": "鼓励学生参与课堂讨论。"
+  },
+  {
+    "word": "respond",
+    "phonetic": "/rɪˈspɒnd/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/r/res/respond.mp3",
+    "pos": "verb",
+    "definition": "回应，回答，反应",
+    "example": "She did not respond to the email.",
+    "example_translation": "她没有回复那封邮件。"
+  },
+  {
+    "word": "require",
+    "phonetic": "/rɪˈkwaɪər/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/r/req/require.mp3",
+    "pos": "verb",
+    "definition": "需要，要求",
+    "example": "This job requires strong communication skills.",
+    "example_translation": "这份工作需要很强的沟通能力。"
+  },
+  {
+    "word": "significant",
+    "phonetic": "/sɪɡˈnɪfɪkənt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/s/sig/significant.mp3",
+    "pos": "adjective",
+    "definition": "重要的，显著的，有意义的",
+    "example": "There was a significant improvement in his performance.",
+    "example_translation": "他的表现有了显著提升。"
+  },
+  {
+    "word": "tradition",
+    "phonetic": "/trəˈdɪʃn/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/t/tra/tradition.mp3",
+    "pos": "noun",
+    "definition": "传统，惯例",
+    "example": "It is a family tradition to gather every Sunday.",
+    "example_translation": "每周日聚会是这个家庭的传统。"
+  },
+  {
+    "word": "transfer",
+    "phonetic": "/trænsˈfɜːr/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/t/tra/transfer.mp3",
+    "pos": "verb/noun",
+    "definition": "转移，转让，调动",
+    "example": "He transferred to another university.",
+    "example_translation": "他转学到了另一所大学。"
+  },
+  {
+    "word": "vary",
+    "phonetic": "/ˈveəri/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/v/var/vary.mp3",
+    "pos": "verb",
+    "definition": "变化，改变，不同",
+    "example": "Prices may vary depending on demand.",
+    "example_translation": "价格可能因需求而变化。"
+  },
+  {
+    "word": "violate",
+    "phonetic": "/ˈvaɪəleɪt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/v/vio/violate.mp3",
+    "pos": "verb",
+    "definition": "违反，侵犯",
+    "example": "He violated the school rules.",
+    "example_translation": "他违反了校规。"
+  },
+  {
+    "word": "welfare",
+    "phonetic": "/ˈwelfeər/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/w/wel/welfare.mp3",
+    "pos": "noun",
+    "definition": "福利，幸福，安康",
+    "example": "The organization focuses on child welfare.",
+    "example_translation": "该组织专注于儿童福利。"
+  }
+]
+[
+  {
+    "word": "analysis",
+    "phonetic": "/əˈnæləsɪs/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/ana/analysis.mp3",
+    "pos": "noun",
+    "definition": "分析，解析",
+    "example": "The analysis shows a clear trend in sales growth.",
+    "example_translation": "分析显示销售增长趋势明显。"
+  },
+  {
+    "word": "approach",
+    "phonetic": "/əˈprəʊtʃ/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/app/approach.mp3",
+    "pos": "noun/verb",
+    "definition": "方法，途径；接近",
+    "example": "We need a new approach to solve this problem.",
+    "example_translation": "我们需要一种新的方法来解决这个问题。"
+  },
+  {
+    "word": "assess",
+    "phonetic": "/əˈses/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/ass/assess.mp3",
+    "pos": "verb",
+    "definition": "评估，评价",
+    "example": "The teacher will assess your performance.",
+    "example_translation": "老师将评估你的表现。"
+  },
+  {
+    "word": "attitude",
+    "phonetic": "/ˈætɪtjuːd/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/att/attitude.mp3",
+    "pos": "noun",
+    "definition": "态度，看法",
+    "example": "He has a positive attitude toward life.",
+    "example_translation": "他对生活持积极态度。"
+  },
+  {
+    "word": "aware",
+    "phonetic": "/əˈweər/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/a/awa/aware.mp3",
+    "pos": "adjective",
+    "definition": "意识到的，知道的",
+    "example": "She is aware of the risks involved.",
+    "example_translation": "她意识到了其中的风险。"
+  },
+  {
+    "word": "capacity",
+    "phonetic": "/kəˈpæsəti/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/cap/capacity.mp3",
+    "pos": "noun",
+    "definition": "容量，能力",
+    "example": "The room was filled to capacity.",
+    "example_translation": "房间已经满员。"
+  },
+  {
+    "word": "concept",
+    "phonetic": "/ˈkɒnsept/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/con/concept.mp3",
+    "pos": "noun",
+    "definition": "概念，观念",
+    "example": "This is a difficult concept to understand.",
+    "example_translation": "这是一个难以理解的概念。"
+  },
+  {
+    "word": "conclude",
+    "phonetic": "/kənˈkluːd/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/con/conclude.mp3",
+    "pos": "verb",
+    "definition": "得出结论，结束",
+    "example": "The meeting concluded at 5 p.m.",
+    "example_translation": "会议在下午5点结束。"
+  },
+  {
+    "word": "confirm",
+    "phonetic": "/kənˈfɜːm/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/con/confirm.mp3",
+    "pos": "verb",
+    "definition": "确认，证实",
+    "example": "Please confirm your attendance.",
+    "example_translation": "请确认你是否出席。"
+  },
+  {
+    "word": "contrast",
+    "phonetic": "/ˈkɒntrɑːst/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/con/contrast.mp3",
+    "pos": "noun/verb",
+    "definition": "对比，差异；对照",
+    "example": "The contrast between the two images is clear.",
+    "example_translation": "这两张图片的对比很明显。"
+  },
+  {
+    "word": "create",
+    "phonetic": "/kriˈeɪt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/c/cre/create.mp3",
+    "pos": "verb",
+    "definition": "创造，创建",
+    "example": "She created a new design for the project.",
+    "example_translation": "她为这个项目设计了一个新方案。"
+  },
+  {
+    "word": "data",
+    "phonetic": "/ˈdeɪtə/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/d/dat/data.mp3",
+    "pos": "noun",
+    "definition": "数据，资料",
+    "example": "The data supports the hypothesis.",
+    "example_translation": "数据支持该假设。"
+  },
+  {
+    "word": "define",
+    "phonetic": "/dɪˈfaɪn/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/d/def/define.mp3",
+    "pos": "verb",
+    "definition": "定义，解释",
+    "example": "We need to define the problem clearly.",
+    "example_translation": "我们需要清晰地定义这个问题。"
+  },
+  {
+    "word": "establish",
+    "phonetic": "/ɪˈstæblɪʃ/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/e/est/establish.mp3",
+    "pos": "verb",
+    "definition": "建立，设立",
+    "example": "The company was established in 1990.",
+    "example_translation": "这家公司成立于1990年。"
+  },
+  {
+    "word": "factor",
+    "phonetic": "/ˈfæktər/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/f/fac/factor.mp3",
+    "pos": "noun",
+    "definition": "因素，要素",
+    "example": "Cost is an important factor in this decision.",
+    "example_translation": "成本是这个决定的重要因素。"
+  },
+  {
+    "word": "focus",
+    "phonetic": "/ˈfəʊkəs/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/f/foc/focus.mp3",
+    "pos": "noun/verb",
+    "definition": "焦点，集中；专注",
+    "example": "We need to focus on our goals.",
+    "example_translation": "我们需要专注于目标。"
+  },
+  {
+    "word": "function",
+    "phonetic": "/ˈfʌŋkʃn/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/f/fun/function.mp3",
+    "pos": "noun/verb",
+    "definition": "功能，作用；运作",
+    "example": "The brain has many complex functions.",
+    "example_translation": "大脑有许多复杂的功能。"
+  },
+  {
+    "word": "indicate",
+    "phonetic": "/ˈɪndɪkeɪt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/ind/indicate.mp3",
+    "pos": "verb",
+    "definition": "表明，指出",
+    "example": "The results indicate a strong correlation.",
+    "example_translation": "结果表明存在强相关性。"
+  },
+  {
+    "word": "interpret",
+    "phonetic": "/ɪnˈtɜːprɪt/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/i/int/interpret.mp3",
+    "pos": "verb",
+    "definition": "解释，理解，翻译",
+    "example": "How do you interpret this data?",
+    "example_translation": "你如何解读这些数据？"
+  },
+  {
+    "word": "method",
+    "phonetic": "/ˈmeθəd/",
+    "audio": "https://dictionary.cambridge.org/media/english/us_pron/m/met/method.mp3",
+    "pos": "noun",
+    "definition": "方法，方式",
+    "example": "This is an effective method of learning vocabulary.",
+    "example_translation": "这是一种有效的词汇学习方法。"
+  }
 ]
