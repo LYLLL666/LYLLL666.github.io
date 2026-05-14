@@ -14,7 +14,44 @@ body{
     overflow-x:hidden;
 }
 
-/* 顶部标题 */
+/* 顶部栏 */
+.top-bar{
+    position:fixed;
+    top:18px;
+    left:0;
+    right:0;
+    z-index:10;
+}
+
+/* 顶部按钮 */
+.top-btn{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.35);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 6px 15px rgba(0,0,0,0.08);
+    font-size:18px;
+    position:absolute;
+    cursor:pointer;
+}
+
+.top-btn.left{
+    left:15px;
+}
+
+.top-btn.right{
+    right:15px;
+}
+
+.top-btn:active{
+    transform:scale(0.95);
+}
+
+/* 标题 */
 .header{
     text-align:center;
     padding:20px 0;
@@ -23,12 +60,12 @@ body{
     color:#1a1a1a;
 }
 
-/* 容器 */
+/* 列表 */
 .container{
-    padding:10px 15px 120px;
+    padding:70px 15px 120px;
 }
 
-/* 收藏卡片 */
+/* 卡片 */
 .word-card{
     backdrop-filter: blur(18px);
     background: rgba(255,255,255,0.35);
@@ -66,7 +103,7 @@ body{
     line-height:1.4;
 }
 
-/* 删除收藏 */
+/* 删除按钮 */
 .remove-btn{
     position:absolute;
     right:12px;
@@ -83,7 +120,7 @@ body{
     cursor:pointer;
 }
 
-/* 底部按钮栏 */
+/* 底部按钮（保留原风格但不再用刷新） */
 .bottom-bar{
     position:fixed;
     bottom:18px;
@@ -116,19 +153,22 @@ body{
 
 <body>
 
-<div class="header">我的收藏</div>
+<!-- 顶部按钮 -->
+<div class="top-bar">
+    <div class="top-btn left" onclick="goBack()">←</div>
+    <div class="top-btn right" onclick="clearAll()">🗑</div>
+</div>
 
 <div class="container" id="list"></div>
 
-<!-- 底部按钮 -->
+<!-- 底部（保留但不再需要刷新按钮） -->
 <div class="bottom-bar">
     <div class="btn" onclick="goBack()">←</div>
     <div class="btn" onclick="clearAll()">🗑</div>
-    <div class="btn" onclick="refresh()">⟳</div>
 </div>
 
 <script>
-// 模拟收藏数据（实际你要换成 localStorage）
+// 统一 key
 let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
 // 渲染
@@ -159,7 +199,7 @@ function render(){
 // 删除单个
 function removeItem(i){
     favorites.splice(i,1);
-    localStorage.setItem("favorites", JSON.stringify(favorites));
+    localStorage.setItem("favorites_list", JSON.stringify(favorites));
     render();
 }
 
@@ -167,7 +207,7 @@ function removeItem(i){
 function clearAll(){
     if(confirm("确定清空收藏？")){
         favorites = [];
-        localStorage.removeItem("favorites");
+        localStorage.setItem("favorites_list", JSON.stringify(favorites));
         render();
     }
 }
@@ -175,12 +215,6 @@ function clearAll(){
 // 返回
 function goBack(){
     history.back();
-}
-
-// 刷新
-function refresh(){
-    favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-    render();
 }
 
 render();
