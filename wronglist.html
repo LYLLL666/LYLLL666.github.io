@@ -2,75 +2,227 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>错题本</title>
 
 <style>
 body{
-    font-family:Arial;
-    background:#fef2f2;
-    text-align:center;
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
+    background: radial-gradient(circle at top, #ffe6e6, #fff3f3, #f5f7ff);
+    min-height:100vh;
+    overflow-x:hidden;
 }
-.card{
-    width:320px;
-    margin:15px auto;
-    background:white;
-    padding:20px;
+
+/* 顶部栏 */
+.top-bar{
+    position:fixed;
+    top:18px;
+    left:0;
+    right:0;
+    z-index:10;
+}
+
+/* 顶部按钮 */
+.top-btn{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.35);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 6px 15px rgba(0,0,0,0.08);
+    font-size:18px;
+    position:absolute;
+    cursor:pointer;
+}
+
+.top-btn.left{
+    left:15px;
+}
+
+.top-btn.right{
+    right:15px;
+}
+
+.top-btn:active{
+    transform:scale(0.95);
+}
+
+/* 列表 */
+.container{
+    padding:70px 15px 160px;
+}
+
+/* 错题卡片 */
+.word-card{
+    backdrop-filter: blur(18px);
+    background: rgba(255,255,255,0.40);
     border-radius:18px;
+    padding:16px;
+    margin-bottom:12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    position:relative;
 }
-.btn{
-    margin-top:10px;
-    padding:8px 14px;
-    border:none;
-    border-radius:10px;
-    background:#ef4444;
-    color:white;
+
+/* 单词 */
+.word{
+    font-size:20px;
+    font-weight:700;
+    color:#111;
+}
+
+/* 音标 */
+.phonetic{
+    font-size:13px;
+    color:#444;
+    margin-top:2px;
+}
+
+/* 释义 */
+.meaning{
+    margin-top:8px;
+    font-size:14px;
+    color:#222;
+    line-height:1.4;
+}
+
+/* 删除按钮 */
+.remove-btn{
+    position:absolute;
+    right:12px;
+    top:12px;
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    background: rgba(255,80,80,0.15);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:14px;
+    color:#ff3b3b;
+    cursor:pointer;
+}
+
+/* =========================
+   🔥 复习按钮（新增）
+========================= */
+.review-btn{
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+
+    padding:12px 26px;
+
+    border-radius:14px;   /* 小矩形圆润 */
+
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.55),
+        rgba(255,255,255,0.25)
+    );
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border:1px solid rgba(255,255,255,0.6);
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,0.10),
+        inset 0 1px 1px rgba(255,255,255,0.6);
+
+    font-size:15px;
+    font-weight:600;
+    color:#0f172a;
+
+    cursor:pointer;
+}
+
+.review-btn:active{
+    transform:translateX(-50%) scale(0.96);
 }
 </style>
 </head>
 
 <body>
 
-<h1>❌ 错题本</h1>
+<!-- 顶部 -->
+<div class="top-bar">
+    <div class="top-btn left" onclick="goBack()">←</div>
+    <div class="top-btn right" onclick="clearAll()">🗑</div>
+</div>
 
-<button onclick="location.href='review.html'">开始复习</button>
+<!-- 列表 -->
+<div class="container" id="list"></div>
 
-<div id="list"></div>
+<!-- 🔥 新增：复习按钮 -->
+<div class="review-btn" onclick="startReview()">
+    开始复习
+</div>
 
 <script>
 
-let wrongList =
-JSON.parse(localStorage.getItem("wrong_list") || "[]");
+let mistakes = JSON.parse(localStorage.getItem("wrong_list") || "[]");
 
+/* 渲染 */
 function render(){
+    const list = document.getElementById("list");
+    list.innerHTML = "";
 
-let box=document.getElementById("list");
-box.innerHTML="";
+    if(mistakes.length === 0){
+        list.innerHTML = "<div style='text-align:center;color:#555;margin-top:40px;'>暂无错题</div>";
+        return;
+    }
 
-if(wrongList.length===0){
-box.innerHTML="<h3>没有错题</h3>";
-return;
+    mistakes.forEach((w, index)=>{
+        const div = document.createElement("div");
+        div.className = "word-card";
+
+        div.innerHTML = `
+            <div class="remove-btn" onclick="removeItem(${index})">✕</div>
+            <div class="word">${w.word}</div>
+            <div class="phonetic">${w.phonetic || ""}</div>
+            <div class="meaning">${w.definition || ""}</div>
+        `;
+
+        list.appendChild(div);
+    });
 }
 
-wrongList.forEach((w,i)=>{
-
-box.innerHTML+=`
-<div class="card">
-${w.word} - ${w.meaning}
-<br>
-<button class="btn" onclick="remove(${i})">删除</button>
-</div>
-`;
-
-});
-
+/* 删除单个 */
+function removeItem(i){
+    mistakes.splice(i,1);
+    localStorage.setItem("wrong_list", JSON.stringify(mistakes));
+    render();
 }
 
-function remove(i){
+/* 清空 */
+function clearAll(){
+    if(confirm("确定清空错题？")){
+        mistakes = [];
+        localStorage.setItem("wrong_list", JSON.stringify(mistakes));
+        render();
+    }
+}
 
-wrongList.splice(i,1);
-localStorage.setItem("wrong_list",JSON.stringify(wrongList));
-render();
+/* 返回 */
+function goBack(){
+    history.back();
+}
 
+/* 🔥 复习功能入口 */
+function startReview(){
+    if(mistakes.length === 0){
+        alert("暂无错题可以复习");
+        return;
+    }
+
+    // 跳转到学习页（复习模式）
+    localStorage.setItem("review_mode", "1");
+    location.href = "index.html";
 }
 
 render();
