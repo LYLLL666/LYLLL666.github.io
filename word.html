@@ -38,7 +38,7 @@ body{
 *{
     -webkit-tap-highlight-color: transparent;
 }
-   
+
 body::before{
     content:"";
     position:fixed;
@@ -282,6 +282,7 @@ body::before{
 <div class="back" onclick="back()">←</div>
 <div class="top">单词学习</div>
 <div class="title-card">单词学习</div>
+
 <div class="card">
     <div class="audio-btn" onclick="speak()">🔊</div>
 
@@ -300,46 +301,63 @@ body::before{
     <div class="btn" onclick="prevWord()">←</div>
     <div class="btn" onclick="saveWord()">⭐</div>
     <div class="btn" onclick="nextWord()">→</div>
-    
 </div>
 
 <script>
+
+/* =========================
+   🔥 防缓存核心版本号
+========================= */
+const WORDS_VERSION = "v3";
+
+function clearOldCache(){
+    let v = localStorage.getItem("words_version");
+    if(v !== WORDS_VERSION){
+        localStorage.removeItem("words_order");
+        localStorage.removeItem("word_index");
+        localStorage.setItem("words_version", WORDS_VERSION);
+    }
+}
 
 let words = [];
 let index = Number(localStorage.getItem("word_index") || 0);
 let favorites = JSON.parse(localStorage.getItem("favorites_list") || "[]");
 
 /* =========================
-   🔥 进入询问（新增）
+   进入询问
 ========================= */
 function askOnEnter(){
 
     let refresh = confirm("是否刷新本次学习？\n确定 = 刷新\n取消 = 保留进度");
 
     if(refresh){
-
         index = 0;
-
         localStorage.removeItem("word_index");
 
-        /* 🔥 重新随机顺序 */
         words = [...words].sort(() => Math.random() - 0.5);
         localStorage.setItem("words_order", JSON.stringify(words));
     }
 }
 
 /* =========================
-   加载词库
+   加载词库（防缓存版）
 ========================= */
+clearOldCache();
+
 fetch("words.json?v=" + Date.now())
 .then(res => res.json())
 .then(data => {
 
     let savedOrder = localStorage.getItem("words_order");
 
-    if(savedOrder && JSON.parse(savedOrder).length > 0){
+    if(savedOrder){
         try{
-            words = JSON.parse(savedOrder);
+            let parsed = JSON.parse(savedOrder);
+            if(Array.isArray(parsed) && parsed.length > 0){
+                words = parsed;
+            }else{
+                throw new Error();
+            }
         }catch(e){
             words = data;
             localStorage.removeItem("words_order");
@@ -352,10 +370,7 @@ fetch("words.json?v=" + Date.now())
     if(index >= words.length) index = 0;
 
     render();
-
-    /* 🔥 每次进入都询问 */
     askOnEnter();
-
     render();
 
     setTimeout(() => speak(), 300);
@@ -380,6 +395,7 @@ function render(){
    发音
 ========================= */
 function speak(){
+
     let w = words[index];
     if(!w || !w.word) return;
 
