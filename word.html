@@ -387,9 +387,9 @@ function chooseGroup(){
 
     index = 0;
     localStorage.removeItem("word_index");
-
-    applyGroup();
     
+    applyGroup();
+    location.reload();
 }
 
 /* 应用分组 */
@@ -401,7 +401,7 @@ function applyGroup(){
     words = words.slice(start, end);
 
     updateGroupUI();
-    location.reload();
+    
 }
 
 /* =========================
