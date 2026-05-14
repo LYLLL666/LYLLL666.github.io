@@ -331,13 +331,13 @@ function askOnEnter(){
 /* =========================
    加载词库
 ========================= */
-fetch("words.json")
+fetch("words.json?v=" + Date.now())
 .then(res => res.json())
 .then(data => {
 
     let savedOrder = localStorage.getItem("words_order");
 
-    if(savedOrder){
+    if(savedOrder && JSON.parse(savedOrder).length > 0){
         try{
             words = JSON.parse(savedOrder);
         }catch(e){
