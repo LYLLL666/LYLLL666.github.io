@@ -2,103 +2,250 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>错题复习</title>
 
 <style>
+
+/* =========================
+   背景（统一你的系统风格）
+========================= */
 body{
-    font-family:Arial;
-    background:#ecfdf5;
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
+
+    background: radial-gradient(
+        circle at top,
+        #dff3ff 0%,
+        #f4fbff 40%,
+        #eaf4ff 70%,
+        #e3efff 100%
+    );
+
+    min-height:100vh;
     text-align:center;
+    color:#0f172a;
+    overflow:hidden;
 }
-.card{
-    width:320px;
-    margin:20px auto;
-    background:white;
-    padding:25px;
-    border-radius:20px;
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background: radial-gradient(circle at top,rgba(255,255,255,.45),rgba(255,255,255,.10),rgba(0,0,0,.02));
+    pointer-events:none;
 }
-.option{
-    margin:10px auto;
-    padding:12px;
-    border:2px solid #ddd;
-    border-radius:10px;
+
+/* 返回 */
+.back{
+    position:fixed;
+    left:16px;
+    top:20px;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
     cursor:pointer;
+    background:rgba(255,255,255,.35);
+    border:1px solid rgba(255,255,255,.6);
+    backdrop-filter:blur(18px);
+    box-shadow:0 8px 18px rgba(0,0,0,.12);
 }
-.correct{background:#bbf7d0;}
-.wrong{background:#fecaca;}
+
+/* 标题 */
+.top{
+    position:absolute;
+    top:18px;
+    width:100%;
+    text-align:center;
+    font-size:18px;
+    font-weight:600;
+}
+
+/* 卡片 */
+.card{
+    margin-top:120px;
+    width:300px;
+    padding:22px;
+    border-radius:24px;
+
+    background:rgba(255,255,255,.55);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.35);
+    box-shadow:0 10px 30px rgba(0,0,0,.06);
+
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/* 单词 */
+.word{
+    font-size:40px;
+    font-weight:700;
+}
+
+/* 释义 */
+.meaning{
+    margin-top:12px;
+    font-size:16px;
+    color:#334155;
+}
+
+/* 按钮 */
+.bottom{
+    position:fixed;
+    bottom:60px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:60px;
+}
+
+.btn{
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:rgba(255,255,255,.35);
+    border:1px solid rgba(255,255,255,.6);
+    backdrop-filter:blur(18px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-size:20px;
+}
+
+.btn:active{
+    transform:scale(.92);
+}
+
+.tip{
+    position:fixed;
+    left:50%;
+    bottom:120px;
+    transform:translateX(-50%);
+    background:rgba(0,0,0,.7);
+    color:#fff;
+    padding:6px 12px;
+    border-radius:10px;
+    font-size:13px;
+    opacity:0;
+    transition:.2s;
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>🔁 错题复习</h1>
+<div class="back" onclick="back()">←</div>
+<div class="top">错题复习</div>
 
 <div class="card">
-<div id="word"></div>
-<div id="options"></div>
-<div id="msg"></div>
+    <div class="word" id="word">加载中...</div>
+    <div class="meaning" id="meaning"></div>
 </div>
 
-<button onclick="next()">下一题</button>
+<div class="bottom">
+    <div class="btn" onclick="wrong()">❌</div>
+    <div class="btn" onclick="speak()">🔊</div>
+    <div class="btn" onclick="right()">✔</div>
+</div>
+
+<div class="tip" id="tip"></div>
 
 <script>
 
-let list =
-JSON.parse(localStorage.getItem("wrong_list") || "[]");
+let list = JSON.parse(localStorage.getItem("wrong_list") || "[]");
+let index = 0;
 
-let index=0;
-
-function render(){
-
-if(list.length===0){
-document.body.innerHTML="<h2>没有错题</h2>";
-return;
-}
-
-let w=list[index];
-
-document.getElementById("word").innerText=w.word;
-
-let options=[w.meaning];
-
-while(options.length<4){
-let r=list[Math.floor(Math.random()*list.length)].meaning;
-if(!options.includes(r)) options.push(r);
-}
-
-options=options.sort(()=>Math.random()-0.5);
-
-document.getElementById("options").innerHTML=
-options.map(o=>
-`<div class="option" onclick="check('${o}','${w.word}','${w.meaning}')">${o}</div>`
-).join("");
-
-}
-
-function check(opt,word,correct){
-
-if(opt===correct){
-
-list=list.filter(i=>i.word!==word);
-localStorage.setItem("wrong_list",JSON.stringify(list));
-
-document.getElementById("msg").innerText="🎉 已掌握";
-
+if(list.length === 0){
+    document.getElementById("word").innerText = "暂无错题";
+    document.getElementById("meaning").innerText = "";
 }else{
-document.getElementById("msg").innerText="❌ 错误";
+    render();
 }
 
+/* 渲染 */
+function render(){
+    let w = list[index];
+
+    if(!w){
+        document.getElementById("word").innerText = "复习完成";
+        document.getElementById("meaning").innerText = "";
+        return;
+    }
+
+    document.getElementById("word").innerText = w.word;
+    document.getElementById("meaning").innerText = w.definition || "";
 }
 
-function next(){
+/* 正确 → 从错题移除 */
+function right(){
 
-index++;
-if(index>=list.length) index=0;
-render();
+    if(!list[index]) return;
 
+    list.splice(index,1);
+    localStorage.setItem("wrong_list", JSON.stringify(list));
+
+    showTip("已掌握 ✔");
+
+    if(index >= list.length) index = list.length - 1;
+
+    render();
 }
 
-render();
+/* 错误 → 下一题 */
+function wrong(){
+    showTip("继续复习");
+
+    if(index < list.length - 1){
+        index++;
+    }else{
+        showTip("已经是最后一题");
+    }
+
+    render();
+}
+
+/* 发音 */
+function speak(){
+
+    let w = list[index];
+    if(!w) return;
+
+    let audio = new Audio(
+        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${w.word.toLowerCase()}--_us_1.mp3`
+    );
+
+    audio.play().catch(()=>{
+        let u = new SpeechSynthesisUtterance(w.word);
+        u.lang = "en-US";
+        speechSynthesis.speak(u);
+    });
+}
+
+/* 返回 */
+function back(){
+    location.href = "index.html";
+}
+
+/* 提示 */
+function showTip(text){
+
+    let tip = document.getElementById("tip");
+
+    tip.innerText = text;
+    tip.style.opacity = "1";
+
+    setTimeout(()=>{
+        tip.style.opacity = "0";
+    },800);
+}
 
 </script>
 
