@@ -523,58 +523,12 @@ function addWrong(w){
 ========================= */
 function next(){
 
-    if(index >= words.length - 1){
-    function showTip(text){
-
-    let tip = document.createElement("div");
-
-    tip.innerText = text;
-
-    tip.style.position = "fixed";
-    tip.style.left = "50%";
-    tip.style.bottom = "120px";
-    tip.style.transform = "translateX(-50%)";
-
-    // ⭐ 更大、更舒服
-    tip.style.maxWidth = "320px";
-    tip.style.padding = "16px 18px";
-    tip.style.borderRadius = "16px";
-
-    tip.style.fontSize = "15px";
-    tip.style.lineHeight = "1.6";
-    tip.style.textAlign = "center";
-
-    tip.style.color = "#0f172a";
-
-    // ⭐ 更好看的玻璃底
-    tip.style.background = "rgba(255,255,255,0.65)";
-    tip.style.backdropFilter = "blur(18px)";
-    tip.style.webkitBackdropFilter = "blur(18px)";
-
-    tip.style.border = "1px solid rgba(255,255,255,0.7)";
-    tip.style.boxShadow = "0 10px 30px rgba(0,0,0,0.12)";
-
-    tip.style.zIndex = "99999";
-
-    tip.style.opacity = "0";
-    tip.style.transition = "0.35s ease";
-
-    document.body.appendChild(tip);
+if(index >= words.length - 1){
 
     setTimeout(()=>{
-        tip.style.opacity = "1";
-        tip.style.transform = "translateX(-50%) translateY(-6px)";
-    },10);
+        showTip(endTips[Math.floor(Math.random() * endTips.length)]);
+    }, 300);
 
-    // ⭐ 停留时间加长（原来900ms → 2500ms）
-    setTimeout(()=>{
-        tip.style.opacity = "0";
-    },2500);
-
-    setTimeout(()=>{
-        tip.remove();
-    },3000);
-}
     return;
 }
 
@@ -649,7 +603,7 @@ function showTip(text){
 
     tip.style.fontSize = "13px";
     tip.style.color = "#fff";
-    tip.style.background = "rgba(0,0,0,0.7)";
+    tip.style.background = "linear-gradient(135deg, #ff5f6d, #ffc371, #47e0ff, #7afcff, #c471ed)";
     tip.style.zIndex = "99999";
 
     tip.style.opacity = "0";
