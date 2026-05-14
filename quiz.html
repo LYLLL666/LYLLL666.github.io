@@ -307,7 +307,7 @@ function askOnEnter(){
 }
 
 /* =========================
-   ⭐ 分组系统
+   ⭐ 分组系统（关键修改）
 ========================= */
 function chooseGroup(){
 
@@ -348,7 +348,7 @@ function applyGroup(){
 }
 
 /* =========================
-   ⭐ 词库（已修复缓存问题）
+   ⭐ 词库
 ========================= */
 fetch("words.json?v=" + Date.now())
 .then(res => res.json())
@@ -357,17 +357,9 @@ fetch("words.json?v=" + Date.now())
     let saved = localStorage.getItem("quiz_order");
 
     if(saved){
-
         allWords = JSON.parse(saved);
-
-        if(allWords.length !== data.length){
-            allWords = [...data].sort(() => Math.random() - 0.5);
-            localStorage.setItem("quiz_order", JSON.stringify(allWords));
-        }
-
     }else{
-
-        allWords = [...data].sort(() => Math.random() - 0.5);
+        allWords = data;
         localStorage.setItem("quiz_order", JSON.stringify(allWords));
     }
 
@@ -380,6 +372,13 @@ fetch("words.json?v=" + Date.now())
 
     render();
 });
+
+/* =========================
+   ⭐ 修复点（关键：分组隔离状态）
+========================= */
+function stateKey(){
+    return groupIndex + "_" + index;
+}
 
 /* =========================
    渲染
@@ -408,7 +407,7 @@ function render(){
         setTimeout(()=> speakAuto(),200);
     });
 
-    let state = quizState[index];
+    let state = quizState[stateKey()];
 
     if(state){
 
@@ -447,7 +446,7 @@ function generate(correct){
 }
 
 /* =========================
-   点击
+   点击（关键修改）
 ========================= */
 function select(i){
 
@@ -461,7 +460,7 @@ function select(i){
 
     let isCorrect = currentOptions[i].correct;
 
-    quizState[index] = {
+    quizState[stateKey()] = {
         selected: i,
         correct: isCorrect
     };
@@ -494,7 +493,7 @@ function autoNext(t){
     setTimeout(()=>{
 
         if(index >= words.length - 1){
-            showTip("已到最后一题");
+            showTip("这是最后一个了");
             return;
         }
 
