@@ -527,7 +527,7 @@ if(index >= words.length - 1){
 
     setTimeout(()=>{
         showTip(endTips[Math.floor(Math.random() * endTips.length)]);
-    }, 1000);
+    }, 300);
 
     return;
 }
@@ -621,11 +621,11 @@ function showTip(text){
 
     setTimeout(()=>{
         tip.style.opacity = "0";
-    },900);
+    },3000);
 
     setTimeout(()=>{
         tip.remove();
-    },1200);
+    },3400);
 }
 
 const endTips = [
