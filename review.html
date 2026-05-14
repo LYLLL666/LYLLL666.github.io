@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>复习模式</title>
+<title>错题复习</title>
 
 <style>
 
@@ -117,43 +117,8 @@ body::before{
     border-color:rgba(239,68,68,.6) !important;
 }
 
-/* 底部按钮 */
-.bottom-bar{
-    position:fixed;
-    left:50%;
-    transform:translateX(-50%);
-    bottom:40px;
-    display:flex;
-    gap:80px;
-}
-
-.btn{
-    width:52px;
-    height:52px;
-    border-radius:50%;
-    font-size:22px;
-    color:#0f172a;
-
-    background:rgba(255,255,255,.35);
-    border:1px solid rgba(255,255,255,.6);
-
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-
-    box-shadow:
-        0 8px 18px rgba(0,0,0,.12),
-        inset 0 1px 1px rgba(255,255,255,.6);
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    cursor:pointer;
-}
-
-.btn:active{
-    transform:scale(.92);
-}
+/* ❌ 删除底部按钮样式（保留结构但不使用） */
+/* bottom-bar removed */
 
 </style>
 </head>
@@ -174,18 +139,15 @@ body::before{
 
 </div>
 
-<div class="bottom-bar">
-    <div class="btn" onclick="prev()">←</div>
-    <div class="btn" onclick="speak()">🔊</div>
-    <div class="btn" onclick="next()">→</div>
-</div>
+<!-- 只保留发音点击，不再有底部按钮 -->
 
 <script>
 
 /* =========================
-   数据：错题来源
+   数据
 ========================= */
 let words = JSON.parse(localStorage.getItem("wrong_list") || "[]");
+let allWords = [];
 
 let index = 0;
 let answered = false;
@@ -194,10 +156,16 @@ let hasSpoken = false;
 let currentOptions = [];
 
 /* =========================
-   初始化
+   加载 words.json（用于干扰选项）
 ========================= */
-bind();
-render();
+fetch("words.json")
+.then(res => res.json())
+.then(data => {
+    allWords = data;
+
+    bind();
+    render();
+});
 
 /* =========================
    渲染
@@ -206,10 +174,6 @@ function render(){
 
     if(words.length === 0){
         document.getElementById("wordCard").innerText = "暂无错题";
-        document.getElementById("o0").innerText = "";
-        document.getElementById("o1").innerText = "";
-        document.getElementById("o2").innerText = "";
-        document.getElementById("o3").innerText = "";
         return;
     }
 
@@ -234,29 +198,33 @@ function render(){
     lockNext = false;
     hasSpoken = false;
 
-    requestAnimationFrame(()=>{
-        setTimeout(()=> speakAuto(),200);
-    });
+    setTimeout(()=>speakAuto(),200);
 }
 
 /* =========================
-   生成选项
+   生成选项（✔ 改：全部来自 words.json）
 ========================= */
 function generate(correct){
 
-    let pool = words
+    let pool = allWords
         .filter(w => w.word !== correct.word)
         .sort(() => Math.random() - 0.5)
         .slice(0,3)
-        .map(w => ({text:w.definition, correct:false}));
+        .map(w => ({
+            text: w.definition,
+            correct: false
+        }));
 
-    pool.push({text:correct.definition, correct:true});
+    pool.push({
+        text: correct.definition,
+        correct: true
+    });
 
     return pool.sort(() => Math.random() - 0.5);
 }
 
 /* =========================
-   选择答案
+   选择
 ========================= */
 function select(i){
 
@@ -274,7 +242,6 @@ function select(i){
 
         options[i].classList.add("correct");
 
-        // ✔ 从错题删除
         let list = JSON.parse(localStorage.getItem("wrong_list") || "[]");
         list = list.filter(item => item.word !== w.word);
         localStorage.setItem("wrong_list", JSON.stringify(list));
@@ -294,7 +261,7 @@ function select(i){
 }
 
 /* =========================
-   下一题
+   下一题（自动）
 ========================= */
 function autoNext(t){
 
@@ -313,26 +280,10 @@ function autoNext(t){
 }
 
 /* =========================
-   翻页
-========================= */
-function next(){
-    if(index < words.length - 1){
-        index++;
-        render();
-    }
-}
-
-function prev(){
-    if(index > 0){
-        index--;
-        render();
-    }
-}
-
-/* =========================
    发音
 ========================= */
 function speak(){
+
     let w = words[index];
     if(!w) return;
 
@@ -364,7 +315,7 @@ function bind(){
 }
 
 /* =========================
-   返回错题集
+   返回
 ========================= */
 function exit(){
     location.href = "wronglist.html";
