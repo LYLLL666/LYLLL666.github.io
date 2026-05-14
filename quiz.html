@@ -378,20 +378,32 @@ fetch("words.json")
 .then(res => res.json())
 .then(data => {
 
-   let saved =
-sessionStorage.getItem("quiz_order");
+/* 网站首次启动 */
+if(!sessionStorage.getItem("site_started")){
 
+    sessionStorage.setItem("site_started", "1");
+
+    /* 清空旧随机顺序 */
+    localStorage.removeItem("quiz_order");
+}
+
+/* 读取顺序 */
+let saved =
+localStorage.getItem("quiz_order");
+
+/* 已有顺序 */
 if(saved){
 
     words = JSON.parse(saved);
 
 }else{
 
+    /* 第一次进入才随机 */
     words =
     [...data].sort(() =>
     Math.random() - 0.5);
 
-    sessionStorage.setItem(
+    localStorage.setItem(
     "quiz_order",
     JSON.stringify(words)
     );
