@@ -200,21 +200,17 @@ let currentOptions = [];
 ========================= */
 function askOnEnter(){
 
-    let refresh = confirm("是否刷新本次练习？\n确定 = 刷新\n取消 = 保留进度");
+    let refresh = confirm("是否刷新本次练习？\n\n确定 = 刷新\n取消 = 保留进度");
 
     if(refresh){
 
-        let ok = confirm("确认要重新开始练习吗？");
+        index = 0;
+        quizState = {};
 
-        if(ok){
-
-            index = 0;
-            quizState = {};
-
-            localStorage.removeItem("quiz_state");
-            localStorage.setItem("quiz_index","0");
-        }
+        localStorage.removeItem("quiz_state");
+        localStorage.setItem("quiz_index","0");
     }
+
 }
 
 /* =========================
