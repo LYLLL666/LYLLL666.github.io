@@ -59,6 +59,27 @@ body::before{
     z-index:99999;
 }
 
+/* 声音按钮 */
+.sound-btn{
+    position:fixed;
+    right:16px;
+    top:20px;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    cursor:pointer;
+
+    background:rgba(255,255,255,.35);
+    border:1px solid rgba(255,255,255,.6);
+    backdrop-filter:blur(18px);
+    box-shadow:0 8px 18px rgba(0,0,0,.12);
+    z-index:99999;
+}
+
 /* 标题 */
 .top{
     position:absolute;
@@ -69,7 +90,7 @@ body::before{
     font-weight:600;
 }
 
-/* 卡片结构 */
+/* 卡片 */
 .cards{
     margin-top:90px;
     display:flex;
@@ -78,7 +99,6 @@ body::before{
     gap:14px;
 }
 
-/* 卡片 */
 .card{
     width:300px;
     padding:20px;
@@ -95,18 +115,15 @@ body::before{
     transform:scale(.97);
 }
 
-/* 单词 */
 .word{
     font-size:38px;
     font-weight:700;
 }
 
-/* 选项 */
 .option{
     font-size:16px;
 }
 
-/* 状态 */
 .correct{
     background:rgba(34,197,94,.25) !important;
     border-color:rgba(34,197,94,.6) !important;
@@ -123,6 +140,8 @@ body::before{
 <body>
 
 <div class="back" onclick="exit()">←</div>
+<div class="sound-btn" onclick="speak()">🔊</div>
+
 <div class="top">错题复习</div>
 
 <div class="cards">
@@ -138,9 +157,6 @@ body::before{
 
 <script>
 
-/* =========================
-   数据
-========================= */
 let words = JSON.parse(localStorage.getItem("wrong_list") || "[]");
 let allWords = [];
 
@@ -150,14 +166,10 @@ let lockNext = false;
 let hasSpoken = false;
 let currentOptions = [];
 
-/* =========================
-   加载词库（干扰选项）
-========================= */
 fetch("words.json")
 .then(res => res.json())
 .then(data => {
     allWords = data;
-
     bind();
     render();
 });
@@ -191,16 +203,13 @@ function render(){
 
     answered = false;
     lockNext = false;
-
-    /* 🔥 每次切题重置发声 */
     hasSpoken = false;
 
-    /* 🔥 自动发声 */
     setTimeout(()=>speakAuto(),200);
 }
 
 /* =========================
-   选项生成（来自 words.json）
+   选项生成（words.json）
 ========================= */
 function generate(correct){
 
@@ -222,7 +231,7 @@ function generate(correct){
 }
 
 /* =========================
-   选择答案
+   选择
 ========================= */
 function select(i){
 
@@ -278,36 +287,40 @@ function autoNext(t){
 }
 
 /* =========================
-   🔊 发声（已修复）
+   🔊 发声（完全复用练习模式）
 ========================= */
 function speak(){
 
     let w = words[index];
     if(!w) return;
 
+    let word = w.word.toLowerCase().trim();
+
     let audio = new Audio(
-        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${w.word.toLowerCase()}--_us_1.mp3`
+        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${word}--_us_1.mp3`
     );
 
-    audio.play().catch(()=>{
-        let u = new SpeechSynthesisUtterance(w.word);
-        u.lang = "en-US";
-        speechSynthesis.speak(u);
-    });
+    audio.play().catch(() => fallbackTTS(w.word));
+    audio.onerror = () => fallbackTTS(w.word);
 }
 
-/* =========================
-   🔁 自动发声（已修复）
-========================= */
+/* TTS兜底 */
+function fallbackTTS(text){
+    window.speechSynthesis.cancel();
+    let u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    u.rate = 0.95;
+    speechSynthesis.speak(u);
+}
+
+/* 自动发声 */
 function speakAuto(){
     if(hasSpoken) return;
     hasSpoken = true;
     speak();
 }
 
-/* =========================
-   绑定
-========================= */
+/* 绑定 */
 function bind(){
     document.getElementById("wordCard").onclick = speak;
     for(let i=0;i<4;i++){
@@ -315,9 +328,7 @@ function bind(){
     }
 }
 
-/* =========================
-   返回
-========================= */
+/* 返回 */
 function exit(){
     location.href = "wronglist.html";
 }
