@@ -359,8 +359,17 @@ function select(i){
    自动翻页
 ========================= */
 function autoNext(t){
+
     setTimeout(()=>{
-        next();
+
+        if(index >= words.length - 1){
+            showTip("已到最后一题");
+            return;
+        }
+
+        index++;
+        render();
+
     }, t);
 }
 
@@ -379,7 +388,13 @@ function addWrong(w){
    翻页
 ========================= */
 function next(){
-    index = (index + 1) % words.length;
+
+    if(index >= words.length - 1){
+        showTip("这是最后一个了");
+        return;
+    }
+
+    index++;
     render();
 }
 
@@ -434,6 +449,45 @@ function bind(){
 ========================= */
 function exit(){
     location.href = "index.html";
+}
+
+
+function showTip(text){
+
+    let tip = document.createElement("div");
+
+    tip.innerText = text;
+
+    tip.style.position = "fixed";
+    tip.style.left = "50%";
+    tip.style.bottom = "120px";
+    tip.style.transform = "translateX(-50%)";
+
+    tip.style.padding = "8px 14px";
+    tip.style.borderRadius = "10px";
+
+    tip.style.fontSize = "13px";
+    tip.style.color = "#fff";
+    tip.style.background = "rgba(0,0,0,0.7)";
+    tip.style.zIndex = "99999";
+
+    tip.style.opacity = "0";
+    tip.style.transition = "0.2s";
+
+    document.body.appendChild(tip);
+
+    setTimeout(()=>{
+        tip.style.opacity = "1";
+        tip.style.transform = "translateX(-50%) translateY(-6px)";
+    },10);
+
+    setTimeout(()=>{
+        tip.style.opacity = "0";
+    },900);
+
+    setTimeout(()=>{
+        tip.remove();
+    },1200);
 }
 
 </script>
