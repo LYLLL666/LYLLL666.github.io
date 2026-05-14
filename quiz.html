@@ -10,7 +10,7 @@
 <style>
 
 /* =========================
-   完全复制学习页UI
+   BASE（完全照搬学习页UI）
 ========================= */
 body{
     margin:0;
@@ -25,9 +25,29 @@ body{
     );
 
     min-height:100vh;
-    overflow:hidden;
+    overflow-y:auto;
+    overflow-x:hidden;
+
     text-align:center;
     color:#0f172a;
+
+    position:relative;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+
+    background:
+    radial-gradient(
+        circle at top,
+        rgba(255,255,255,.45),
+        rgba(255,255,255,.10),
+        rgba(0,0,0,.02)
+    );
+
+    pointer-events:none;
 }
 
 /* 返回 */
@@ -52,7 +72,11 @@ body{
     backdrop-filter:blur(18px);
     -webkit-backdrop-filter:blur(18px);
 
-    box-shadow:0 8px 18px rgba(0,0,0,.12);
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.12),
+        inset 0 1px 1px rgba(255,255,255,.6);
+
+    z-index:9999;
 }
 
 /* 标题 */
@@ -63,9 +87,10 @@ body{
     text-align:center;
     font-size:18px;
     font-weight:600;
+    color:rgba(15,23,42,.75);
 }
 
-/* 卡片 */
+/* 主卡 */
 .card{
     margin-top:90px;
     width:300px;
@@ -73,7 +98,15 @@ body{
     border-radius:24px;
 
     background:rgba(255,255,255,.55);
-    backdrop-filter:blur(18px);
+
+    backdrop-filter:blur(18px) saturate(160%);
+    -webkit-backdrop-filter:blur(18px) saturate(160%);
+
+    border:1px solid rgba(255,255,255,.35);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.4),
+        0 10px 30px rgba(0,0,0,.06);
 
     margin-left:auto;
     margin-right:auto;
@@ -102,21 +135,28 @@ body{
     height:38px;
 
     border-radius:50%;
+
     display:flex;
     align-items:center;
     justify-content:center;
 
     cursor:pointer;
 
+    font-size:16px;
+
     background:rgba(255,255,255,.35);
     border:1px solid rgba(255,255,255,.6);
+
+    backdrop-filter:blur(12px);
+
+    box-shadow:
+        0 6px 12px rgba(0,0,0,.10),
+        inset 0 1px 1px rgba(255,255,255,.6);
 }
 
-/* =========================
-   练习选项（严格UI统一）
-========================= */
+/* 选项 */
 .options{
-    width:300px;
+    width:320px;
     margin:24px auto 0;
     display:flex;
     flex-direction:column;
@@ -126,35 +166,25 @@ body{
 .option{
     padding:16px;
     border-radius:20px;
-
     background:rgba(255,255,255,.45);
-    backdrop-filter:blur(18px);
-
-    border:1px solid rgba(255,255,255,.35);
-
     cursor:pointer;
 
-    font-size:16px;
+    transition:0.2s;
 }
 
 .option:active{
-    transform:scale(0.98);
+    transform:scale(0.97);
 }
 
-.correct{
-    background:rgba(52,199,89,.25);
-}
+.correct{ background:rgba(52,199,89,.25); }
+.wrong{ background:rgba(255,59,48,.22); }
 
-.wrong{
-    background:rgba(255,59,48,.22);
-}
-
-/* 底部按钮（完全一致学习页） */
+/* 按钮 */
 .bottom-bar{
-    position:fixed;
+    position:absolute;
     left:50%;
     transform:translateX(-50%);
-    bottom:80px;
+    bottom:220px;
 
     display:flex;
     gap:80px;
@@ -165,13 +195,17 @@ body{
     height:52px;
     border-radius:50%;
 
-    background:rgba(255,255,255,.2);
+    border:1px solid rgba(255,255,255,.35);
+    background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.06));
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    font-size:22px;
+    cursor:pointer;
 }
 
 .btn:active{
@@ -188,6 +222,7 @@ body{
 
 <div class="card">
     <div class="audio-btn" onclick="speak()">🔊</div>
+
     <div id="word">Loading...</div>
     <div id="phonetic"></div>
 </div>
@@ -201,104 +236,99 @@ body{
 
 <script>
 
-/* =========================
-   数据 & 顺序（完全不刷新）
-========================= */
 let words = [];
-let index = Number(localStorage.getItem("word_index") || 0);
+let index = 0;
+let locked = false;
 
+/* 错题 */
 let wrongs = JSON.parse(localStorage.getItem("wrongs_list") || "[]");
 
-/* 只初始化一次随机顺序 */
-fetch("words.json")
-.then(res => res.json())
-.then(data => {
+/* ====== 只在第一次随机 ====== */
+fetch("words.json").then(r=>r.json()).then(data=>{
 
-    let saved = localStorage.getItem("words_order");
+    let saved = sessionStorage.getItem("quiz_order");
 
     if(saved){
         words = JSON.parse(saved);
     }else{
-        words = data.sort(() => Math.random() - 0.5);
-        localStorage.setItem("words_order", JSON.stringify(words));
+        words = [...data].sort(()=>Math.random()-0.5);
+        sessionStorage.setItem("quiz_order", JSON.stringify(words));
     }
 
     render();
     speak();
 });
 
-/* =========================
-   渲染题目
-========================= */
+/* ====== 渲染 ====== */
 function render(){
+    if(!words.length) return;
 
     let w = words[index];
-    if(!w) return;
 
     document.getElementById("word").innerText = w.word;
     document.getElementById("phonetic").innerText = w.phonetic || "";
 
-    let options = [w.definition];
+    let correct = w.definition;
+
+    let options = [correct];
 
     while(options.length < 4){
         let r = words[Math.floor(Math.random()*words.length)].definition;
         if(!options.includes(r)) options.push(r);
     }
 
-    options.sort(() => Math.random() - 0.5);
+    options.sort(()=>Math.random()-0.5);
 
     let box = document.getElementById("options");
     box.innerHTML = "";
 
-    options.forEach(t => {
-
+    options.forEach(t=>{
         let div = document.createElement("div");
         div.className = "option";
         div.innerText = t;
 
-        div.onclick = () => check(div, t, w);
+        div.onclick = ()=>check(div,t,w);
 
         box.appendChild(div);
     });
-
-    localStorage.setItem("word_index", index);
 }
 
-/* =========================
-   发音（完全复用学习页逻辑）
-========================= */
+/* ====== 发音 ====== */
 function speak(){
-
     let w = words[index];
     if(!w) return;
 
     window.speechSynthesis.cancel();
 
     let u = new SpeechSynthesisUtterance(w.word);
-    u.lang = "en-US";
-    u.rate = 0.95;
-
+    u.lang="en-US";
+    u.rate=0.95;
     speechSynthesis.speak(u);
 }
 
-/* =========================
-   判断
-========================= */
-function check(el, selected, w){
+/* ====== 答题 ====== */
+function check(el,selected,w){
+
+    if(locked) return;
+    locked = true;
 
     let all = document.querySelectorAll(".option");
-    all.forEach(i => i.style.pointerEvents = "none");
+    all.forEach(i=>i.style.pointerEvents="none");
 
     if(selected === w.definition){
 
         el.classList.add("correct");
-        setTimeout(() => next(), 500);
+
+        setTimeout(()=>{
+            next();
+            locked=false;
+        },500);
 
     }else{
 
         el.classList.add("wrong");
 
-        all.forEach(i => {
+        all.forEach(i=>{
             if(i.innerText === w.definition){
                 i.classList.add("correct");
             }
@@ -306,45 +336,42 @@ function check(el, selected, w){
 
         saveWrong(w);
 
-        setTimeout(() => next(), 2000);
+        setTimeout(()=>{
+            next();
+            locked=false;
+        },2000);
     }
 }
 
-/* =========================
-   错题
-========================= */
+/* ====== 错题 ====== */
 function saveWrong(w){
 
     if(!w || !w.word) return;
 
-    if(!wrongs.find(i => i.word === w.word)){
+    if(!wrongs.some(i=>i.word===w.word)){
         wrongs.push(w);
-        localStorage.setItem("wrongs_list", JSON.stringify(wrongs));
+        localStorage.setItem("wrongs_list",JSON.stringify(wrongs));
     }
 }
 
-/* =========================
-   切换（不刷新）
-========================= */
+/* ====== 切题 ====== */
 function next(){
-    index = (index + 1) % words.length;
+    index = (index+1) % words.length;
     render();
     speak();
 }
 
 function prev(){
-    if(index > 0){
+    if(index>0){
         index--;
         render();
         speak();
     }
 }
 
-/* =========================
-   返回
-========================= */
+/* ====== 返回 ====== */
 function back(){
-    location.href = "index.html";
+    location.href="index.html";
 }
 
 </script>
