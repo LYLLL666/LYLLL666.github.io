@@ -9,24 +9,7 @@
 
 <style>
 
-body{
-    margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
 
-    /* 🌈 绿色 + 橙色彩虹混合 */
-    background: linear-gradient(
-        135deg,
-        
-        #a7f3d0 20%,    /* 浅绿 */
-        
-        
-        #86efac 100%    /* 回到绿 */
-    );
-
-    min-height:100vh;
-    text-align:center;
-    color:#0f172a;
-}
 
 body::before{
     content:"";
@@ -36,29 +19,7 @@ body::before{
     pointer-events:none;
 }
 
-body::before{
-    content:"";
-    position:fixed;
-    inset:0;
 
-    background: radial-gradient(
-        circle at 20% 20%,
-        rgba(255,255,255,.35),
-        transparent 40%
-    ),
-    radial-gradient(
-        circle at 80% 30%,
-        rgba(255,200,100,.25),
-        transparent 45%
-    ),
-    radial-gradient(
-        circle at 40% 80%,
-        rgba(100,255,180,.25),
-        transparent 50%
-    );
-
-    pointer-events:none;
-}
 
 /* 返回 */
 .back{
