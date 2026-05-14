@@ -378,24 +378,24 @@ fetch("words.json")
 .then(res => res.json())
 .then(data => {
 
-    let saved =
-    localStorage.getItem("quiz_order");
+   let saved =
+sessionStorage.getItem("quiz_order");
 
-    if(saved){
+if(saved){
 
-        words = JSON.parse(saved);
+    words = JSON.parse(saved);
 
-    }else{
+}else{
 
-        words =
-        data.sort(() =>
-        Math.random() - 0.5);
+    words =
+    [...data].sort(() =>
+    Math.random() - 0.5);
 
-        localStorage.setItem(
-        "quiz_order",
-        JSON.stringify(words)
-        );
-    }
+    sessionStorage.setItem(
+    "quiz_order",
+    JSON.stringify(words)
+    );
+}
 
     render();
     speak();
