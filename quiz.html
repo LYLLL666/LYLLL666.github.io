@@ -15,11 +15,10 @@ user-scalable=no">
 <style>
 
 /* =========================
-   BASE
+   BASE（完全不动UI）
 ========================= */
 body{
     margin:0;
-
     font-family:
     -apple-system,
     BlinkMacSystemFont,
@@ -47,7 +46,6 @@ body{
 
 body::before{
     content:"";
-
     position:fixed;
     inset:0;
 
@@ -62,12 +60,9 @@ body::before{
     pointer-events:none;
 }
 
-/* =========================
-   返回按钮
-========================= */
+/* 返回 */
 .back{
     position:fixed;
-
     left:16px;
     top:20px;
 
@@ -98,39 +93,25 @@ body::before{
     inset 0 1px 1px rgba(255,255,255,.6);
 
     z-index:99999;
-
-    -webkit-tap-highlight-color: transparent;
 }
 
-/* =========================
-   标题
-========================= */
+/* 标题 */
 .top{
     position:absolute;
-
     top:18px;
-
     width:100%;
-
     text-align:center;
 
     font-size:18px;
     font-weight:600;
-
     color:rgba(15,23,42,.75);
 }
 
-/* =========================
-   单词卡片
-========================= */
+/* 卡片 */
 .card{
-
     margin-top:90px;
-
     width:300px;
-
     padding:24px;
-
     border-radius:24px;
 
     background:rgba(255,255,255,.55);
@@ -157,19 +138,13 @@ body::before{
 
 #phonetic{
     margin-top:8px;
-
     font-size:14px;
-
     opacity:.7;
 }
 
-/* =========================
-   发音按钮
-========================= */
+/* 发音 */
 .audio-btn{
-
     position:absolute;
-
     top:12px;
     right:12px;
 
@@ -195,33 +170,19 @@ body::before{
     box-shadow:
     0 6px 12px rgba(0,0,0,.10),
     inset 0 1px 1px rgba(255,255,255,.6);
-
-    -webkit-tap-highlight-color: transparent;
 }
 
-.audio-btn:active{
-    transform:scale(.92);
-}
-
-/* =========================
-   选项
-========================= */
+/* 选项 */
 .options{
-
     width:320px;
-
     margin:24px auto 0;
-
     display:flex;
     flex-direction:column;
-
     gap:14px;
 }
 
 .option{
-
     padding:16px 18px;
-
     border-radius:20px;
 
     background:rgba(255,255,255,.45);
@@ -230,19 +191,10 @@ body::before{
 
     border:1px solid rgba(255,255,255,.35);
 
-    box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.3),
-    0 6px 18px rgba(0,0,0,.05);
-
+    cursor:pointer;
     font-size:16px;
 
-    color:#0f172a;
-
-    cursor:pointer;
-
-    transition:.18s;
-
-    -webkit-tap-highlight-color: transparent;
+    transition:.15s;
 }
 
 .option:active{
@@ -257,47 +209,30 @@ body::before{
     background:rgba(255,59,48,.22);
 }
 
-/* =========================
-   按钮区
-========================= */
+/* 底部按钮 */
 .bottom-bar{
-
     position:fixed;
-
     left:50%;
     transform:translateX(-50%);
-
     bottom:80px;
 
     display:flex;
-
     gap:80px;
-
-    align-items:center;
-    justify-content:center;
 }
 
-/* =========================
-   按钮
-========================= */
 .btn{
-
     width:52px;
     height:52px;
-
     border-radius:50%;
 
     border:1px solid rgba(255,255,255,.35);
 
     background:
-    linear-gradient(
-        to bottom,
-        rgba(255,255,255,.18),
-        rgba(255,255,255,.06)
-    );
+    linear-gradient(to bottom,
+    rgba(255,255,255,.18),
+    rgba(255,255,255,.06));
 
     backdrop-filter:blur(18px) saturate(170%);
-    -webkit-backdrop-filter:blur(18px) saturate(170%);
 
     box-shadow:
     inset 0 1px 1px rgba(255,255,255,.4),
@@ -310,14 +245,6 @@ body::before{
     display:flex;
     align-items:center;
     justify-content:center;
-
-    color:rgba(15,23,42,.75);
-
-    -webkit-tap-highlight-color: transparent;
-}
-
-.btn:active{
-    transform:scale(.92);
 }
 
 </style>
@@ -325,89 +252,64 @@ body::before{
 
 <body>
 
-<div class="back"
-onclick="back()">←</div>
-
+<div class="back" onclick="back()">←</div>
 <div class="top">练习模式</div>
 
-<!-- 单词卡 -->
 <div class="card">
 
-    <div class="audio-btn"
-    onclick="speak()">🔊</div>
+    <div class="audio-btn" onclick="speak()">🔊</div>
 
     <div id="word">Loading...</div>
-
     <div id="phonetic"></div>
 
 </div>
 
-<!-- 选项 -->
-<div class="options"
-id="options"></div>
+<div class="options" id="options"></div>
 
-<!-- 底部按钮 -->
 <div class="bottom-bar">
-
-    <div class="btn"
-    onclick="prevQuestion()">←</div>
-
-    <div class="btn"
-    onclick="nextQuestion()">→</div>
-
+    <div class="btn" onclick="prevQuestion()">←</div>
+    <div class="btn" onclick="nextQuestion()">→</div>
 </div>
 
 <script>
 
+/* =========================
+   数据
+========================= */
 let words = [];
-
 let index = 0;
 
-/* 错题本 */
-let wrongs =
-JSON.parse(
-localStorage.getItem("wrongs_list")
-|| "[]"
-);
+/* 错题（稳定版） */
+let wrongs = [];
+
+try {
+    wrongs = JSON.parse(localStorage.getItem("wrongs_list")) || [];
+} catch(e){
+    wrongs = [];
+}
 
 /* =========================
-   随机顺序
+   只第一次随机（不刷新就不变）
 ========================= */
-
 fetch("words.json")
 .then(res => res.json())
 .then(data => {
 
-/* 网站首次启动 */
-if(!sessionStorage.getItem("site_started")){
+    let saved = localStorage.getItem("quiz_order");
 
-    sessionStorage.setItem("site_started", "1");
+    if(saved){
 
-    /* 清空旧随机顺序 */
-    localStorage.removeItem("quiz_order");
-}
+        words = JSON.parse(saved);
 
-/* 读取顺序 */
-let saved =
-localStorage.getItem("quiz_order");
+    }else{
 
-/* 已有顺序 */
-if(saved){
+        words = [...data].sort(() => Math.random() - 0.5);
 
-    words = JSON.parse(saved);
-
-}else{
-
-    /* 第一次进入才随机 */
-    words =
-    [...data].sort(() =>
-    Math.random() - 0.5);
-
-    localStorage.setItem(
-    "quiz_order",
-    JSON.stringify(words)
-    );
-}
+        localStorage.setItem(
+            "quiz_order",
+            JSON.stringify(words)
+        );
+    }
 
     render();
     speak();
@@ -416,154 +318,115 @@ if(saved){
 /* =========================
    渲染
 ========================= */
-
 function render(){
 
-    if(words.length === 0) return;
+    if(!words.length) return;
 
     let w = words[index];
 
-    document.getElementById("word")
-    .innerText = w.word;
+    document.getElementById("word").innerText = w.word;
+    document.getElementById("phonetic").innerText = w.phonetic || "";
 
-    document.getElementById("phonetic")
-    .innerText = w.phonetic || "";
-
-    /* 正确答案 */
     let options = [w.definition];
 
-    /* 随机错误选项 */
     while(options.length < 4){
 
-        let random =
-        words[
-            Math.floor(
-            Math.random() *
-            words.length
-            )
+        let r = words[
+            Math.floor(Math.random() * words.length)
         ].definition;
 
-        if(!options.includes(random)){
-            options.push(random);
+        if(!options.includes(r)){
+            options.push(r);
         }
     }
 
-    /* 打乱 */
-    options.sort(() =>
-    Math.random() - 0.5);
+    options.sort(() => Math.random() - 0.5);
 
-    let container =
-    document.getElementById("options");
-
-    container.innerHTML = "";
+    let box = document.getElementById("options");
+    box.innerHTML = "";
 
     options.forEach(text => {
 
-        let div =
-        document.createElement("div");
-
+        let div = document.createElement("div");
         div.className = "option";
-
         div.innerText = text;
 
         div.onclick = () =>
-        checkAnswer(
-            div,
-            text,
-            w.definition,
-            w
-        );
+        check(div, text, w);
 
-        container.appendChild(div);
+        box.appendChild(div);
     });
 }
 
 /* =========================
    发音
 ========================= */
-
 function speak(){
 
     let w = words[index];
-
-    if(!w || !w.word) return;
+    if(!w) return;
 
     window.speechSynthesis.cancel();
 
-    let utter =
-    new SpeechSynthesisUtterance(w.word);
+    let u = new SpeechSynthesisUtterance(w.word);
+    u.lang = "en-US";
+    u.rate = 0.95;
 
-    utter.lang = "en-US";
-
-    utter.rate = 0.95;
-
-    speechSynthesis.speak(utter);
+    speechSynthesis.speak(u);
 }
 
 /* =========================
    判断
 ========================= */
+function check(el, selected, w){
 
-function checkAnswer(
-    el,
-    selected,
-    correct,
-    wordObj
-){
+    let all = document.querySelectorAll(".option");
 
-    let all =
-    document.querySelectorAll(".option");
+    all.forEach(i => i.style.pointerEvents = "none");
 
-    all.forEach(i => {
-        i.style.pointerEvents = "none";
-    });
-
-    /* 正确 */
-    if(selected === correct){
+    if(selected === w.definition){
 
         el.classList.add("correct");
 
-        setTimeout(() => {
-            nextQuestion();
-        }, 500);
+        setTimeout(nextQuestion, 500);
 
     }else{
 
-        /* 错误 */
         el.classList.add("wrong");
 
         all.forEach(i => {
-
-            if(i.innerText === correct){
+            if(i.innerText === w.definition){
                 i.classList.add("correct");
             }
         });
 
-        saveWrong(wordObj);
+        saveWrong(w);
 
-        setTimeout(() => {
-            nextQuestion();
-        }, 2000);
+        setTimeout(nextQuestion, 2000);
     }
 }
 
 /* =========================
-   错题保存
+   错题保存（已优化）
 ========================= */
-
 function saveWrong(w){
 
-    let exists =
-    wrongs.find(i =>
-    i.word === w.word);
+    if(!w || !w.word) return;
+
+    let exists = wrongs.some(i => i.word === w.word);
 
     if(!exists){
 
-        wrongs.push(w);
+        wrongs.push({
+            word: w.word,
+            phonetic: w.phonetic || "",
+            definition: w.definition || "",
+            example: w.example || ""
+        });
 
         localStorage.setItem(
-        "wrongs_list",
-        JSON.stringify(wrongs)
+            "wrongs_list",
+            JSON.stringify(wrongs)
         );
     }
 }
@@ -571,22 +434,12 @@ function saveWrong(w){
 /* =========================
    下一题
 ========================= */
-
 function nextQuestion(){
 
     index++;
 
     if(index >= words.length){
-
         index = 0;
-
-        words.sort(() =>
-        Math.random() - 0.5);
-
-        localStorage.setItem(
-        "quiz_order",
-        JSON.stringify(words)
-        );
     }
 
     render();
@@ -596,13 +449,10 @@ function nextQuestion(){
 /* =========================
    上一题
 ========================= */
-
 function prevQuestion(){
 
     if(index > 0){
-
         index--;
-
         render();
         speak();
     }
@@ -611,7 +461,6 @@ function prevQuestion(){
 /* =========================
    返回
 ========================= */
-
 function back(){
     location.href = "index.html";
 }
