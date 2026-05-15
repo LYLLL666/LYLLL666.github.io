@@ -20,119 +20,207 @@
 
 body{
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
-    background: radial-gradient(circle at top, #d7ecff, #eaf3ff);
     height:100vh;
     overflow:hidden;
+
+    background: radial-gradient(circle at top, #d7ecff, #eaf3ff);
 }
 
 /* =========================
-   顶部栏
+   背景流光
 ========================= */
-.topbar{
+canvas{
     position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    height:50px;
+    inset:0;
+    z-index:-2;
+}
+
+/* =========================
+   顶部圆形按钮（强化质感）
+========================= */
+.fab{
+    position:fixed;
+
+    width:54px;
+    height:54px;
+
+    border-radius:50%;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    background:rgba(255,255,255,0.35);
-    backdrop-filter: blur(20px);
+    cursor:pointer;
+    user-select:none;
 
-    border-bottom:1px solid rgba(0,0,0,0.05);
+    background:
+    linear-gradient(145deg,
+        rgba(255,255,255,.55),
+        rgba(255,255,255,.15)
+    );
+
+    backdrop-filter: blur(26px) saturate(180%);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
+
+    border:1px solid rgba(255,255,255,.35);
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.12),
+        inset 0 1px 1px rgba(255,255,255,.7),
+        inset 0 -2px 8px rgba(0,0,0,.08);
+
+    color:rgba(20,20,25,.8);
+    font-size:18px;
+
+    transition:all .18s ease;
 }
 
-/* 按钮 */
-.btn{
-    position:absolute;
-    top:10px;
-    font-size:14px;
-    padding:6px 10px;
-    border-radius:10px;
-    background:rgba(255,255,255,0.5);
-    backdrop-filter: blur(10px);
-    border:none;
+/* hover（电脑） */
+.fab:hover{
+    transform:translateY(-2px);
+    box-shadow:
+        0 14px 30px rgba(0,0,0,.16),
+        inset 0 1px 1px rgba(255,255,255,.75);
 }
 
-/* 左上返回 */
+/* 按下质感 */
+.fab:active{
+    transform:scale(.94);
+    box-shadow:
+        inset 0 6px 12px rgba(0,0,0,.12),
+        inset 0 -2px 6px rgba(255,255,255,.4);
+}
+
+/* 左右位置 */
 .back{
-    left:10px;
+    top:18px;
+    left:18px;
 }
 
-/* 右上刷新 */
 .refresh{
-    right:10px;
+    top:18px;
+    right:18px;
 }
 
 /* =========================
-   聊天区
+   聊天框（玻璃卡片）
 ========================= */
 #chat{
     position:absolute;
-    top:60px;
-    bottom:70px;
-    left:0;
-    right:0;
+    top:90px;
+    bottom:90px;
+    left:50%;
+    transform:translateX(-50%);
+
+    width:92%;
+    max-width:420px;
+
+    padding:16px;
 
     overflow-y:auto;
-    padding:15px;
+
+    border-radius:26px;
+
+    background:rgba(255,255,255,.38);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.6),
+        0 15px 35px rgba(0,0,0,.08);
 }
 
 /* 消息 */
 .msg{
-    max-width:80%;
+    max-width:82%;
     padding:10px 14px;
     margin:10px 0;
-    border-radius:14px;
+
+    border-radius:16px;
+    line-height:1.5;
     word-break:break-word;
 }
 
 /* 用户 */
 .user{
     margin-left:auto;
-    background:rgba(60,120,255,0.9);
+    background:rgba(50,120,255,.92);
     color:white;
+    box-shadow:0 6px 14px rgba(50,120,255,.25);
 }
 
 /* AI */
 .ai{
     margin-right:auto;
-    background:rgba(255,255,255,0.7);
+    background:rgba(255,255,255,.75);
+    box-shadow:0 6px 14px rgba(0,0,0,.06);
 }
 
 /* =========================
-   输入区
+   输入区（质感按钮）
 ========================= */
 .inputBox{
     position:fixed;
-    bottom:10px;
-    left:10px;
-    right:10px;
+    bottom:18px;
+    left:50%;
+    transform:translateX(-50%);
+
+    width:92%;
+    max-width:420px;
 
     display:flex;
     gap:10px;
 }
 
+/* 输入框 */
 input{
     flex:1;
-    padding:12px;
-    border-radius:14px;
+    padding:13px 14px;
+
+    border-radius:18px;
     border:none;
     outline:none;
 
-    background:rgba(255,255,255,0.5);
-    backdrop-filter: blur(20px);
+    background:rgba(255,255,255,.55);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+
+    box-shadow:
+        inset 0 2px 6px rgba(255,255,255,.6),
+        inset 0 -2px 6px rgba(0,0,0,.06);
+
+    font-size:16px;
 }
 
+/* 发送按钮（重点质感） */
 button{
-    padding:12px 14px;
+    padding:12px 16px;
+
     border:none;
-    border-radius:14px;
-    background:rgba(60,120,255,0.9);
+    border-radius:18px;
+
+    cursor:pointer;
+
+    background:
+    linear-gradient(145deg,
+        rgba(60,120,255,.95),
+        rgba(40,90,220,.95)
+    );
+
     color:white;
+    font-weight:600;
+
+    box-shadow:
+        0 10px 18px rgba(40,90,220,.25),
+        inset 0 1px 1px rgba(255,255,255,.3);
+
+    transition:all .15s ease;
+}
+
+button:active{
+    transform:scale(.96);
+    box-shadow:
+        inset 0 6px 14px rgba(0,0,0,.25);
 }
 
 /* 隐藏滚动条 */
@@ -145,16 +233,11 @@ button{
 
 <body>
 
-<!-- 顶部 -->
-<div class="topbar">
+<!-- 返回 -->
+<div class="fab back" onclick="history.back()">←</div>
 
-    <button class="btn back" onclick="goBack()">← 返回</button>
-
-    <div style="font-weight:600;">AI Chat</div>
-
-    <button class="btn refresh" onclick="location.reload()">⟳</button>
-
-</div>
+<!-- 刷新 -->
+<div class="fab refresh" onclick="location.reload()">⟳</div>
 
 <!-- 聊天 -->
 <div id="chat"></div>
@@ -166,11 +249,6 @@ button{
 </div>
 
 <script>
-
-/* 返回 */
-function goBack(){
-    history.back();
-}
 
 /* 添加消息 */
 function addMsg(text,type){
