@@ -1,3 +1,48 @@
-export async function onRequest() {
-  return new Response("FUNCTIONS WORKING");
+export async function onRequestPost(context) {
+
+  try {
+
+    const body = await context.request.json();
+
+    const res = await fetch("https://api.deepseek.com/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "sk-1f50671c6d4347acba71ae2b2e0e9081"
+      },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        messages: [
+          {
+            role: "system",
+            content: "You are a helpful English tutor."
+          },
+          {
+            role: "user",
+            content: body.message || ""
+          }
+        ]
+      })
+    });
+
+    const data = await res.json();
+
+    return new Response(JSON.stringify(data), {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+  } catch (e) {
+
+    return new Response(JSON.stringify({
+      error: e.toString()
+    }), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+  }
 }
