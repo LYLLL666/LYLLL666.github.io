@@ -133,13 +133,18 @@ canvas{
    聊天框（不动）
 ========================= */
 #chat{
+    position:fixed;
+    top:90px;
+    bottom:80px;
+    left:50%;
+    transform:translateX(-50%);
+
     width:92%;
     max-width:420px;
 
-    margin:120px auto 0 auto;
-
     padding:16px;
-    padding-bottom:140px; /* ✅ 关键：给输入框留空间 */
+
+    overflow-y:auto;
 
     border-radius:26px;
 
@@ -193,6 +198,7 @@ canvas{
     /*transition: transform 0.2s ease;*/
    
     z-index:999; /* ✅ 最高层 */
+    position:fixed;
 }
 
 /* 输入框 */
@@ -240,7 +246,7 @@ button{
 <div class="fab back" onclick="history.back()">←</div>
 
 <!-- 中间卡片（新增） -->
-<div class="centerCard">AI Chat</div>
+
 
 <!-- 右上 -->
 <div class="fab refresh" onclick="location.reload()">⟳</div>
@@ -310,7 +316,13 @@ document.getElementById("input").addEventListener("keydown",(e)=>{
     if(e.key==="Enter") send();
 });
 
-
+document.addEventListener('focusin', (e) => {
+    if (e.target.tagName === 'INPUT') {
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+        }, 50);
+    }
+});
    
 </script>
 
