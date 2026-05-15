@@ -77,6 +77,8 @@ canvas{
 
     transition:all .18s ease;
 
+    pointer-events:auto;
+   
     /* ✅ 最高层 */
     z-index:999;
 }
@@ -84,11 +86,13 @@ canvas{
 /* hover */
 .fab:hover{
     transform:translateY(-2px);
+    pointer-events:auto;
 }
 
 /* active */
 .fab:active{
     transform:scale(.94);
+    pointer-events:auto;
 }
 
 /* 左右位置 */
@@ -125,7 +129,7 @@ canvas{
 
     font-weight:600;
     color:rgba(10,10,15,.75);
-
+    pointer-events:auto;
     z-index:999; /* ✅ 最高层 */
 }
 
@@ -242,14 +246,15 @@ button{
 
 <body>
 
-<!-- 左上 -->
-<div class="fab back" onclick="history.back()">←</div>
+<div class="topBar">
 
-<!-- 中间卡片（新增） -->
-<div class="centerCard">AI Chat</div>
+    <div class="fab back" onclick="history.back()">←</div>
 
-<!-- 右上 -->
-<div class="fab refresh" onclick="location.reload()">⟳</div>
+    <div class="centerCard">AI Chat</div>
+
+    <div class="fab refresh" onclick="location.reload()">⟳</div>
+
+</div>
 
 <!-- 聊天 -->
 <div id="chat"></div>
@@ -311,7 +316,20 @@ async function send(){
     }
 }
 
-ibu
+.topBar{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+
+    height:70px;
+
+    z-index:999;
+
+    pointer-events:none; /* 防止影响滑动 */
+}
+
+
    
 </script>
 
