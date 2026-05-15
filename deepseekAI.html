@@ -108,7 +108,7 @@ canvas{
 .centerCard{
     position:fixed;
 
-    top:34px;
+    top:18px;
     left:50%;
     transform:translateX(-50%);
 
@@ -133,24 +133,18 @@ canvas{
    聊天框（不动）
 ========================= */
 #chat{
-    position:absolute;
-    top:90px;
-    bottom:90px;
-    left:50%;
-    transform:translateX(-50%);
-
     width:92%;
     max-width:420px;
 
-    padding:16px;
+    margin:120px auto 0 auto;
 
-    overflow-y:auto;
+    padding:16px;
+    padding-bottom:140px; /* ✅ 关键：给输入框留空间 */
 
     border-radius:26px;
 
     background:rgba(255,255,255,.38);
     backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
 
     box-shadow:
         inset 0 1px 1px rgba(255,255,255,.6),
@@ -196,7 +190,7 @@ canvas{
     display:flex;
     gap:10px;
    
-    transition: transform 0.2s ease;
+    /*transition: transform 0.2s ease;*/
    
     z-index:999; /* ✅ 最高层 */
 }
@@ -316,47 +310,7 @@ document.getElementById("input").addEventListener("keydown",(e)=>{
     if(e.key==="Enter") send();
 });
 
-/* =========================
-   手机键盘适配（核心）
-========================= */
 
-const inputBox = document.querySelector(".inputBox");
-const chat = document.getElementById("chat");
-
-function adjustForKeyboard(){
-
-    const vv = window.visualViewport;
-
-    if(!vv) return;
-
-    const heightDiff = window.innerHeight - vv.height;
-
-    // 键盘弹出
-    if(heightDiff > 100){
-        inputBox.style.transform = `translateX(-50%) translateY(-${heightDiff}px)`;
-        chat.style.height = `calc(100vh - ${heightDiff + 160}px)`;
-    } 
-    else {
-        inputBox.style.transform = `translateX(-50%)`;
-        chat.style.height = `calc(100vh - 180px)`;
-    }
-
-    // 自动滚到底部
-    chat.scrollTop = chat.scrollHeight;
-}
-
-if(window.visualViewport){
-    visualViewport.addEventListener("resize", adjustForKeyboard);
-    visualViewport.addEventListener("scroll", adjustForKeyboard);
-}
-
-document.getElementById("input").addEventListener("focus",()=>{
-    setTimeout(adjustForKeyboard,100);
-});
-
-document.getElementById("input").addEventListener("blur",()=>{
-    setTimeout(adjustForKeyboard,100);
-});
    
 </script>
 
