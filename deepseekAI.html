@@ -146,10 +146,15 @@ canvas{
 
     overflow-y:auto;
 
-    /* ❌ 去掉卡片 */
     background:transparent;
     border:none;
     box-shadow:none;
+
+    display:flex;
+    flex-direction:column;
+
+    /* ✅ 让最新消息在底部（微信式） */
+    justify-content:flex-end;
 }
 /* 消息 */
 .msg{
