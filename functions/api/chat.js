@@ -4,7 +4,7 @@ export async function onRequestPost(context) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer sk-你的Key写这里"
+      "Authorization": "sk-1f50671c6d4347acba71ae2b2e0e9081"
     },
     body: JSON.stringify({
       model: "deepseek-chat",
