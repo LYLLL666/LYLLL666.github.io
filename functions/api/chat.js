@@ -1,5 +1,3 @@
-export async function onRequestPost() {
-
-  return new Response("FUNCTIONS OK");
-
+export async function onRequest() {
+  return new Response("FUNCTIONS WORKING");
 }
