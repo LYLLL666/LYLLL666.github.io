@@ -134,28 +134,23 @@ canvas{
 ========================= */
 #chat{
     position:fixed;
-    top:90px;
-    bottom:80px;
+    top:70px;
+    bottom:90px;
     left:50%;
     transform:translateX(-50%);
 
     width:92%;
     max-width:420px;
 
-    padding:16px;
+    padding:10px;
 
     overflow-y:auto;
 
-    border-radius:26px;
-
-    background:rgba(255,255,255,.38);
-    backdrop-filter: blur(28px);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.6),
-        0 15px 35px rgba(0,0,0,.08);
+    /* ❌ 去掉卡片 */
+    background:transparent;
+    border:none;
+    box-shadow:none;
 }
-
 /* 消息 */
 .msg{
     max-width:82%;
@@ -198,7 +193,7 @@ canvas{
     /*transition: transform 0.2s ease;*/
    
     z-index:999; /* ✅ 最高层 */
-    position:fixed;
+    
 }
 
 /* 输入框 */
@@ -246,7 +241,7 @@ button{
 <div class="fab back" onclick="history.back()">←</div>
 
 <!-- 中间卡片（新增） -->
-
+<div class="centerCard">AI Chat</div>
 
 <!-- 右上 -->
 <div class="fab refresh" onclick="location.reload()">⟳</div>
@@ -311,18 +306,7 @@ async function send(){
     }
 }
 
-/* 回车 */
-document.getElementById("input").addEventListener("keydown",(e)=>{
-    if(e.key==="Enter") send();
-});
-
-document.addEventListener('focusin', (e) => {
-    if (e.target.tagName === 'INPUT') {
-        setTimeout(() => {
-            window.scrollTo(0, 0);
-        }, 50);
-    }
-});
+ibu
    
 </script>
 
