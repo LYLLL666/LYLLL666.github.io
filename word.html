@@ -326,6 +326,7 @@ body::before{
 <div class="group-wrap">
     <!-- ⭐ 已融合：显示+按钮合一 -->
     <div class="group-btn" id="groupBtn" onclick="chooseGroup()">第1组</div>
+    <div class="group-btn" onclick="refreshWord()">⟳</div>
 </div>
 
 <div class="top">单词学习</div>
@@ -511,6 +512,11 @@ function saveWord(){
 
 function back(){
     location.href = "index.html";
+}
+
+function refreshWord(){
+    localStorage.removeItem("word_index");
+    location.reload();
 }
 
 /* 初始化 */

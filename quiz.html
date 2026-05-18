@@ -236,6 +236,7 @@ body::before{
 
 <div class="group-wrap">
     <div class="group-btn" id="groupBtn" onclick="chooseGroup()">第1组</div>
+    <div class="group-btn" onclick="refreshQuiz()">⟳</div>
 </div>
 
 <div class="top">练习模式</div>
@@ -259,10 +260,6 @@ body::before{
 </div>
 
 <script>
-
-/* =========================
-   状态
-========================= */
 let quizState = JSON.parse(localStorage.getItem("quiz_state") || "{}");
 
 let words = [];
@@ -275,70 +272,34 @@ let hasSpoken = false;
 let currentOptions = [];
 
 /* =========================
-   ⭐ 分组
+   分组（与学习模式同步 word_group）
 ========================= */
-let groupIndex = Number(localStorage.getItem("quiz_group") || 1);
+let groupIndex = Number(localStorage.getItem("word_group") || 1);
 const GROUP_SIZE = 50;
+let totalWords = 0;
 
-/* =========================
-   🔥 每次进入都询问
-========================= */
-function askOnEnter(){
-
-    let refresh = confirm("是否刷新本次练习？\n\n确定 = 刷新\n取消 = 保留进度");
-
-    if(refresh){
-
-        index = 0;
-        quizState = {};
-
-        allWords = [...allWords].sort(() => Math.random() - 0.5);
-
-        let start = (groupIndex - 1) * GROUP_SIZE;
-        let end = start + GROUP_SIZE;
-
-        words = allWords.slice(start,end);
-
-        localStorage.setItem("quiz_order", JSON.stringify(allWords));
-
-        localStorage.removeItem("quiz_state");
-        localStorage.setItem("quiz_index","0");
-    }
-}
-
-/* =========================
-   ⭐ 分组系统（关键修改）
-========================= */
 function chooseGroup(){
 
-    let input = prompt("请选择第几组（1-5）");
+    let maxGroup = Math.ceil(totalWords / GROUP_SIZE) || 5;
+    let input = prompt("请选择第几组（1-" + maxGroup + "）");
 
     let n = Number(input);
 
-    if(!Number.isInteger(n) || n < 1 || n > 5){
-        alert("请输入1-5之间的整数");
+    if(!Number.isInteger(n) || n < 1 || n > maxGroup){
+        alert("请输入1-" + maxGroup + "之间的整数");
         return;
     }
 
     groupIndex = n;
-    
 
-
-    localStorage.setItem("quiz_group", groupIndex);
+    localStorage.setItem("word_group", groupIndex);
 
     index = 0;
 
     localStorage.setItem("quiz_index","0");
 
-    
-
-    if(!sessionStorage.getItem("quiz_group_reload")){
-        sessionStorage.setItem("quiz_group_reload","1");
-        location.reload();
-    }else{
-        applyGroup();
-        render();
-    }
+    applyGroup();
+    render();
 }
 
 function applyGroup(){
@@ -348,15 +309,13 @@ function applyGroup(){
 
     words = allWords.slice(start,end);
 
-    document.getElementById("groupBtn").innerText = `第${groupIndex}组`;
+    document.getElementById("groupBtn").innerText = "第" + groupIndex + "组";
 }
 
-/* =========================
-   ⭐ 词库
-========================= */
 fetch("words.json?v=" + Date.now())
 .then(res => res.json())
 .then(data => {
+    totalWords = data.length;
 
     let saved = localStorage.getItem("quiz_order");
 
@@ -371,23 +330,15 @@ fetch("words.json?v=" + Date.now())
 
     bind();
     render();
-
-    askOnEnter();
-
-    render();
 });
 
-/* =========================
-   ⭐ 修复点（关键：分组隔离状态）
-========================= */
 function stateKey(){
     return groupIndex + "_" + index;
 }
 
-/* =========================
-   渲染
-========================= */
 function render(){
+
+    if(words.length === 0) return;
 
     let w = words[index];
 
@@ -433,9 +384,6 @@ function render(){
     }
 }
 
-/* =========================
-   生成选项
-========================= */
 function generate(correct){
 
     let pool = words
@@ -449,9 +397,6 @@ function generate(correct){
     return pool.sort(() => Math.random() - 0.5);
 }
 
-/* =========================
-   点击（关键修改）
-========================= */
 function select(i){
 
     if(answered || lockNext) return;
@@ -489,15 +434,12 @@ function select(i){
     }
 }
 
-/* =========================
-   自动下一题
-========================= */
 function autoNext(t){
 
     setTimeout(()=>{
 
         if(index >= words.length - 1){
-            showTip("这是最后一个了");
+            showTip(endTips[Math.floor(Math.random() * endTips.length)]);
             return;
         }
 
@@ -507,9 +449,6 @@ function autoNext(t){
     }, t);
 }
 
-/* =========================
-   错题
-========================= */
 function addWrong(w){
     let list = JSON.parse(localStorage.getItem("wrong_list") || "[]");
     if(!list.some(i=>i.word===w.word)){
@@ -518,9 +457,6 @@ function addWrong(w){
     }
 }
 
-/* =========================
-   翻页
-========================= */
 function next(){
 
 if(index >= words.length - 1){
@@ -543,15 +479,12 @@ function prev(){
     }
 }
 
-/* =========================
-   发音
-========================= */
 function speak(){
     let w = words[index];
     if(!w) return;
 
     let audio = new Audio(
-        `https://ssl.gstatic.com/dictionary/static/sounds/oxford/${w.word.toLowerCase()}--_us_1.mp3`
+        "https://ssl.gstatic.com/dictionary/static/sounds/oxford/" + w.word.toLowerCase() + "--_us_1.mp3"
     );
 
     audio.play().catch(()=>{
@@ -567,9 +500,6 @@ function speakAuto(){
     speak();
 }
 
-/* =========================
-   绑定
-========================= */
 function bind(){
     document.getElementById("wordCard").onclick = speak;
     for(let i=0;i<4;i++){
@@ -577,16 +507,17 @@ function bind(){
     }
 }
 
-/* =========================
-   退出
-========================= */
 function exit(){
     location.href = "index.html";
 }
 
-/* =========================
-   提示
-========================= */
+function refreshQuiz(){
+    localStorage.removeItem("quiz_state");
+    localStorage.removeItem("quiz_index");
+    localStorage.removeItem("quiz_order");
+    location.reload();
+}
+
 function showTip(text){
 
     let tip = document.createElement("div");
@@ -629,15 +560,15 @@ function showTip(text){
 }
 
 const endTips = [
-    "好啦，这一组做完了哦～先别急着继续，起来走一走也好呀 😊 学习之外的世界也很有意思的！",
+    "好啦，这一组做完了哦～先别急着继续，起来走一走也好呀 学习之外的世界也很有意思的！",
 
-    "这一组结束啦，辛苦你啦～要不要先休息一下？看看窗外、喝口水也可以呀 🌿 不用一直待在这里的。",
+    "这一组结束啦，辛苦你啦～要不要先休息一下？看看窗外、喝口水也可以呀 不用一直待在这里的。",
 
-    "做完这一部分啦～可以先放松一下哦 😌 学习很重要，但生活里还有好多可爱的事情等你去发现呢。",
+    "做完这一部分啦～可以先放松一下哦 学习很重要，但生活里还有好多可爱的事情等你去发现呢。",
 
-    "这一组已经搞定啦～先别继续刷了嘛，出去动一动或者发会儿呆都很好 ✨ 真的不用一直学的呀。",
+    "这一组已经搞定啦～先别继续刷了嘛，出去动一动或者发会儿呆都很好 真的不用一直学的呀。",
 
-    "完成这一组啦～奖励自己休息一下吧 😆 生活又不只有学习，对吧？慢一点也没关系的～"
+    "完成这一组啦～奖励自己休息一下吧 生活又不只有学习，对吧？慢一点也没关系的～"
 ];
 
 </script>
