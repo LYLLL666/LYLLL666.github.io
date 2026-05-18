@@ -176,7 +176,10 @@ body::before{
 <div class="title-card">单词复习</div>
 <div class="cards">
 
-    <div class="card word" id="wordCard">加载中...</div>
+    <div class="card word">
+        <div id="wordText" style="font-size:38px;font-weight:700;">加载中...</div>
+        <div id="phonetic" style="font-size:14px;opacity:.65;margin-top:4px;"></div>
+    </div>
 
     <div class="card option" id="o0"></div>
     <div class="card option" id="o1"></div>
@@ -210,7 +213,8 @@ fetch("words.json")
 function render(){
 
     if(words.length === 0){
-        document.getElementById("wordCard").innerText = "暂无错题";
+        document.getElementById("wordText").innerText = "暂无错题";
+        document.getElementById("phonetic").innerText = "";
         return;
     }
 
@@ -221,7 +225,8 @@ function render(){
 
     let w = words[index];
 
-    document.getElementById("wordCard").innerText = w.word;
+    document.getElementById("wordText").innerText = w.word;
+    document.getElementById("phonetic").innerText = w.phonetic || "";
 
     currentOptions = generate(w);
 
@@ -352,7 +357,7 @@ function speakAuto(){
 
 /* 绑定 */
 function bind(){
-    document.getElementById("wordCard").onclick = speak;
+    document.getElementById("wordText").onclick = speak;
     for(let i=0;i<4;i++){
         document.getElementById("o"+i).onclick = ()=>select(i);
     }
