@@ -322,7 +322,7 @@ fetch("words.json?v=" + Date.now())
     if(saved){
         allWords = JSON.parse(saved);
     }else{
-        allWords = data;
+        allWords = data.sort(() => Math.random() - 0.5);
         localStorage.setItem("quiz_order", JSON.stringify(allWords));
     }
 
