@@ -272,91 +272,57 @@ async function searchWord(){
     let word = document.getElementById("inputWord").value.trim();
     if(!word) return;
 
-    let data = await fetchWord(word);
-    current = data;
+    document.getElementById("word").innerText = "查询中...";
+    document.getElementById("phonetic").innerText = "";
+    document.getElementById("meaning").innerText = "";
+    document.getElementById("example").innerText = "";
 
-    // =====================
-    // 1. 英文原文显示
-    // =====================
-    document.getElementById("word").innerText = data.word;
-    document.getElementById("phonetic").innerText = data.phonetic || "";
-    document.getElementById("meaning").innerText = data.meaning;
-    document.getElementById("example").innerText = data.example;
+    try {
+        let data = await fetchWordFromAI(word);
+        current = data;
 
-    // =====================
-    // 2. 分别翻译（三个独立DOM）
-    // =====================
-
-    // word翻译
-    translate(data.word || "").then(zh => {
-        document.getElementById("word").innerText =
-            data.word + "\n" + zh;
-    });
-
-    // meaning翻译
-    translate(data.meaning || "").then(zh => {
-        document.getElementById("meaning").innerText =
-            data.meaning + "\n" + zh;
-    });
-
-    // example翻译
-    translate(data.example || "").then(zh => {
-        document.getElementById("example").innerText =
-            data.example + "\n" + zh;
-    });
-}
-
-// =====================
-// 英文词典API
-// =====================
-async function fetchWord(word){
-
-    try{
-        let res = await fetch(
-            "https://api.dictionaryapi.dev/api/v2/entries/en/" + word
-        );
-
-        let data = await res.json();
-        let d = data[0];
-
-        return {
-            word: d.word,
-            phonetic: d.phonetic || "",
-            meaning: d.meanings?.[0]?.definitions?.[0]?.definition || "",
-            example: d.meanings?.[0]?.definitions?.[0]?.example || ""
-        };
-
-    }catch(e){
-        return {
-            word,
-            phonetic:"",
-            meaning:"查询失败",
-            example:""
-        };
+        document.getElementById("word").innerText = data.word + "\n" + (data.word_cn || "");
+        document.getElementById("phonetic").innerText = data.phonetic || "";
+        document.getElementById("meaning").innerText = data.meaning + "\n" + (data.meaning_cn || "");
+        document.getElementById("example").innerText = data.example + "\n" + (data.example_cn || "");
+    } catch(e) {
+        document.getElementById("word").innerText = word;
+        document.getElementById("meaning").innerText = "查询失败，请重试";
     }
 }
 
 // =====================
-// 🔥 翻译API（新增）
+// DeepSeek AI 查词（稳定）
 // =====================
-async function translate(text){
+async function fetchWordFromAI(word){
 
-    if(!text) return "";
+    let res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            message: "请查询英文单词\"" + word + "\"，严格只返回以下JSON格式（不要markdown代码块，不要任何其他文字）：\n{\n  \"word\": \"" + word + "\",\n  \"word_cn\": \"单词的中文翻译\",\n  \"phonetic\": \"IPA音标，如 /ˈeksəmpəl/\",\n  \"meaning\": \"英文释义/definition\",\n  \"meaning_cn\": \"中文释义\",\n  \"example\": \"英文例句\",\n  \"example_cn\": \"例句中文翻译\"\n}"
+        })
+    });
 
-    try{
-        let res = await fetch(
-            "https://api.mymemory.translated.net/get?q=" +
-            encodeURIComponent(text) +
-            "&langpair=en|zh-CN"
-        );
+    let data = await res.json();
+    let content = data.choices?.[0]?.message?.content || "";
 
-        let data = await res.json();
+    let json = content
+        .replace(/```json\s*/gi, "")
+        .replace(/```\s*/g, "")
+        .trim();
 
-        return data?.responseData?.translatedText || "";
+    let parsed = JSON.parse(json);
 
-    }catch(e){
-        return "";
-    }
+    return {
+        word: parsed.word || word,
+        word_cn: parsed.word_cn || "",
+        phonetic: parsed.phonetic || "",
+        meaning: parsed.meaning || "",
+        meaning_cn: parsed.meaning_cn || "",
+        example: parsed.example || "",
+        example_cn: parsed.example_cn || ""
+    };
 }
 
 // =====================
