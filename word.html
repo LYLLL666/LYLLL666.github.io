@@ -379,15 +379,18 @@ function updateGroupUI(){
     document.getElementById("groupBtn").innerText = `第${groupIndex}组`;
 }
 
+let totalWords = 0;
+
 /* 选择分组 */
 function chooseGroup(){
 
-    let input = prompt("请选择第几组（1-5）");
+    let maxGroup = Math.ceil(totalWords / GROUP_SIZE) || 5;
+    let input = prompt("请选择第几组（1-" + maxGroup + "）");
 
     let n = Number(input);
 
-    if(!Number.isInteger(n) || n < 1 || n > 5){
-        alert("请输入1-5之间的整数");
+    if(!Number.isInteger(n) || n < 1 || n > maxGroup){
+        alert("请输入1-" + maxGroup + "之间的整数");
         return;
     }
 
@@ -421,6 +424,7 @@ fetch("words.json?v=" + Date.now())
 .then(data => {
 
     words = data;
+    totalWords = data.length;
 
     applyGroup();
 
